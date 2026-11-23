@@ -436,25 +436,51 @@
               <!-- PANTALLA INICIAL DEL JUEGO -->
               <div class="game-overlay-screen" id="game-start-overlay">
                 <div class="game-overlay-card">
-                  <span style="font-size: 2.8rem; display: block; margin-bottom: 0.35rem;">🕊️📚</span>
-                  <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">Flappy Pet: Vuelo de Estudio</h3>
-                  <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    ¡Desafío dinámico! Tu mascota debe volar entre columnas de libros y obstáculos sin tocar el suelo ni chocar.
-                  </p>
-
-                  <div style="text-align: left; background: var(--bg-subtle); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.78rem; margin-bottom: 1.25rem;">
-                    <div style="margin-bottom: 0.35rem;">👆 <strong>Toca / Clic / Espacio:</strong> Aletea hacia arriba</div>
-                    <div style="margin-bottom: 0.35rem;">🧱 <strong>Esquiva:</strong> Pilares de procrastinación y fatiga</div>
-                    <div>🍪 <strong>Recompensa:</strong> ¡Ganas 1 bocadito cada 4 obstáculos superados!</div>
+                  <div class="game-hero-badge">
+                    <span class="game-hero-emoji">🦅</span>
+                    <span class="game-hero-sub-emoji">📚</span>
                   </div>
 
-                  <button type="button" class="btn-primary" id="btn-start-arcade">
-                    ¡Toca para Despegar! 🚀
+                  <h3 class="game-card-title">Flappy Pet: Vuelo Académico</h3>
+                  <p class="game-card-subtitle">
+                    Pausa activa para despejar tu mente, afinar reflejos y ganar premios para tu mascota.
+                  </p>
+
+                  <div class="game-rules-grid">
+                    <div class="game-rule-card">
+                      <div class="rule-icon-circle rule-icon-tap">👆</div>
+                      <div class="rule-content">
+                        <strong>¿Cómo volar?</strong>
+                        <span>Toca la pantalla, haz clic o presiona Espacio para dar impulso a tu mascota.</span>
+                      </div>
+                    </div>
+
+                    <div class="game-rule-card">
+                      <div class="rule-icon-circle rule-icon-book">📚</div>
+                      <div class="rule-content">
+                        <strong>Esquiva las columnas</strong>
+                        <span>Supera los obstáculos de libros (DSM-5, Piaget) sin caer ni estrellarte.</span>
+                      </div>
+                    </div>
+
+                    <div class="game-rule-card">
+                      <div class="rule-icon-circle rule-icon-cookie">🍪</div>
+                      <div class="rule-content">
+                        <strong>Gana galletitas reales</strong>
+                        <span>Atrapa bocaditos en vuelo o cruza 4 columnas para alimentar a tu compañero.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn-game-launch" id="btn-start-arcade">
+                    <span>¡Comenzar Vuelo!</span>
+                    <span class="btn-game-icon">🚀</span>
                   </button>
-                  
-                  <div class="game-instructions-box" style="margin-top: 0.75rem;">
-                    <span>📱 En Celular: Toca la pantalla</span>
-                    <span>💻 En PC: Clic o Barra Espaciadora</span>
+
+                  <div class="game-controls-pill">
+                    <span>📱 En Celular: <strong>Toca la pantalla</strong></span>
+                    <span class="pill-divider">•</span>
+                    <span>💻 En PC: <strong>Espacio o Clic</strong></span>
                   </div>
                 </div>
               </div>
@@ -462,25 +488,30 @@
               <!-- PANTALLA DE GAME OVER -->
               <div class="game-overlay-screen hidden" id="game-over-overlay">
                 <div class="game-overlay-card">
-                  <span style="font-size: 2.5rem; display: block; margin-bottom: 0.35rem;">💥</span>
-                  <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.25rem;">¡Chocaste con la Distracción!</h3>
-                  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;" id="game-over-feedback">
-                    ¡Buen intento! Cada vuelo afina tu ritmo y reflejos.
+                  <div class="game-hero-badge game-badge-danger">
+                    <span class="game-hero-emoji">💫</span>
+                    <span class="game-hero-sub-emoji">📚</span>
+                  </div>
+
+                  <h3 class="game-card-title">¡Fin del Vuelo!</h3>
+                  <p class="game-card-subtitle" id="game-over-feedback">
+                    ¡Buen intento! Cada intento afina tu ritmo y coordinación.
                   </p>
 
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem;">
-                    <div style="background: var(--bg-subtle); padding: 0.65rem; border-radius: var(--radius-md);">
-                      <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Obstáculos Superados</span>
-                      <strong style="font-size: 1.25rem; color: var(--primary);" id="game-final-score">0</strong>
+                  <div class="game-results-row">
+                    <div class="game-result-box">
+                      <span class="result-label">Obstáculos</span>
+                      <strong class="result-val val-score" id="game-final-score">0</strong>
                     </div>
-                    <div style="background: var(--bg-subtle); padding: 0.65rem; border-radius: var(--radius-md);">
-                      <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Bocaditos Ganados</span>
-                      <strong style="font-size: 1.25rem; color: var(--accent-green);" id="game-final-snacks">🍪 +0</strong>
+                    <div class="game-result-box">
+                      <span class="result-label">Bocaditos Ganados</span>
+                      <strong class="result-val val-cookies" id="game-final-snacks">🍪 +0</strong>
                     </div>
                   </div>
 
-                  <button type="button" class="btn-primary" id="btn-restart-arcade">
-                    Intentar de Nuevo 🔄
+                  <button type="button" class="btn-game-launch" id="btn-restart-arcade">
+                    <span>Volar de Nuevo</span>
+                    <span class="btn-game-icon">🔄</span>
                   </button>
                 </div>
               </div>
@@ -797,7 +828,7 @@
 
   <!-- AVISO TOAST FLOTANTE -->
   <div class="toast-msg" id="toast-element" role="status" aria-live="polite">
-    <span id="toast-text">¡Paso completado!</span>
+    <span id="toast-text"></span>
   </div>
 
   <!-- Confeti CDN -->

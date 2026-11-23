@@ -412,13 +412,17 @@
     }
   }
 
+  let toastTimeout = null;
   function showToast(message) {
     const toast = document.getElementById('toast-element');
     const text = document.getElementById('toast-text');
     if (toast && text) {
       text.innerText = message;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
     }
   }
 
@@ -644,16 +648,33 @@
   };
 
   let flappyAnimId = null;
+  let sharedAudioCtx = null;
+
+  function getAudioContext() {
+    try {
+      if (!sharedAudioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) sharedAudioCtx = new AudioCtx();
+      }
+      if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+        sharedAudioCtx.resume().catch(() => {});
+      }
+      return sharedAudioCtx;
+    } catch (e) {
+      return null;
+    }
+  }
 
   function playFlapSound() {
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(320, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(560, audioCtx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -664,13 +685,14 @@
 
   function playPointSound() {
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
       osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12); // A5
-      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -681,13 +703,14 @@
 
   function playCrashSound() {
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioCtx = getAudioContext();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(180, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.25);
-      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -696,25 +719,75 @@
     } catch (e) {}
   }
 
+  function spawnParticles(x, y, color = '#ECC94B', count = 8) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 40 + Math.random() * 80;
+      flappyState.particles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        color: color,
+        size: 3 + Math.random() * 3,
+        life: 0.45 + Math.random() * 0.3
+      });
+    }
+  }
+
+  function showFloatingText(x, y, text, color = '#48BB78', size = 18) {
+    flappyState.floatingTexts.push({
+      x: x,
+      y: y,
+      text: text,
+      color: color,
+      size: size,
+      alpha: 1.0
+    });
+  }
+
+  function safeRoundRect(ctx, x, y, w, h, radii) {
+    if (w <= 0 || h <= 0) return;
+    if (typeof ctx.roundRect === 'function') {
+      try {
+        ctx.roundRect(x, y, w, h, radii);
+        return;
+      } catch (e) {}
+    }
+    ctx.rect(x, y, w, h);
+  }
+
   function initFlappyGame() {
     const canvas = document.getElementById('flappy-pet-canvas');
     if (!canvas) return;
 
     const wrapper = canvas.parentElement;
-    canvas.width = wrapper.clientWidth || 360;
-    canvas.height = wrapper.clientHeight || 440;
+    if (wrapper) {
+      canvas.width = wrapper.clientWidth || 360;
+      canvas.height = wrapper.clientHeight || 450;
+    }
 
     const highDisplay = document.getElementById('game-high-score-display');
     if (highDisplay) highDisplay.innerText = `${flappyState.highScore}`;
 
     // Listener de aleteo (salto) con un toque o clic en la pantalla
-    canvas.onpointerdown = (e) => {
-      e.preventDefault();
+    const jumpHandler = (e) => {
+      // Ignorar si el clic fue en un botón de overlay
+      if (e.target && (e.target.closest('#game-start-overlay') || e.target.closest('#game-over-overlay'))) return;
       if (!flappyState.running) return;
+      e.preventDefault();
       flappyJump();
     };
 
+    if (wrapper) {
+      wrapper.onpointerdown = jumpHandler;
+    } else {
+      canvas.onpointerdown = jumpHandler;
+    }
+
     window.onkeydown = (e) => {
+      const minijuegoView = document.getElementById('view-minijuego');
+      if (!minijuegoView || minijuegoView.style.display === 'none') return;
       if (!flappyState.running) return;
       if (e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp') {
         e.preventDefault();
@@ -724,6 +797,7 @@
   }
 
   function flappyJump() {
+    if (!flappyState.running) return;
     const b = flappyState.bird;
     b.vy = b.jump;
     playFlapSound();
@@ -745,6 +819,12 @@
   function startFlappyGame() {
     const canvas = document.getElementById('flappy-pet-canvas');
     if (!canvas) return;
+
+    const wrapper = canvas.parentElement;
+    if (wrapper) {
+      canvas.width = wrapper.clientWidth || 360;
+      canvas.height = wrapper.clientHeight || 450;
+    }
 
     flappyState.running = true;
     flappyState.score = 0;
@@ -770,8 +850,12 @@
       lastTime = now;
 
       if (flappyState.running) {
-        updateFlappyPhysics(dt, canvas);
-        renderFlappyScene(canvas);
+        try {
+          updateFlappyPhysics(dt, canvas);
+          renderFlappyScene(canvas);
+        } catch (err) {
+          console.error('Flappy error:', err);
+        }
         flappyAnimId = requestAnimationFrame(flappyLoop);
       }
     }
@@ -936,19 +1020,19 @@
       // Columna superior (Libros cayendo)
       ctx.fillStyle = pipeColor;
       ctx.beginPath();
-      ctx.roundRect(p.x, 0, p.width, p.topHeight, [0, 0, 6, 6]);
+      safeRoundRect(ctx, p.x, 0, p.width, p.topHeight, [0, 0, 6, 6]);
       ctx.fill();
       // Borde de libro
       ctx.fillStyle = capColor;
-      ctx.fillRect(p.x - 3, p.topHeight - 16, p.width + 6, 16);
+      ctx.fillRect(p.x - 3, Math.max(0, p.topHeight - 16), p.width + 6, 16);
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(p.x + 8, p.topHeight - 12, p.width - 16, 2);
+      ctx.fillRect(p.x + 8, Math.max(0, p.topHeight - 12), p.width - 16, 2);
 
       // Columna inferior (Pila de libros)
-      const bHeight = canvas.height - p.bottomY;
+      const bHeight = Math.max(0, canvas.height - p.bottomY);
       ctx.fillStyle = pipeColor;
       ctx.beginPath();
-      ctx.roundRect(p.x, p.bottomY, p.width, bHeight, [6, 6, 0, 0]);
+      safeRoundRect(ctx, p.x, p.bottomY, p.width, bHeight, [6, 6, 0, 0]);
       ctx.fill();
       // Borde de libro inferior
       ctx.fillStyle = capColor;
@@ -1038,8 +1122,9 @@
     // Recompensa real: 1 bocadito cada 4 obstáculos + los bocaditos atrapados en el vuelo
     const snacksEarned = Math.floor(flappyState.score / 4) + flappyState.cookiesCollected;
     if (snacksEarned > 0 && appState.pet) {
-      appState.pet.foodStock += snacksEarned;
+      appState.pet.foodStock = (appState.pet.foodStock || 0) + snacksEarned;
       saveState();
+      renderPetDisplay();
     }
 
     // Guardar récord si superó el anterior
@@ -1574,7 +1659,10 @@
       avatarWrapper.classList.add('pet-bounce');
     }
 
-    playSweetChime();
+    // Solo sonar si el usuario pidió el consejo manualmente con el botón
+    if (forceAdvice) {
+      playSweetChime();
+    }
   }
 
   function renderTasksList() {
