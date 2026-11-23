@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="pastel">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>PsicoPlan | Asistente de IA para Estudiantes de Psicología</title>
+  <meta name="description" content="Organiza tus tareas de psicología en pasos pequeños, cuida a tu mascota de estudio y toma pausas activas.">
+  <meta name="theme-color" content="#8B7CE6">
+  
+  <!-- PWA Manifest & Favicon -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.svg">
+  
+  <!-- Fuentes Nunito & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       0. PANTALLA DE LOGIN CON COLORES NEUTROS Y ELECCIÓN DE TEMA
+       ========================================================================= -->
+  <div class="login-screen-wrapper" id="view-login" style="display: none;">
+    <div class="login-card-neutral">
+      <div class="login-brand-header">
+        <div class="login-brand-icon">🧠</div>
+        <h1>PsicoPlan</h1>
+        <p>Tu asistente de bienestar y enfoque académico</p>
+      </div>
+
+      <!-- Pestañas Iniciar Sesión / Registro -->
+      <div class="login-tabs">
+        <button type="button" class="login-tab-btn active" id="tab-login-btn">Iniciar Sesión</button>
+        <button type="button" class="login-tab-btn" id="tab-register-btn">Crear Cuenta</button>
+      </div>
+
+      <form id="auth-form" onsubmit="event.preventDefault();">
+        <div class="form-group" id="group-name" style="display: none;">
+          <label class="form-label" for="login-name-input">Nombre o apodo</label>
+          <input type="text" id="login-name-input" class="form-control" placeholder="Ej. Camila">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-email-input">Correo electrónico</label>
+          <input type="email" id="login-email-input" class="form-control" placeholder="estudiante@universidad.edu" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password-input">Contraseña</label>
+          <input type="password" id="login-password-input" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <!-- Selector de tema inicial -->
+        <label class="form-label" style="margin-top: 1rem;">Elige tu tema preferido:</label>
+        <div class="theme-palette-picker" id="login-theme-picker">
+          <button type="button" class="theme-pill-btn" data-set-theme="neutral">🕊️ Neutro</button>
+          <button type="button" class="theme-pill-btn active" data-set-theme="pastel">🎨 Pastel</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="forest">🌿 Bosque</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="ocean">🌊 Océano</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="sunset">🌸 Atardecer</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="dark">🌙 Noche</button>
+        </div>
+
+        <button type="submit" class="btn-neutral-primary" id="btn-submit-auth">
+          Entrar a PsicoPlan →
+        </button>
+      </form>
+
+      <div class="login-guest-divider">
+        <span>O CONTINUAR SIN REGISTRO</span>
+      </div>
+
+      <button type="button" class="btn-neutral-ghost" id="btn-login-guest">
+        ⚡ Ingresar como Estudiante Invitado
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       BARRA SUPERIOR (HEADER)
+       ========================================================================= -->
+  <header class="top-nav" id="app-header">
+    <a href="#inicio" class="brand-container" id="nav-brand-logo">
+      <div class="brand-logo-icon" aria-hidden="true">🧠</div>
+      <span class="brand-name">PsicoPlan</span>
+    </a>
+
+    <div class="top-actions">
+      <!-- Selector de Tema Rápido -->
+      <button class="icon-btn" id="theme-selector-btn" title="Cambiar tema de color" aria-label="Cambiar tema">
+        <span>🎨</span>
+      </button>
+
+      <!-- Minijuego / Pausa Zen -->
+      <button class="icon-btn" id="nav-minigame-btn" title="Pausa Activa y Minijuego" aria-label="Minijuego antiestrés" data-view="minijuego">
+        <span>🎮</span>
+      </button>
+
+      <!-- Notificaciones -->
+      <button class="icon-btn" id="notif-bell-btn" title="Recordatorios de entrega" aria-label="Notificaciones">
+        <span>🔔</span>
+        <span class="badge-dot" id="notif-badge" style="display: none;"></span>
+      </button>
+
+      <!-- Ajustes de IA -->
+      <button class="icon-btn" id="settings-btn" title="Configurar API de Gemini" aria-label="Ajustes">
+        <span>⚙️</span>
+      </button>
+
+      <!-- Menú de Usuario / Perfil -->
+      <button class="icon-btn" id="user-menu-btn" title="Perfil y cerrar sesión" aria-label="Perfil">
+        <span id="header-avatar-initial">👤</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       CONTENEDOR MULTIPLATAFORMA
+       ========================================================================= -->
+  <div class="app-container" id="app-body">
+
+    <!-- 1. BARRA LATERAL IZQUIERDA (Computador >1024px) -->
+    <aside class="sidebar-left" aria-label="Menú principal">
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-view="inicio">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Inicio
+        </button>
+        <button class="sidebar-link" id="sidebar-add-task-btn" data-view="wizard">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nueva Tarea
+        </button>
+        <button class="sidebar-link" data-view="minijuego">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Pausa Zen 🎮
+        </button>
+        <button class="sidebar-link" data-view="desempeno">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Mi Desempeño
+        </button>
+      </nav>
+
+      <!-- Perfil en el menú lateral -->
+      <div class="user-profile-box">
+        <div class="user-avatar" id="sidebar-user-avatar">P</div>
+        <div style="overflow: hidden; flex: 1;">
+          <p style="font-weight: 700; font-size: 0.9rem;" id="sidebar-user-name">Estudiante</p>
+          <p style="font-size: 0.75rem; color: var(--text-muted);" id="sidebar-user-level">Nivel: Novato</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. CONTENIDO CENTRAL -->
+    <main class="main-content" id="main-view-container">
+
+      <!-- ==========================================
+           VISTA 1: INICIO (PASO 1 + MASCOTA)
+           ========================================== -->
+      <section id="view-inicio">
+
+        <!-- TARJETA DE LA MASCOTA VIRTUAL -->
+        <div class="pet-showcase-card" id="pet-main-card">
+          <div class="pet-avatar-wrapper" id="btn-pet-avatar" title="Toca para interactuar">
+            <div class="pet-svg-container" id="pet-svg-display">
+              <!-- SVG dinámico inyectado por app.js -->
+            </div>
+            <div class="pet-mood-badge" id="pet-mood-badge-icon" title="Estado de ánimo">😊</div>
+          </div>
+
+          <div class="pet-info-box">
+            <div class="pet-name-title">
+              <h3 style="font-size: 1.15rem; font-weight: 800;">
+                <span id="pet-display-name">Mascota</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-left: 0.4rem;" id="pet-species-name">(Gatito Zen)</span>
+              </h3>
+              <button type="button" class="btn-secondary" id="btn-open-customize-pet" style="padding: 0.25rem 0.65rem; font-size: 0.75rem; min-height: 28px;">
+                Personalizar 🎨
+              </button>
+            </div>
+
+            <!-- Diálogo de la mascota con consejos psicológicos -->
+            <div class="pet-speech-dialogue" id="pet-dialogue-text">
+              "¡Hola! Cada subtarea que cumplas me da bocaditos 🍪 para mantener mi energía."
+            </div>
+
+            <!-- Barra de satisfacción / hambre -->
+            <div class="pet-hunger-bar-wrapper">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
+                <span>Satisfacción:</span>
+                <span id="pet-hunger-percent">75%</span>
+              </div>
+              <div class="progress-container" style="height: 6px; margin: 0.25rem 0;">
+                <div class="progress-fill" id="pet-hunger-bar" style="width: 75%; background: var(--accent-green);"></div>
+              </div>
+            </div>
+
+            <!-- Barra de acción de alimentar -->
+            <div class="pet-feed-action-bar">
+              <button type="button" class="btn-feed-pet" id="btn-feed-action">
+                <span>Alimentar</span>
+                <span id="pet-food-stock-badge">🍪 2</span>
+              </button>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">
+                Ganas +1 bocadito por cada subtarea completada
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Racha y Resumen Rápido -->
+        <div class="streak-bar">
+          <div class="streak-info">
+            <span style="font-size: 1.35rem;">🔥</span>
+            <div>
+              <span>Racha actual: <strong id="streak-days-count">1</strong> días</span>
+            </div>
+          </div>
+          <div style="font-weight: 800; color: var(--primary);" id="points-badge-quick">
+            ✨ 0 pts
+          </div>
+        </div>
+
+        <!-- Botón Grande "Agregar tarea +" -->
+        <button class="btn-primary" id="btn-start-wizard" style="margin-bottom: 1.5rem;">
+          <span>Agregar tarea</span>
+          <span style="font-size: 1.3rem; font-weight: 800;">+</span>
+        </button>
+
+        <!-- Lista de Tareas Activas -->
+        <div class="tasks-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 700;">Tus Tareas Activas</h3>
+          <span id="active-tasks-count" style="font-size: 0.85rem; color: var(--text-muted);">0 tareas</span>
+        </div>
+
+        <div id="tasks-list-container">
+          <!-- Inyectado por app.js -->
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VISTA 2: ASISTENTE WIZARD (PASOS 2, 3 Y 4)
+           ========================================== -->
+      <section id="view-wizard" style="display: none;">
+        <div class="card" style="padding-top: 1.5rem;">
+          
+          <div class="stepper-header">
+            <div class="stepper-progress-line"></div>
+            <div class="stepper-step active" id="step-node-2">
+              <div class="step-circle">1</div>
+              <span class="step-label">Tu Tarea</span>
+            </div>
+            <div class="stepper-step" id="step-node-3">
+              <div class="step-circle">2</div>
+              <span class="step-label">Preguntas IA</span>
+            </div>
+            <div class="stepper-step" id="step-node-4">
+              <div class="step-circle">3</div>
+              <span class="step-label">Tu Plan</span>
+            </div>
+          </div>
+
+          <!-- PASO 2: CUÉNTANOS SOBRE TU TAREA -->
+          <div id="wizard-step-2">
+            <h3 style="margin-bottom: 0.5rem;">Paso 1: Cuéntanos sobre tu tarea 📝</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Describe lo que debes entregar y nuestro asistente te guiará paso a paso.</p>
+
+            <form id="form-step-2" onsubmit="event.preventDefault();">
+              <div class="form-group">
+                <label class="form-label" for="task-title-input">¿En qué consiste tu tarea o trabajo? *</label>
+                <textarea id="task-title-input" class="form-control" placeholder="Ej. Ensayo sobre las etapas del desarrollo cognitivo de Piaget y su aplicación en la escuela..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="task-course-select">Curso de Psicología *</label>
+                <select id="task-course-select" class="form-control" required>
+                  <option value="">Selecciona un curso...</option>
+                  <option value="Psicología General">Psicología General</option>
+                  <option value="Psicología del Desarrollo">Psicología del Desarrollo</option>
+                  <option value="Psicología Social">Psicología Social</option>
+                  <option value="Psicología Clínica">Psicología Clínica</option>
+                  <option value="Psicología Educativa">Psicología Educativa</option>
+                  <option value="Neuropsicología">Neuropsicología</option>
+                  <option value="Estadística y Psicometría">Estadística y Psicometría</option>
+                  <option value="Metodología de la Investigación">Metodología de la Investigación</option>
+                  <option value="Historia de la Psicología">Historia de la Psicología</option>
+                  <option value="Otro">Otro curso de psicología</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="task-deadline-input">Fecha de entrega *</label>
+                <input type="date" id="task-deadline-input" class="form-control" required>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem;">
+                <button type="button" class="btn-secondary" id="btn-cancel-wizard" style="flex: 1;">Cancelar</button>
+                <button type="button" class="btn-primary" id="btn-to-step-3" style="flex: 2;">Siguiente →</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- PASO 3: PREGUNTAS DE IA -->
+          <div id="wizard-step-3" style="display: none;">
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 2rem;">🤖</span>
+              <p style="font-size: 0.9rem; color: var(--text-main);">
+                <strong>¡Perfecto!</strong> Ahora responde 3 breves preguntas para que la IA diseñe subtareas realistas y adaptadas a tu tiempo.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="q1-input">1. ¿Qué es lo primero que necesitas hacer?</label>
+              <input type="text" id="q1-input" class="form-control" placeholder="Ej. Elegir el tema o leer las indicaciones del docente">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="q2-input">2. ¿Qué recursos necesitas?</label>
+              <input type="text" id="q2-input" class="form-control" placeholder="Ej. Manual DSM-5, artículos de SciELO, apuntes">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="q3-input">3. ¿Cuánto tiempo tienes disponible?</label>
+              <input type="text" id="q3-input" class="form-control" placeholder="Ej. 1 hora diaria después de clases">
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+              <button type="button" class="btn-secondary" id="btn-back-to-step-2" style="flex: 1;">← Atrás</button>
+              <button type="button" class="btn-primary" id="btn-generate-plan" style="flex: 2;">
+                <span>Generar mi plan ✨</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ESTADO DE CARGA DE IA -->
+          <div id="ai-loading-box" style="display: none; text-align: center; padding: 2.5rem 1rem;">
+            <div style="font-size: 3rem; animation: petHop 1.5s infinite alternate;">🤖</div>
+            <h3 style="margin-top: 1rem; color: var(--primary);">Tu asistente de psicología está pensando...</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;" id="ai-loading-tip">
+              "Dividir una gran tarea reduce la sobrecarga cognitiva y alivia la procrastinación."
+            </p>
+          </div>
+
+          <!-- PASO 4: TU PLAN GENERADO -->
+          <div id="wizard-step-4" style="display: none;">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+              <span style="font-size: 2.5rem;">🏆</span>
+              <h2 style="font-size: 1.35rem; font-weight: 700;">¡Listo! Aquí tienes tu plan</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Cada paso completado le dará un bocadito 🍪 a tu mascota.</p>
+            </div>
+
+            <!-- Progreso en Tiempo Real -->
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.9rem;">
+                <span>Progreso:</span>
+                <span id="plan-progress-percent">0%</span>
+              </div>
+              <div class="progress-container">
+                <div class="progress-fill" id="plan-progress-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Checklist de Subtareas -->
+            <h4 style="margin-bottom: 0.75rem;">Pasos sugeridos:</h4>
+            <div id="subtasks-checklist-container">
+              <!-- Checklist inyectado por app.js -->
+            </div>
+
+            <!-- Sugerencias de Herramientas -->
+            <div class="card" style="background: var(--bg-subtle); margin: 1.25rem 0; border: 1px dashed var(--border-color);">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.25rem;">💡</span>
+                <strong>Herramientas recomendadas:</strong>
+              </div>
+              <div id="tools-list-container">
+                <!-- Enlaces inyectados -->
+              </div>
+            </div>
+
+            <button class="btn-secondary" id="btn-scholar-search" style="width: 100%; margin-bottom: 1rem;">
+              <span>📚 Buscar artículos en Google Académico</span>
+            </button>
+
+            <button class="btn-primary" id="btn-finish-plan">
+              <span>Guardar y volver al Inicio</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VISTA 3: MINIJUEGO DE PAUSA ACTIVA 🎮
+           ========================================== -->
+      <section id="view-minijuego" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <div>
+              <h2 style="font-size: 1.35rem; font-weight: 700;">Zona de Calma & Minijuego 🎮</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Desconecta unos minutos. ¡Explota burbujas para ganar bocaditos o practica respiración guiada!
+              </p>
+            </div>
+            <button class="btn-secondary" id="btn-toggle-game-mode" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+              Cambiar Modo 🔄
+            </button>
+          </div>
+
+          <!-- MODO 1: BURBUJAS ANTIESTRÉS -->
+          <div id="mode-bubble-pop">
+            <div class="game-canvas-wrapper">
+              <canvas id="zen-bubbles-canvas"></canvas>
+              <div class="game-hud">
+                <div class="game-score-badge">
+                  <span>Puntos Zen: </span><strong id="game-zen-points">0</strong>
+                </div>
+                <div class="game-score-badge">
+                  <span>Bocaditos Ganados: </span><strong id="game-snacks-earned" style="color: var(--accent-green);">🍪 +0</strong>
+                </div>
+              </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem;">
+              💡 Toca las burbujas flotantes para relajarte. ¡Cada 10 burbujas ganas 1 bocadito para tu mascota!
+            </p>
+          </div>
+
+          <!-- MODO 2: RESPIRACIÓN 4-7-8 -->
+          <div id="mode-breathing-478" style="display: none;">
+            <div class="breathing-mode-card">
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Técnica de Respiración 4-7-8</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Sigue el ritmo del círculo para activar el sistema parasimpático y reducir la ansiedad.
+              </p>
+
+              <div class="breathing-circle-outer" id="breath-circle-anim">
+                <div class="breathing-circle-inner">
+                  <span id="breath-action-text">Inhala</span>
+                  <span id="breath-timer-text" style="font-size: 1.5rem;">4</span>
+                </div>
+              </div>
+
+              <button class="btn-primary" id="btn-start-breathing" style="max-width: 200px; margin: 0 auto;">
+                Iniciar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VISTA 4: MI DESEMPEÑO
+           ========================================== -->
+      <section id="view-desempeno" style="display: none;">
+        <div class="card">
+          <h2 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Mi Desempeño 📊</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Tu constancia académica y el cuidado de tu mascota.
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 1.5rem;">✨</span>
+              <p style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">Puntos Totales</p>
+              <h3 id="stats-total-points">0</h3>
+            </div>
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 1.5rem;">🎯</span>
+              <p style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700;">Nivel</p>
+              <h3 id="stats-level-name">Novato</h3>
+            </div>
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+              <span style="font-size: 1.5rem;">🍪</span>
+              <p style="font-size: 0.75rem; color: var(--accent-green); font-weight: 700;">Comidas Dadas</p>
+              <h3 id="stats-meals-count">0</h3>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom: 0.75rem;">Pasos completados esta semana</h4>
+          <div style="background: var(--bg-subtle); border-radius: var(--radius-md); padding: 1rem; text-align: center; margin-bottom: 1.5rem;">
+            <canvas id="weekly-chart-canvas" width="480" height="220" style="max-width: 100%; height: auto;"></canvas>
+          </div>
+
+          <h4 style="margin-bottom: 0.75rem;">Tus Insignias</h4>
+          <div id="badges-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem;">
+            <!-- Insignias generadas -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 3. PANEL DERECHO (Computador >1024px) -->
+    <aside class="sidebar-right" aria-label="Estadísticas y acompañamiento">
+      
+      <!-- Mini resumen de la Mascota -->
+      <div class="card" style="margin-bottom: 0;">
+        <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+          <span style="display: flex; align-items: center; gap: 0.4rem;">
+            <span id="right-pet-icon">🐱</span> Tu Compañero
+          </span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);" id="right-pet-name">Mascota</span>
+        </h4>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; overflow: hidden;" id="right-panel-pet-thumb">
+            <!-- Mini SVG -->
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700;">
+              <span>Ánimo:</span>
+              <span id="right-pet-mood-text" style="color: var(--accent-green);">Feliz 😊</span>
+            </div>
+            <div class="progress-container" style="height: 6px; margin: 0.25rem 0;">
+              <div class="progress-fill" id="right-pet-hunger-bar" style="width: 75%;"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="right-pet-snacks-count">🍪 2 bocaditos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progreso General -->
+      <div class="card" style="margin-bottom: 0;">
+        <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🎖️</span> Tu Progreso
+        </h4>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem;">
+          <span id="right-panel-level">Nivel: Novato</span>
+          <span id="right-panel-points">0 pts</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-fill" id="right-panel-xp-bar" style="width: 10%;"></div>
+        </div>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;" id="right-panel-next-level">
+          Faltan 50 pts para subir de nivel
+        </p>
+      </div>
+
+      <!-- Herramientas de Psicología -->
+      <div class="card" style="margin-bottom: 0;">
+        <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>📚</span> Recursos Frecuentes
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
+          <a href="https://scholar.google.com" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
+            🔍 Google Académico
+          </a>
+          <a href="https://scielo.org" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
+            🔬 SciELO Psicología
+          </a>
+          <a href="https://apastyle.apa.org" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
+            📖 Normas APA 7ma Ed.
+          </a>
+          <a href="https://pomofocus.io" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
+            ⏱️ Pomodoro Timer
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR (Celular y Tablet) -->
+  <nav class="bottom-nav" aria-label="Navegación móvil" id="app-bottom-nav">
+    <button class="nav-item-btn active" data-view="inicio">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Inicio
+    </button>
+    <button class="nav-item-btn" id="mobile-add-task-btn" data-view="wizard">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      + Tarea
+    </button>
+    <button class="nav-item-btn" data-view="minijuego">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Juego 🎮
+    </button>
+    <button class="nav-item-btn" data-view="desempeno">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Progreso
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       MODALES
+       ========================================================================= -->
+
+  <!-- 1. MODAL: PERSONALIZAR MASCOTA -->
+  <div class="modal-overlay" id="customize-pet-modal" role="dialog" aria-modal="true" aria-labelledby="custom-pet-title">
+    <div class="modal-box">
+      <h3 id="custom-pet-title" style="margin-bottom: 0.25rem;">Personaliza a tu Mascota 🎨</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Adapta su color, ropa y especie a tu gusto.
+      </p>
+
+      <!-- Vista previa en vivo -->
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 1.25rem;">
+        <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-color);" id="custom-pet-preview-box">
+          <!-- Vista previa SVG -->
+        </div>
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label class="form-label" for="custom-pet-name-input">Nombre de la mascota:</label>
+        <input type="text" id="custom-pet-name-input" class="form-control" maxlength="15">
+      </div>
+
+      <!-- Especie -->
+      <div class="form-group">
+        <label class="form-label" for="custom-pet-species-select">Especie:</label>
+        <select id="custom-pet-species-select" class="form-control">
+          <option value="cat">🐱 Gatito Zen</option>
+          <option value="dog">🐶 Perrito Guía</option>
+          <option value="owl">🦉 Búho Sabio</option>
+          <option value="bunny">🐰 Conejita Ágil</option>
+          <option value="bear">🐻 Osito Calma</option>
+        </select>
+      </div>
+
+      <!-- Color de Pelaje -->
+      <label class="form-label">Color del pelaje / cuerpo:</label>
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; margin-bottom: 1.25rem;" id="fur-color-palette">
+        <!-- Inyectado por app.js -->
+      </div>
+
+      <!-- Vestimenta / Accesorios -->
+      <div class="form-group">
+        <label class="form-label" for="custom-pet-outfit-select">Vestimenta / Accesorio:</label>
+        <select id="custom-pet-outfit-select" class="form-control">
+          <option value="none">✨ Al natural (Sin accesorio)</option>
+          <option value="glasses">👓 Gafas de Psicólogo</option>
+          <option value="scarf">🧣 Bufanda Abrigadora</option>
+          <option value="hat">🎓 Birrete de Graduación</option>
+          <option value="bowtie">🎀 Moño Elegante</option>
+          <option value="flower">🌸 Flor Zen en la Cabeza</option>
+          <option value="cape">🦸 Capa de Superestudiante</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+        <button class="btn-secondary" id="btn-close-custom-pet" style="flex: 1;">Cancelar</button>
+        <button class="btn-primary" id="btn-save-custom-pet" style="flex: 1;">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: SELECTOR DE TEMAS -->
+  <div class="modal-overlay" id="theme-modal" role="dialog" aria-modal="true" aria-labelledby="theme-title">
+    <div class="modal-box">
+      <h3 id="theme-title" style="margin-bottom: 0.5rem;">Paleta de Color y Tema 🎨</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Personaliza los tonos visuales de tu aplicación según tu estado de ánimo.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;" id="in-app-theme-picker">
+        <button type="button" class="theme-pill-btn" data-set-theme="neutral">🕊️ Neutro Calmo</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="pastel">🎨 Pastel Clásico</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="forest">🌿 Bosque Sereno</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="ocean">🌊 Océano Profundo</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="sunset">🌸 Atardecer Rosa</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="dark">🌙 Noche de Estudio</button>
+      </div>
+
+      <button class="btn-secondary" id="btn-close-theme-modal" style="width: 100%; margin-top: 1.5rem;">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- 3. MODAL: AJUSTES Y GEMINI API KEY -->
+  <div class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-box">
+      <h3 id="settings-title" style="margin-bottom: 0.5rem;">Configuración de IA 🤖</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Ingresa tu API Key gratuita de Google Gemini o usa el modo Demo simulado.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="gemini-api-input">API Key de Google Gemini:</label>
+        <input type="password" id="gemini-api-input" class="form-control" placeholder="AIzaSy...">
+        <small style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">
+          Se guarda únicamente en tu navegador. Si lo dejas vacío, PsicoPlan usará el <strong>Modo Demo inteligente</strong> con respuestas offline realistas.
+        </small>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+        <button class="btn-secondary" id="btn-close-settings" style="flex: 1;">Cerrar</button>
+        <button class="btn-primary" id="btn-save-settings" style="flex: 1;">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MODAL: PERFIL Y CERRAR SESIÓN -->
+  <div class="modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="modal-box">
+      <h3 id="profile-title" style="margin-bottom: 0.5rem;">Tu Perfil 👤</h3>
+      
+      <div class="form-group">
+        <label class="form-label" for="profile-name-input">Nombre:</label>
+        <input type="text" id="profile-name-input" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="profile-email-input">Correo:</label>
+        <input type="email" id="profile-email-input" class="form-control">
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+        <button class="btn-secondary" id="btn-close-profile" style="flex: 1;">Cerrar</button>
+        <button class="btn-primary" id="btn-save-profile" style="flex: 1;">Guardar</button>
+      </div>
+
+      <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border-color);">
+
+      <button type="button" class="btn-neutral-ghost" id="btn-logout" style="width: 100%; color: #E53E3E;">
+        🚪 Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. MODAL: RECORDATORIOS -->
+  <div class="modal-overlay" id="notif-modal" role="dialog" aria-modal="true" aria-labelledby="notif-title">
+    <div class="modal-box">
+      <h3 id="notif-title" style="margin-bottom: 0.75rem;">🔔 Recordatorios de Entregas</h3>
+      <div id="notif-list-container">
+        <!-- Inyectado por app.js -->
+      </div>
+      <button class="btn-secondary" id="btn-close-notif" style="width: 100%; margin-top: 1rem;">Entendido</button>
+    </div>
+  </div>
+
+  <!-- AVISO TOAST FLOTANTE -->
+  <div class="toast-msg" id="toast-element" role="status" aria-live="polite">
+    <span id="toast-text">¡Paso completado!</span>
+  </div>
+
+  <!-- Confeti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Lógica -->
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

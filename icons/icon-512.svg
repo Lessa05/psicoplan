@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9FA8DA" />
+      <stop offset="50%" stop-color="#80CBC4" />
+      <stop offset="100%" stop-color="#CE93D8" />
+    </linearGradient>
+    <filter id="shadow512" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#3f51b5" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad512)" />
+  
+  <!-- Cloud body -->
+  <g filter="url(#shadow512)">
+    <path d="M160 336 h192 a64 64 0 0 0 21.3 -124.2 a85.3 85.3 0 0 0 -154.6 -40 a69.3 69.3 0 0 0 -112 57.6 a53.3 53.3 0 0 0 53.3 106.6 z" fill="#FFFFFF" />
+    <!-- Cheeks -->
+    <circle cx="182" cy="282" r="16" fill="#FFCDD2" opacity="0.85" />
+    <circle cx="310" cy="282" r="16" fill="#FFCDD2" opacity="0.85" />
+    <!-- Happy eyes -->
+    <path d="M192 261 Q205 245 218 261" stroke="#2c3437" stroke-width="8" stroke-linecap="round" fill="none" />
+    <path d="M274 261 Q287 245 300 261" stroke="#2c3437" stroke-width="8" stroke-linecap="round" fill="none" />
+    <!-- Smile -->
+    <path d="M236 280 Q246 301 256 280" stroke="#2c3437" stroke-width="8" stroke-linecap="round" fill="none" />
+    <!-- Golden Star -->
+    <path d="M363 150 L371 176 L398 184 L371 192 L363 218 L355 192 L328 184 L355 176 Z" fill="#FFCA28" stroke="#FFA000" stroke-width="3" />
+    <!-- Mini star -->
+    <path d="M130 190 L134 204 L148 208 L134 212 L130 226 L126 212 L112 208 L126 204 Z" fill="#FFE082" />
+  </g>
+</svg>
