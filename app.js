@@ -56,6 +56,12 @@
   let currentWizardData = null;
   let currentViewingTask = null;
 
+  // Variables de Firebase & Firestore
+  let firebaseAuth = null;
+  let firestoreDb = null;
+  let isFirebaseReady = false;
+  let pendingVerificationUser = null;
+
   // Variables del Minijuego
   let gameMode = 'arcade'; // 'arcade' o 'breathing'
   let zenPoints = 0;
@@ -81,8 +87,164 @@
     try {
       localStorage.setItem('psicoplan_state', JSON.stringify(appState));
       renderUI();
+      syncStateToFirestore();
     } catch (e) {
       console.warn('Error al guardar en localStorage', e);
+    }
+  }
+
+  // =========================================================================
+  // SERVICIOS FIREBASE (AUTH GOOGLE/FACEBOOK, VERIFICACIÓN Y CLOUD FIRESTORE)
+  // =========================================================================
+  function initFirebaseServices() {
+    try {
+      if (typeof firebase !== 'undefined' && typeof PSICOPLAN_CONFIG !== 'undefined' && PSICOPLAN_CONFIG.FIREBASE_CONFIG && PSICOPLAN_CONFIG.FIREBASE_CONFIG.apiKey) {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(PSICOPLAN_CONFIG.FIREBASE_CONFIG);
+        }
+        firebaseAuth = firebase.auth();
+        firestoreDb = firebase.firestore();
+        isFirebaseReady = true;
+
+        firebaseAuth.onAuthStateChanged(async (user) => {
+          if (user) {
+            const isSocial = user.providerData && user.providerData.some(p => p.providerId === 'google.com' || p.providerId === 'facebook.com');
+            if (user.emailVerified || isSocial) {
+              appState.user.isLoggedIn = true;
+              appState.user.uid = user.uid;
+              appState.user.email = user.email || '';
+              appState.user.name = user.displayName || (user.email ? user.email.split('@')[0] : 'Estudiante');
+
+              await loadUserFromFirestore(user.uid);
+              saveState();
+              switchView('inicio');
+            } else {
+              showEmailVerificationPrompt(user, false);
+              await firebaseAuth.signOut();
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Firebase en modo local / offline:', e);
+    }
+  }
+
+  function showEmailVerificationPrompt(user, isNew = false) {
+    pendingVerificationUser = user;
+    const alertBox = document.getElementById('email-verification-alert');
+    const titleEl = document.getElementById('verif-title');
+    const descEl = document.getElementById('verif-desc');
+    if (!alertBox) return;
+
+    if (isNew) {
+      if (titleEl) titleEl.innerText = '✉️ ¡Cuenta creada! Confirma tu correo';
+      if (descEl) descEl.innerText = `Enviamos un enlace de verificación a ${user.email}. Por favor haz clic en él para validar que el correo existe y poder entrar.`;
+    } else {
+      if (titleEl) titleEl.innerText = '⚠️ Correo pendiente de verificación';
+      if (descEl) descEl.innerText = `El correo ${user.email} aún no ha sido confirmado. Revisa tu bandeja de entrada o spam para activar tu cuenta.`;
+    }
+    alertBox.style.display = 'flex';
+  }
+
+  async function resendEmailVerification() {
+    if (!pendingVerificationUser) {
+      showToast('Ingresa tu correo para reenviar la verificación');
+      return;
+    }
+    try {
+      if (pendingVerificationUser.sendEmailVerification) {
+        await pendingVerificationUser.sendEmailVerification();
+        showToast('✉️ Correo de verificación reenviado con éxito');
+      } else {
+        showToast('Inicia sesión para reenviar el enlace');
+      }
+    } catch (err) {
+      showToast('Espera unos instantes antes de reenviar otro correo');
+    }
+  }
+
+  async function loginWithGoogle() {
+    if (!isFirebaseReady || !firebaseAuth) {
+      showToast('⚙️ Agrega tus credenciales de Firebase en config.js para usar Google');
+      return;
+    }
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('profile');
+      provider.addScope('email');
+      const result = await firebaseAuth.signInWithPopup(provider);
+      showToast(`¡Bienvenido/a, ${result.user.displayName || 'Estudiante'}!`);
+    } catch (err) {
+      console.error('Google Auth Error:', err);
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showToast('Error con Google: ' + (err.message || 'Intenta de nuevo'));
+      }
+    }
+  }
+
+  async function loginWithFacebook() {
+    if (!isFirebaseReady || !firebaseAuth) {
+      showToast('⚙️ Agrega tus credenciales de Firebase en config.js para usar Facebook');
+      return;
+    }
+    try {
+      const provider = new firebase.auth.FacebookAuthProvider();
+      provider.addScope('email');
+      const result = await firebaseAuth.signInWithPopup(provider);
+      showToast(`¡Bienvenido/a, ${result.user.displayName || 'Estudiante'}!`);
+    } catch (err) {
+      console.error('Facebook Auth Error:', err);
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showToast('Error con Facebook: ' + (err.message || 'Intenta de nuevo'));
+      }
+    }
+  }
+
+  async function loadUserFromFirestore(uid) {
+    if (!firestoreDb) return;
+    try {
+      const docRef = firestoreDb.collection('users').doc(uid);
+      const snap = await docRef.get();
+      if (snap.exists) {
+        const data = snap.data();
+        if (data.pet) appState.pet = data.pet;
+        if (data.tasks) appState.tasks = data.tasks;
+        if (data.points !== undefined) appState.user.points = data.points;
+        if (data.streak !== undefined) appState.user.streak = data.streak;
+        if (data.settings) appState.settings = data.settings;
+      } else {
+        if (!appState.pet) appState.pet = createRandomPet();
+        await docRef.set({
+          name: appState.user.name,
+          email: appState.user.email,
+          pet: appState.pet,
+          tasks: appState.tasks,
+          points: appState.user.points || 0,
+          streak: appState.user.streak || 1,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
+    } catch (e) {
+      console.warn('Error leyendo Firestore:', e);
+    }
+  }
+
+  async function syncStateToFirestore() {
+    if (!firestoreDb || !appState.user.uid) return;
+    try {
+      await firestoreDb.collection('users').doc(appState.user.uid).set({
+        name: appState.user.name,
+        email: appState.user.email,
+        pet: appState.pet,
+        tasks: appState.tasks,
+        points: appState.user.points,
+        streak: appState.user.streak,
+        settings: appState.settings,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    } catch (e) {
+      console.warn('Error sincronizando Firestore:', e);
     }
   }
 
@@ -624,6 +786,7 @@
   // =========================================================================
   let flappyState = {
     running: false,
+    hasStartedFlight: false, // Levita plácidamente en el centro hasta que el usuario dé el primer toque
     score: 0,
     cookiesCollected: 0,
     highScore: parseInt(localStorage.getItem('psicoplan_flappy_high') || '0', 10),
@@ -632,8 +795,8 @@
       y: 200,
       vy: 0,
       radius: 20,
-      gravity: 0.38,
-      jump: -6.8,
+      gravity: 0.27, // Gravedad suave para dar tiempo de reacción perfecto
+      jump: -5.6,    // Impulso balanceado y agradable
       rotation: 0
     },
     pipes: [],
@@ -798,6 +961,7 @@
 
   function flappyJump() {
     if (!flappyState.running) return;
+    flappyState.hasStartedFlight = true; // Activa el vuelo al primer toque del jugador
     const b = flappyState.bird;
     b.vy = b.jump;
     playFlapSound();
@@ -827,9 +991,10 @@
     }
 
     flappyState.running = true;
+    flappyState.hasStartedFlight = false; // ¡Mascota levitando pacíficamente hasta el primer toque!
     flappyState.score = 0;
     flappyState.cookiesCollected = 0;
-    flappyState.bird.y = canvas.height * 0.45;
+    flappyState.bird.y = canvas.height * 0.42;
     flappyState.bird.vy = 0;
     flappyState.bird.rotation = 0;
     flappyState.pipes = [];
@@ -866,16 +1031,24 @@
   function updateFlappyPhysics(dt, canvas) {
     const b = flappyState.bird;
 
-    // Física de caída y gravedad
-    b.vy += b.gravity;
-    b.y += b.vy;
-    b.rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, b.vy * 0.08));
-
-    // Nubes de fondo deslizándose
+    // Nubes de fondo deslizándose suavemente
     flappyState.bgClouds.forEach(c => {
       c.x -= 15 * dt * c.s;
       if (c.x < -60) c.x = canvas.width + 50;
     });
+
+    // MODO LEVITACIÓN PRE-VUELO: Si el jugador no ha tocado la pantalla, la mascota flota en el centro
+    if (!flappyState.hasStartedFlight) {
+      b.y = canvas.height * 0.42 + Math.sin(Date.now() * 0.005) * 6;
+      b.vy = 0;
+      b.rotation = Math.sin(Date.now() * 0.004) * 0.05;
+      return;
+    }
+
+    // Física de caída y gravedad
+    b.vy += b.gravity;
+    b.y += b.vy;
+    b.rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, b.vy * 0.08));
 
     // Colisión con suelo o techo
     if (b.y + b.radius >= canvas.height - 18) {
@@ -888,9 +1061,9 @@
       b.vy = 0;
     }
 
-    // Spawn de columnas de libros (obstáculos)
+    // Spawn de columnas de libros (obstáculos) solo tras haber iniciado el vuelo
     flappyState.spawnTimer += dt;
-    const spawnRate = Math.max(1.5, 2.3 - Math.min(0.6, flappyState.score * 0.03));
+    const spawnRate = Math.max(1.6, 2.4 - Math.min(0.6, flappyState.score * 0.03));
 
     if (flappyState.spawnTimer >= spawnRate) {
       flappyState.spawnTimer = 0;
@@ -1112,6 +1285,25 @@
       ctx.fillText(ft.text, ft.x, ft.y);
       ctx.restore();
     });
+
+    // 8. Aviso flotante de inicio esperando el primer toque
+    if (!flappyState.hasStartedFlight) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.beginPath();
+      safeRoundRect(ctx, canvas.width / 2 - 135, canvas.height * 0.42 + 45, 270, 36, [18, 18, 18, 18]);
+      ctx.fill();
+      ctx.strokeStyle = '#8B7CE6';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#2D3748';
+      ctx.font = 'bold 13px Nunito, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('👆 ¡Toca la pantalla o Espacio para volar!', canvas.width / 2, canvas.height * 0.42 + 63);
+      ctx.restore();
+    }
   }
 
   function endFlappyGame() {
@@ -1926,22 +2118,88 @@
       });
     });
 
-    // Enviar Login/Registro
-    document.getElementById('auth-form')?.addEventListener('submit', () => {
+    // Enviar Login/Registro con Correo y Contraseña
+    document.getElementById('auth-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const email = document.getElementById('login-email-input').value.trim();
-      const name = isRegisterMode ? document.getElementById('login-name-input').value.trim() : (email.split('@')[0] || 'Estudiante');
+      const password = document.getElementById('login-password-input').value;
+      const name = isRegisterMode ? (document.getElementById('login-name-input').value.trim() || email.split('@')[0]) : (email.split('@')[0] || 'Estudiante');
 
-      appState.user.isLoggedIn = true;
-      appState.user.email = email;
-      appState.user.name = name || 'Estudiante';
-
-      if (!appState.pet) {
-        appState.pet = createRandomPet();
+      if (!email || !password) {
+        showToast('Por favor completa tu correo y contraseña');
+        return;
       }
 
-      saveState();
-      showToast(`¡Bienvenido/a, ${appState.user.name}!`);
-      switchView('inicio');
+      if (isFirebaseReady && firebaseAuth) {
+        if (isRegisterMode) {
+          try {
+            const userCred = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+            if (name) {
+              await userCred.user.updateProfile({ displayName: name });
+            }
+            // Enviar verificación de correo obligatoria
+            await userCred.user.sendEmailVerification();
+            showEmailVerificationPrompt({ email }, true);
+            // Salir de sesión inmediatamente hasta que el usuario confirme su correo
+            await firebaseAuth.signOut();
+            showToast('✉️ Correo de verificación enviado');
+            tabLogin?.click();
+          } catch (err) {
+            console.error('Error Registro Firebase:', err);
+            if (err.code === 'auth/email-already-in-use') {
+              showToast('Este correo ya está registrado. Inicia sesión.');
+            } else if (err.code === 'auth/weak-password') {
+              showToast('La contraseña debe tener al menos 6 caracteres');
+            } else if (err.code === 'auth/invalid-email') {
+              showToast('El formato del correo es inválido');
+            } else {
+              showToast('Error: ' + (err.message || 'Verifica los datos'));
+            }
+          }
+        } else {
+          try {
+            const userCred = await firebaseAuth.signInWithEmailAndPassword(email, password);
+            if (!userCred.user.emailVerified) {
+              showEmailVerificationPrompt(userCred.user, false);
+              await firebaseAuth.signOut();
+            } else {
+              appState.user.isLoggedIn = true;
+              appState.user.uid = userCred.user.uid;
+              appState.user.email = userCred.user.email;
+              appState.user.name = userCred.user.displayName || email.split('@')[0] || 'Estudiante';
+              await loadUserFromFirestore(userCred.user.uid);
+              saveState();
+              showToast(`¡Bienvenido/a, ${appState.user.name}!`);
+              switchView('inicio');
+            }
+          } catch (err) {
+            console.error('Error Login Firebase:', err);
+            showToast('Correo o contraseña incorrectos');
+          }
+        }
+      } else {
+        // Modo demo local sin backend
+        appState.user.isLoggedIn = true;
+        appState.user.email = email;
+        appState.user.name = name || 'Estudiante';
+        if (!appState.pet) {
+          appState.pet = createRandomPet();
+        }
+        saveState();
+        showToast(`¡Bienvenido/a, ${appState.user.name}!`);
+        switchView('inicio');
+      }
+    });
+
+    // Botones de autenticación con Google y Facebook
+    document.getElementById('btn-auth-google')?.addEventListener('click', loginWithGoogle);
+    document.getElementById('btn-auth-facebook')?.addEventListener('click', loginWithFacebook);
+
+    // Botones de alerta de verificación de correo
+    document.getElementById('btn-resend-verif')?.addEventListener('click', resendEmailVerification);
+    document.getElementById('btn-dismiss-verif')?.addEventListener('click', () => {
+      const box = document.getElementById('email-verification-alert');
+      if (box) box.style.display = 'none';
     });
 
     // Entrar como invitado
@@ -2089,8 +2347,11 @@
     });
 
     // Cerrar sesión
-    document.getElementById('btn-logout')?.addEventListener('click', () => {
+    document.getElementById('btn-logout')?.addEventListener('click', async () => {
       profileModal?.classList.remove('active');
+      if (isFirebaseReady && firebaseAuth) {
+        await firebaseAuth.signOut();
+      }
       appState.user.isLoggedIn = false;
       saveState();
       showToast('Has cerrado sesión');
@@ -2116,6 +2377,7 @@
 
     setupEvents();
     setupWizardSteps();
+    initFirebaseServices();
     renderUI();
 
     // La mascota habla periódicamente (cada 40s) para dar consejos, avisar hambre o tristeza por tareas pausadas
