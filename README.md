@@ -8,7 +8,7 @@ PsicoPlan es una aplicación web progresiva (**PWA**), multiplataforma y 100% gr
 
 ### 1. 🕊️ Login con Colores Neutros y Selector de Temas
 - Pantalla de bienvenida limpia, sobria y elegante con tonos cálidos y grises neutros.
-- Pestañas para **Iniciar Sesión**, **Crear Cuenta** o **Ingresar como Invitado** (acceso instantáneo con 1 solo clic).
+- Acceso seguro mediante **Iniciar Sesión** o **Crear Cuenta** con verificación de correo, o en 1 clic con **Google** y **Facebook**. Registro obligatorio para proteger el progreso del estudiante.
 - Selector de temas visuales para elegir tu vibra favorita:
   - 🕊️ **Neutro Calmo**: Slate, warm gray y grafito minimalista.
   - 🎨 **Pastel Clásico**: Lila, celeste y menta relajante.

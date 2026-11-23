@@ -14,11 +14,11 @@ const PSICOPLAN_CONFIG = {
   // Configuración de Firebase (Opcional - https://console.firebase.google.com/)
   // Si dejas apiKey vacía, PsicoPlan usará localStorage automáticamente como respaldo.
   FIREBASE_CONFIG: {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyD5EsDPCGnrrGNoFTlaJmNGPtw8Vb0E2bw",
+    authDomain: "psicoplan-c57f1.firebaseapp.com",
+    projectId: "psicoplan-c57f1",
+    storageBucket: "psicoplan-c57f1.firebasestorage.app",
+    messagingSenderId: "718056628549",
+    appId: "1:718056628549:web:6e13ecade39663c4ea5e2c"
   }
 };

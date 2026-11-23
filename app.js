@@ -2202,18 +2202,6 @@
       if (box) box.style.display = 'none';
     });
 
-    // Entrar como invitado
-    document.getElementById('btn-login-guest')?.addEventListener('click', () => {
-      appState.user.isLoggedIn = true;
-      appState.user.name = 'Invitado';
-      if (!appState.pet) {
-        appState.pet = createRandomPet();
-      }
-      saveState();
-      showToast('¡Has entrado como Estudiante Invitado!');
-      switchView('inicio');
-    });
-
     // 3. Mascota: Alimentar, Personalizar y Pedir Consejos
     document.getElementById('btn-feed-action')?.addEventListener('click', feedPet);
     document.getElementById('btn-pet-avatar')?.addEventListener('click', () => {
