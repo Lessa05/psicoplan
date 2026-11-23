@@ -57,7 +57,7 @@
   let currentViewingTask = null;
 
   // Variables del Minijuego
-  let gameMode = 'bubbles'; // 'bubbles' o 'breathing'
+  let gameMode = 'arcade'; // 'arcade' o 'breathing'
   let zenPoints = 0;
   let bubbles = [];
   let bubbleAnimId = null;
@@ -127,16 +127,42 @@
   }
 
   function getPetMood(pet) {
-    if (pet.hunger < 25) return 'starving';
-    if (pet.hunger < 50) return 'sleepy';
+    if (!pet) return 'happy';
+    // 1. Si tiene hambre (< 40%)
+    if (pet.hunger < 40) return 'starving';
+
+    // 2. Si hay tareas activas rezagadas o abandonadas
+    const hasPendingTasks = appState.tasks && appState.tasks.some(t => t.subtasks && t.subtasks.some(s => !s.completed));
+    if (hasPendingTasks) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const hasStalledTask = appState.tasks.some(t => {
+        const isPending = t.subtasks.some(s => !s.completed);
+        const deadline = new Date(t.deadline);
+        const diffDays = (deadline - new Date()) / (1000 * 60 * 60 * 24);
+        return isPending && (diffDays <= 2 || t.createdAt.split('T')[0] !== todayStr);
+      });
+      // Si la satisfacción no está al tope y las tareas están pendientes: se pone triste
+      if (hasStalledTask && pet.hunger < 80) {
+        return 'sad';
+      }
+    }
+
     if (pet.hunger >= 85) return 'ecstatic';
+    if (pet.hunger < 55) return 'sleepy';
     return 'happy';
   }
 
   const PET_PHRASES = {
     starving: [
-      "¡Tengo pancita vacía! 🥺 Completa una subtarea para darme un bocadito.",
-      "Necesito energía nutritiva para acompañarte a estudiar..."
+      "¡Tengo mucha hambre! 🥺 ¿Hacemos una subtarea para ganar un rico bocadito?",
+      "Mi pancita hace ruidos... ¡termina un paso de tu plan y dame de comer! 🍪",
+      "Necesito nutrientes para seguir acompañándote a estudiar 🥺"
+    ],
+    sad: [
+      "Veo que dejamos pausada la tarea... me da un poquito de tristeza 😢 ¡Hagamos aunque sea un pasito hoy!",
+      "¡No procrastines! Recuerda que tu yo del futuro te agradecerá avanzar hoy.",
+      "Extraño verte tachar tareas en tu checklist... ¡yo sé que eres muy capaz! 💔",
+      "A veces empezar es lo más difícil. Comprométete solo con 5 minutos hoy, ¡hazlo por mí! 🥺"
     ],
     sleepy: [
       "Un bostezo... ¿Será hora de una pausa activa de 5 minutos? 😴",
@@ -154,6 +180,15 @@
     zen: [
       "Inhala profundamente... siente cómo tu cuerpo se relaja 🧘",
       "La atención plena en el presente disipa la ansiedad del futuro."
+    ],
+    advice: [
+      "💡 Tip de psicología: La técnica de los 2 minutos dice que si empezar te cuesta, haz solo 2 minutos. ¡Casi siempre continúas!",
+      "🧠 Neurociencia: Tu memoria de trabajo rinde mucho mejor si alejas el celular de tu campo visual.",
+      "✨ Psicología de hábitos: No esperes a tener motivación para empezar; la acción precede a la motivación.",
+      "📚 Ley de Yerkes-Dodson: Un nivel moderado de activación es óptimo; respira hondo si sientes nervios.",
+      "♥ ¡Cada autor que citas y cada página que redactas te acerca a tu título de psicólogo/a!",
+      "🌱 El descanso es productivo: 5 minutos de pausa cada 25 minutos restauran tu dopamina y concentración.",
+      "📖 Efecto Zeigárnik: Las tareas incompletas ocupan espacio mental. ¡Terminar un paso pequeño te dará paz mental inmediata!"
     ]
   };
 
@@ -184,6 +219,14 @@
         <circle cx="60" cy="40" r="2" fill="#FFFFFF"/>
       `;
       mouthSvg = `<path d="M46 56 Q50 52 54 56" stroke="#2D3748" stroke-width="2.5" stroke-linecap="round" fill="none"/>`;
+    } else if (mood === 'sad') {
+      eyesSvg = `
+        <path d="M33 40 Q39 45 44 41" stroke="#2D3748" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M56 41 Q61 45 67 40" stroke="#2D3748" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <!-- Lagrimita tierna -->
+        <circle cx="34" cy="48" r="2.5" fill="#54B4D3"/>
+      `;
+      mouthSvg = `<path d="M44 56 Q50 50 56 56" stroke="#2D3748" stroke-width="2.5" stroke-linecap="round" fill="none"/>`;
     } else if (mood === 'ecstatic' || mood === 'zen') {
       eyesSvg = `
         <path d="M32 42 Q38 34 44 42" stroke="#2D3748" stroke-width="3.5" stroke-linecap="round" fill="none"/>
@@ -573,104 +616,461 @@
   }
 
   // =========================================================================
-  // 7. MINIJUEGO: BURBUJAS ANTIESTRÉS Y RESPIRACIÓN 4-7-8
+  // 7. MINIJUEGO: FLAPPY PET (VUELO ACADÉMICO CON OBSTÁCULOS) 🚀📚
   // =========================================================================
-  function initBubbleGame() {
-    const canvas = document.getElementById('zen-bubbles-canvas');
+  let flappyState = {
+    running: false,
+    score: 0,
+    cookiesCollected: 0,
+    highScore: parseInt(localStorage.getItem('psicoplan_flappy_high') || '0', 10),
+    bird: {
+      x: 75,
+      y: 200,
+      vy: 0,
+      radius: 20,
+      gravity: 0.38,
+      jump: -6.8,
+      rotation: 0
+    },
+    pipes: [],
+    particles: [],
+    floatingTexts: [],
+    spawnTimer: 0,
+    bgClouds: [
+      { x: 30, y: 50, s: 0.6 },
+      { x: 180, y: 80, s: 0.8 },
+      { x: 320, y: 40, s: 0.5 }
+    ]
+  };
+
+  let flappyAnimId = null;
+
+  function playFlapSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(560, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    } catch (e) {}
+  }
+
+  function playPointSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12); // A5
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.12);
+    } catch (e) {}
+  }
+
+  function playCrashSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.25);
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.25);
+    } catch (e) {}
+  }
+
+  function initFlappyGame() {
+    const canvas = document.getElementById('flappy-pet-canvas');
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.parentElement.clientWidth || 360;
-    canvas.height = canvas.parentElement.clientHeight || 380;
+    const wrapper = canvas.parentElement;
+    canvas.width = wrapper.clientWidth || 360;
+    canvas.height = wrapper.clientHeight || 440;
 
-    bubbles = [];
-    const bubbleColors = [
-      'rgba(139, 124, 230, 0.4)',
-      'rgba(84, 180, 211, 0.4)',
-      'rgba(72, 187, 120, 0.4)',
-      'rgba(246, 135, 179, 0.4)',
-      'rgba(236, 201, 75, 0.4)'
-    ];
+    const highDisplay = document.getElementById('game-high-score-display');
+    if (highDisplay) highDisplay.innerText = `${flappyState.highScore}`;
 
-    for (let i = 0; i < 15; i++) {
-      bubbles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: 18 + Math.random() * 22,
-        color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)],
-        vx: (Math.random() - 0.5) * 0.7,
-        vy: -0.4 - Math.random() * 0.6
+    // Listener de aleteo (salto) con un toque o clic en la pantalla
+    canvas.onpointerdown = (e) => {
+      e.preventDefault();
+      if (!flappyState.running) return;
+      flappyJump();
+    };
+
+    window.onkeydown = (e) => {
+      if (!flappyState.running) return;
+      if (e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        flappyJump();
+      }
+    };
+  }
+
+  function flappyJump() {
+    const b = flappyState.bird;
+    b.vy = b.jump;
+    playFlapSound();
+
+    // Partículas de aleteo detrás de la mascota
+    for (let i = 0; i < 4; i++) {
+      flappyState.particles.push({
+        x: b.x - 12,
+        y: b.y + 10,
+        vx: -30 - Math.random() * 30,
+        vy: (Math.random() - 0.5) * 40,
+        color: 'rgba(255, 255, 255, 0.7)',
+        size: 3 + Math.random() * 3,
+        life: 0.3
       });
     }
+  }
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function startFlappyGame() {
+    const canvas = document.getElementById('flappy-pet-canvas');
+    if (!canvas) return;
 
-      bubbles.forEach(b => {
-        b.x += b.vx;
-        b.y += b.vy;
+    flappyState.running = true;
+    flappyState.score = 0;
+    flappyState.cookiesCollected = 0;
+    flappyState.bird.y = canvas.height * 0.45;
+    flappyState.bird.vy = 0;
+    flappyState.bird.rotation = 0;
+    flappyState.pipes = [];
+    flappyState.particles = [];
+    flappyState.floatingTexts = [];
+    flappyState.spawnTimer = 0;
 
-        if (b.y + b.r < 0) {
-          b.y = canvas.height + b.r;
-          b.x = Math.random() * canvas.width;
-        }
-        if (b.x - b.r < 0 || b.x + b.r > canvas.width) {
-          b.vx *= -1;
-        }
+    document.getElementById('game-start-overlay')?.classList.add('hidden');
+    document.getElementById('game-over-overlay')?.classList.add('hidden');
 
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.fillStyle = b.color;
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+    updateFlappyHUD();
 
-        // Brillo de la burbuja
-        ctx.beginPath();
-        ctx.arc(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.22, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.fill();
-      });
+    cancelAnimationFrame(flappyAnimId);
+    let lastTime = performance.now();
 
-      bubbleAnimId = requestAnimationFrame(animate);
-    }
+    function flappyLoop(now) {
+      const dt = Math.min(0.04, (now - lastTime) / 1000);
+      lastTime = now;
 
-    cancelAnimationFrame(bubbleAnimId);
-    animate();
-
-    // Evento de clic o toque en burbuja
-    function handleBubblePop(clientX, clientY) {
-      const rect = canvas.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const clickY = clientY - rect.top;
-
-      for (let i = bubbles.length - 1; i >= 0; i--) {
-        const b = bubbles[i];
-        const dist = Math.hypot(clickX - b.x, clickY - b.y);
-        if (dist <= b.r + 5) {
-          playPopSound();
-          zenPoints += 1;
-          document.getElementById('game-zen-points').innerText = zenPoints;
-
-          // Reubicar burbuja
-          b.y = canvas.height + b.r;
-          b.x = Math.random() * canvas.width;
-
-          // Recompensa de bocaditos para la mascota: cada 10 burbujas
-          if (zenPoints % 10 === 0 && appState.pet) {
-            appState.pet.foodStock += 1;
-            document.getElementById('game-snacks-earned').innerText = `🍪 +${Math.floor(zenPoints / 10)}`;
-            launchConfetti();
-            showToast('🍪 ¡Ganaste 1 bocadito para tu mascota por relajarte!');
-            saveState();
-          }
-          break;
-        }
+      if (flappyState.running) {
+        updateFlappyPhysics(dt, canvas);
+        renderFlappyScene(canvas);
+        flappyAnimId = requestAnimationFrame(flappyLoop);
       }
     }
 
-    canvas.onpointerdown = (e) => handleBubblePop(e.clientX, e.clientY);
+    flappyAnimId = requestAnimationFrame(flappyLoop);
+  }
+
+  function updateFlappyPhysics(dt, canvas) {
+    const b = flappyState.bird;
+
+    // Física de caída y gravedad
+    b.vy += b.gravity;
+    b.y += b.vy;
+    b.rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, b.vy * 0.08));
+
+    // Nubes de fondo deslizándose
+    flappyState.bgClouds.forEach(c => {
+      c.x -= 15 * dt * c.s;
+      if (c.x < -60) c.x = canvas.width + 50;
+    });
+
+    // Colisión con suelo o techo
+    if (b.y + b.radius >= canvas.height - 18) {
+      b.y = canvas.height - 18 - b.radius;
+      endFlappyGame();
+      return;
+    }
+    if (b.y - b.radius <= 0) {
+      b.y = b.radius;
+      b.vy = 0;
+    }
+
+    // Spawn de columnas de libros (obstáculos)
+    flappyState.spawnTimer += dt;
+    const spawnRate = Math.max(1.5, 2.3 - Math.min(0.6, flappyState.score * 0.03));
+
+    if (flappyState.spawnTimer >= spawnRate) {
+      flappyState.spawnTimer = 0;
+      spawnFlappyPillars(canvas);
+    }
+
+    // Velocidad de avance de las columnas
+    const speed = 120 + Math.min(70, flappyState.score * 3.5);
+
+    // Mover y verificar columnas
+    for (let i = flappyState.pipes.length - 1; i >= 0; i--) {
+      const p = flappyState.pipes[i];
+      p.x -= speed * dt;
+
+      // Colisión con la columna superior o inferior
+      if (b.x + b.radius > p.x && b.x - b.radius < p.x + p.width) {
+        if (b.y - b.radius < p.topHeight || b.y + b.radius > p.bottomY) {
+          endFlappyGame();
+          return;
+        }
+      }
+
+      // Recolectar bocadito flotante entre las columnas
+      if (p.hasCookie && !p.cookieCollected) {
+        const distCookie = Math.hypot(b.x - (p.x + p.width / 2), b.y - p.cookieY);
+        if (distCookie < b.radius + 16) {
+          p.cookieCollected = true;
+          flappyState.cookiesCollected += 1;
+          playPointSound();
+          spawnParticles(b.x, b.y, '#48BB78', 12);
+          showFloatingText(b.x, b.y - 15, '+1 🍪', '#48BB78', 18);
+          updateFlappyHUD();
+        }
+      }
+
+      // Superar la columna con éxito
+      if (p.x + p.width < b.x && !p.passed) {
+        p.passed = true;
+        flappyState.score += 1;
+        playPointSound();
+        spawnParticles(p.x + p.width, canvas.height / 2, '#ECC94B', 8);
+        updateFlappyHUD();
+      }
+
+      // Eliminar columnas fuera de pantalla
+      if (p.x + p.width < -20) {
+        flappyState.pipes.splice(i, 1);
+      }
+    }
+
+    // Actualizar partículas
+    for (let i = flappyState.particles.length - 1; i >= 0; i--) {
+      const pt = flappyState.particles[i];
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt;
+      pt.life -= dt;
+      if (pt.life <= 0) flappyState.particles.splice(i, 1);
+    }
+
+    // Actualizar textos flotantes
+    for (let i = flappyState.floatingTexts.length - 1; i >= 0; i--) {
+      const ft = flappyState.floatingTexts[i];
+      ft.y -= 35 * dt;
+      ft.alpha -= dt * 1.2;
+      if (ft.alpha <= 0) flappyState.floatingTexts.splice(i, 1);
+    }
+  }
+
+  function spawnFlappyPillars(canvas) {
+    const gap = Math.max(105, 128 - Math.min(20, flappyState.score * 0.8));
+    const minTop = 45;
+    const maxTop = canvas.height - gap - 65;
+    const topHeight = minTop + Math.random() * (maxTop - minTop);
+    const bottomY = topHeight + gap;
+    const width = 54;
+
+    const hasCookie = Math.random() < 0.45; // 45% de columnas tienen un bocadito flotante
+    const cookieY = topHeight + gap / 2;
+
+    flappyState.pipes.push({
+      x: canvas.width + 10,
+      width,
+      topHeight,
+      bottomY,
+      passed: false,
+      hasCookie,
+      cookieCollected: false,
+      cookieY
+    });
+  }
+
+  function updateFlappyHUD() {
+    const scoreEl = document.getElementById('game-score-display');
+    const cookiesEl = document.getElementById('flappy-cookies-display');
+
+    if (scoreEl) scoreEl.innerText = flappyState.score;
+    if (cookiesEl) cookiesEl.innerText = `🍪 ${flappyState.cookiesCollected}`;
+  }
+
+  function renderFlappyScene(canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Cielo Pastel
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    skyGrad.addColorStop(0, '#EBF4FF');
+    skyGrad.addColorStop(1, '#F7FAFC');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2. Nubes flotantes de fondo
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    flappyState.bgClouds.forEach(c => {
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 25 * c.s, 0, Math.PI * 2);
+      ctx.arc(c.x + 20 * c.s, c.y - 10 * c.s, 30 * c.s, 0, Math.PI * 2);
+      ctx.arc(c.x + 45 * c.s, c.y, 22 * c.s, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 3. Columnas de Libros y Pilares Académicos (Obstáculos)
+    flappyState.pipes.forEach((p, idx) => {
+      const isAlt = idx % 2 === 0;
+      const pipeColor = isAlt ? '#8B7CE6' : '#54B4D3';
+      const capColor = isAlt ? '#7665DE' : '#3E9FB8';
+
+      // Columna superior (Libros cayendo)
+      ctx.fillStyle = pipeColor;
+      ctx.beginPath();
+      ctx.roundRect(p.x, 0, p.width, p.topHeight, [0, 0, 6, 6]);
+      ctx.fill();
+      // Borde de libro
+      ctx.fillStyle = capColor;
+      ctx.fillRect(p.x - 3, p.topHeight - 16, p.width + 6, 16);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(p.x + 8, p.topHeight - 12, p.width - 16, 2);
+
+      // Columna inferior (Pila de libros)
+      const bHeight = canvas.height - p.bottomY;
+      ctx.fillStyle = pipeColor;
+      ctx.beginPath();
+      ctx.roundRect(p.x, p.bottomY, p.width, bHeight, [6, 6, 0, 0]);
+      ctx.fill();
+      // Borde de libro inferior
+      ctx.fillStyle = capColor;
+      ctx.fillRect(p.x - 3, p.bottomY, p.width + 6, 16);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(p.x + 8, p.bottomY + 10, p.width - 16, 2);
+
+      // Bocadito flotante 🍪
+      if (p.hasCookie && !p.cookieCollected) {
+        ctx.font = '22px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🍪', p.x + p.width / 2, p.cookieY);
+      }
+    });
+
+    // 4. Suelo de césped suave
+    ctx.fillStyle = '#48BB78';
+    ctx.fillRect(0, canvas.height - 16, canvas.width, 16);
+    ctx.fillStyle = '#38A169';
+    ctx.fillRect(0, canvas.height - 16, canvas.width, 3);
+
+    // 5. Partículas
+    flappyState.particles.forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+      ctx.fillStyle = pt.color;
+      ctx.globalAlpha = Math.max(0, pt.life);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    // 6. Mascota Voladora (Personaje con inclinación y alas)
+    const b = flappyState.bird;
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.rotation);
+
+    // Sombra suave
+    ctx.beginPath();
+    ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
+    ctx.fillStyle = appState.pet?.furColor || '#ECC94B';
+    ctx.fill();
+    ctx.strokeStyle = '#2D3748';
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+
+    // Alita aleteando
+    const wingY = Math.sin(Date.now() * 0.02) * 5;
+    ctx.beginPath();
+    ctx.ellipse(-8, wingY, 9, 6, -0.2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.fill();
+    ctx.strokeStyle = '#2D3748';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Emoji de la especie
+    const petEmoji = appState.pet?.species === 'cat' ? '🐱' :
+                     appState.pet?.species === 'dog' ? '🐶' :
+                     appState.pet?.species === 'owl' ? '🦉' :
+                     appState.pet?.species === 'bunny' ? '🐰' : '🐻';
+
+    ctx.font = '28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(petEmoji, 2, -2);
+    ctx.restore();
+
+    // 7. Textos flotantes
+    flappyState.floatingTexts.forEach(ft => {
+      ctx.save();
+      ctx.font = `bold ${ft.size}px Nunito, sans-serif`;
+      ctx.fillStyle = ft.color;
+      ctx.globalAlpha = Math.max(0, ft.alpha);
+      ctx.textAlign = 'center';
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    });
+  }
+
+  function endFlappyGame() {
+    flappyState.running = false;
+    cancelAnimationFrame(flappyAnimId);
+    playCrashSound();
+
+    // Recompensa real: 1 bocadito cada 4 obstáculos + los bocaditos atrapados en el vuelo
+    const snacksEarned = Math.floor(flappyState.score / 4) + flappyState.cookiesCollected;
+    if (snacksEarned > 0 && appState.pet) {
+      appState.pet.foodStock += snacksEarned;
+      saveState();
+    }
+
+    // Guardar récord si superó el anterior
+    if (flappyState.score > flappyState.highScore) {
+      flappyState.highScore = flappyState.score;
+      localStorage.setItem('psicoplan_flappy_high', flappyState.score.toString());
+      launchConfetti(true);
+      showToast('🏆 ¡NUEVO RÉCORD DE VUELO ACADÉMICO!');
+    }
+
+    const finalScoreEl = document.getElementById('game-final-score');
+    const finalSnacksEl = document.getElementById('game-final-snacks');
+    const feedbackEl = document.getElementById('game-over-feedback');
+
+    if (finalScoreEl) finalScoreEl.innerText = flappyState.score;
+    if (finalSnacksEl) finalSnacksEl.innerText = `🍪 +${snacksEarned}`;
+
+    if (feedbackEl) {
+      if (flappyState.score >= 15) {
+        feedbackEl.innerText = `¡Maestría en concentración! Tu mascota ${appState.pet?.name || ''} voló como profesional.`;
+      } else if (flappyState.score >= 6) {
+        feedbackEl.innerText = `¡Gran ritmo y control de reflejos! Esquivaste los distractores con soltura.`;
+      } else {
+        feedbackEl.innerText = `¡Buen vuelo! Con cada intento mejorarás tu ritmo y coordinación.`;
+      }
+    }
+
+    const highDisplay = document.getElementById('game-high-score-display');
+    if (highDisplay) highDisplay.innerText = `${flappyState.highScore}`;
+
+    document.getElementById('game-over-overlay')?.classList.remove('hidden');
   }
 
   function startBreathingSession() {
@@ -761,9 +1161,10 @@
     });
 
     if (viewName === 'minijuego') {
-      setTimeout(initBubbleGame, 100);
+      setTimeout(initFlappyGame, 100);
     } else {
-      cancelAnimationFrame(bubbleAnimId);
+      flappyState.running = false;
+      cancelAnimationFrame(flappyAnimId);
     }
 
     if (viewName === 'desempeno') {
@@ -1097,6 +1498,7 @@
     // Badge de ánimo
     const moodEmojis = {
       starving: '🥺',
+      sad: '😢',
       sleepy: '😴',
       happy: '😊',
       ecstatic: '🥳',
@@ -1104,6 +1506,19 @@
     };
     const moodBadge = document.getElementById('pet-mood-badge-icon');
     if (moodBadge) moodBadge.innerText = moodEmojis[pet.mood] || '😊';
+
+    const rightMoodText = document.getElementById('right-pet-mood-text');
+    if (rightMoodText) {
+      const moodLabels = {
+        starving: 'Hambriento 🥺',
+        sad: 'Triste 😢',
+        sleepy: 'Somnoliento 😴',
+        happy: 'Feliz 😊',
+        ecstatic: '¡Eufórico! 🥳',
+        zen: 'Zen 🧘'
+      };
+      rightMoodText.innerText = moodLabels[pet.mood] || 'Feliz 😊';
+    }
 
     // Barra de satisfacción
     const hungerPercent = document.getElementById('pet-hunger-percent');
@@ -1127,6 +1542,39 @@
       const phrases = PET_PHRASES[pet.mood] || PET_PHRASES.happy;
       dialogueEl.innerText = `"${phrases[Math.floor(Math.random() * phrases.length)]}"`;
     }
+  }
+
+  function givePetAdvice(forceAdvice = false) {
+    if (!appState.pet) return;
+    const dialogueEl = document.getElementById('pet-dialogue-text');
+    if (!dialogueEl) return;
+
+    let phrases = [];
+    const mood = getPetMood(appState.pet);
+
+    if (forceAdvice) {
+      phrases = PET_PHRASES.advice;
+    } else {
+      if (mood === 'starving') {
+        phrases = PET_PHRASES.starving;
+      } else if (mood === 'sad') {
+        phrases = PET_PHRASES.sad;
+      } else {
+        phrases = Math.random() < 0.4 ? PET_PHRASES.advice : (PET_PHRASES[mood] || PET_PHRASES.happy);
+      }
+    }
+
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    dialogueEl.innerText = `"${randomPhrase}"`;
+
+    const avatarWrapper = document.getElementById('btn-pet-avatar');
+    if (avatarWrapper) {
+      avatarWrapper.classList.remove('pet-bounce');
+      void avatarWrapper.offsetWidth;
+      avatarWrapper.classList.add('pet-bounce');
+    }
+
+    playSweetChime();
   }
 
   function renderTasksList() {
@@ -1420,11 +1868,19 @@
       switchView('inicio');
     });
 
-    // 3. Mascota: Alimentar y Personalizar
+    // 3. Mascota: Alimentar, Personalizar y Pedir Consejos
     document.getElementById('btn-feed-action')?.addEventListener('click', feedPet);
     document.getElementById('btn-pet-avatar')?.addEventListener('click', () => {
-      feedPet();
+      // Si tiene hambre lo alimenta, si no le da un consejo motivador
+      if (appState.pet && appState.pet.hunger < 40 && appState.pet.foodStock > 0) {
+        feedPet();
+      } else {
+        givePetAdvice(false);
+      }
     });
+
+    document.getElementById('btn-pet-advice')?.addEventListener('click', () => givePetAdvice(true));
+    document.getElementById('pet-dialogue-text')?.addEventListener('click', () => givePetAdvice(false));
 
     document.getElementById('btn-open-customize-pet')?.addEventListener('click', openCustomizePetModal);
     document.getElementById('btn-close-custom-pet')?.addEventListener('click', () => {
@@ -1461,23 +1917,28 @@
       }
     });
 
-    // 4. Minijuego: Cambio de modo y respiración
+    // 4. Minijuego: Flappy Pet y Respiración
+    document.getElementById('btn-start-arcade')?.addEventListener('click', startFlappyGame);
+    document.getElementById('btn-restart-arcade')?.addEventListener('click', startFlappyGame);
+
     document.getElementById('btn-toggle-game-mode')?.addEventListener('click', () => {
-      const modeBubbles = document.getElementById('mode-bubble-pop');
+      const modeArcade = document.getElementById('mode-arcade-game');
       const modeBreathing = document.getElementById('mode-breathing-478');
       const btn = document.getElementById('btn-toggle-game-mode');
 
-      if (gameMode === 'bubbles') {
+      if (gameMode === 'arcade') {
         gameMode = 'breathing';
-        modeBubbles.style.display = 'none';
-        modeBreathing.style.display = 'block';
-        btn.innerText = 'Ver Burbujas 🫧';
+        flappyState.running = false;
+        cancelAnimationFrame(flappyAnimId);
+        if (modeArcade) modeArcade.style.display = 'none';
+        if (modeBreathing) modeBreathing.style.display = 'block';
+        btn.innerText = 'Flappy Pet 🚀';
       } else {
-        gameMode = 'bubbles';
-        modeBubbles.style.display = 'block';
-        modeBreathing.style.display = 'none';
-        btn.innerText = 'Respiración 4-7-8 🧘';
-        setTimeout(initBubbleGame, 50);
+        gameMode = 'arcade';
+        if (modeArcade) modeArcade.style.display = 'block';
+        if (modeBreathing) modeBreathing.style.display = 'none';
+        btn.innerText = 'Modo Respiración 🧘';
+        setTimeout(initFlappyGame, 50);
       }
     });
 
@@ -1568,6 +2029,13 @@
     setupEvents();
     setupWizardSteps();
     renderUI();
+
+    // La mascota habla periódicamente (cada 40s) para dar consejos, avisar hambre o tristeza por tareas pausadas
+    setInterval(() => {
+      if (appState.user.isLoggedIn && appState.pet) {
+        givePetAdvice(false);
+      }
+    }, 40000);
   });
 
 })();

@@ -42,9 +42,24 @@ PsicoPlan es una aplicación web progresiva (**PWA**), multiplataforma y 100% gr
     - 🌸 Flor Zen
     - 🦸 Capa de Superestudiante
 
-### 3. 🎮 Minijuego de Pausa Activa y Relajación
-- **Burbujas Antiestrés (Canvas Interactivo)**: Explota burbujas flotantes con sonido placentero para liberar tensión. ¡Por cada 10 burbujas ganas **+1 bocadito extra 🍪** para tu mascota!
-- **Respiración Guiada 4-7-8**: Círculo animado para regular el sistema nervioso (Inhala 4s, Mantén 7s, Exhala 8s) con tu mascota acompañándote.
+### 3. 🎮 Minijuego Dinámico: Flappy Pet (Vuelo Académico) 🦅📚
+- **Estilo Flappy Bird con física y desafío real:**
+  - Control con un solo toque (pantalla táctil en celular, barra espaciadora o clic en PC).
+  - Tu mascota vuela a través de columnas de libros y manuales de psicología (DSM-5, Freud, Piaget, APA 7) que aparecen a diferentes alturas.
+  - Recolecta galletitas flotantes 🍪 en el aire y gana puntos al cruzar cada columna de libros.
+  - Efectos de sonido sintetizados por Web Audio API: aleteo, campana de punto, mordisco de galleta y choque.
+  - Dificultad retadora: requiere precisión y ritmo.
+  - **Recompensa para tu mascota:** ¡Cada 4 columnas de libros cruzadas o galletas recogidas en vuelo te dan galletas reales para alimentar a tu mascota!
+  - Récord guardado (High Score) para superar tu propia marca.
+
+### 4. 💬 Mascota Parlante & Proactiva (Consejos de Psicología y Emociones)
+- **Consejos y motivación en tiempo real:**
+  - Botón interactivo **"💡 Pedir Consejo"** junto a la mascota para recibir tips científicos de estudio (Efecto Zeigarnik, Pomodoro, Repetición Espaciada, Desensibilización Sistemática).
+  - La mascota habla automáticamente cada cierto tiempo en la pantalla principal.
+- **Avisos de Hambre:**
+  - Si la barra de nutrición baja de 40%, la mascota te avisará con ruegos tiernos: *"¡Tengo mucha hambre! 🥺 Termina una tarea para darme una galletita"*.
+- **Tristeza por Tareas Pendientes o Atrasadas:**
+  - Si tienes tareas sin avanzar o la fecha de entrega está cerca, la mascota cambiará sus ojitos a carita triste con lágrimas y te dirá: *"Estoy un poco triste... tenemos tareas pendientes esperándonos 🥺"* o *"¡Ánimo! Aunque cueste empezar, el primer paso es el más valioso"*.
 
 ---
 

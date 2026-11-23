@@ -182,9 +182,15 @@
               </button>
             </div>
 
-            <!-- Diálogo de la mascota con consejos psicológicos -->
-            <div class="pet-speech-dialogue" id="pet-dialogue-text">
+            <!-- Diálogo de la mascota con consejos psicológicos y avisos de hambre/tristeza -->
+            <div class="pet-speech-dialogue" id="pet-dialogue-text" style="cursor: pointer;" title="Toca para pedir otro consejo">
               "¡Hola! Cada subtarea que cumplas me da bocaditos 🍪 para mantener mi energía."
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <button type="button" class="btn-secondary" id="btn-pet-advice" style="padding: 0.22rem 0.6rem; font-size: 0.72rem; min-height: 26px; gap: 0.3rem;">
+                💡 Pedir Consejo
+              </button>
             </div>
 
             <!-- Barra de satisfacción / hambre -->
@@ -393,46 +399,106 @@
       </section>
 
       <!-- ==========================================
-           VISTA 3: MINIJUEGO DE PAUSA ACTIVA 🎮
+           VISTA 3: MINIJUEGO DINÁMICO: NEURO-CATCH ⚡
            ========================================== -->
       <section id="view-minijuego" style="display: none;">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-              <h2 style="font-size: 1.35rem; font-weight: 700;">Zona de Calma & Minijuego 🎮</h2>
+              <h2 style="font-size: 1.35rem; font-weight: 700;">Flappy Pet: Vuelo Académico 🚀</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted);">
-                Desconecta unos minutos. ¡Explota burbujas para ganar bocaditos o practica respiración guiada!
+                ¡Toca o haz clic para aletear, esquivar columnas de procrastinación y ganar bocaditos!
               </p>
             </div>
             <button class="btn-secondary" id="btn-toggle-game-mode" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
-              Cambiar Modo 🔄
+              Modo Respiración 🧘
             </button>
           </div>
 
-          <!-- MODO 1: BURBUJAS ANTIESTRÉS -->
-          <div id="mode-bubble-pop">
-            <div class="game-canvas-wrapper">
-              <canvas id="zen-bubbles-canvas"></canvas>
-              <div class="game-hud">
-                <div class="game-score-badge">
-                  <span>Puntos Zen: </span><strong id="game-zen-points">0</strong>
+          <!-- MODO FLAPPY PET -->
+          <div id="mode-arcade-game">
+            <div class="arcade-game-wrapper">
+              <canvas id="flappy-pet-canvas"></canvas>
+
+              <!-- HUD Superior -->
+              <div class="game-hud-top">
+                <div class="hud-stat-pill">
+                  <span>Obstáculos: </span><strong id="game-score-display">0</strong>
                 </div>
-                <div class="game-score-badge">
-                  <span>Bocaditos Ganados: </span><strong id="game-snacks-earned" style="color: var(--accent-green);">🍪 +0</strong>
+                <div class="hud-stat-pill">
+                  <span>Bocaditos: </span><strong id="flappy-cookies-display" style="color: var(--accent-green);">🍪 0</strong>
+                </div>
+                <div class="hud-stat-pill">
+                  <span>🏆 Récord: </span><strong id="game-high-score-display">0</strong>
                 </div>
               </div>
+
+              <!-- PANTALLA INICIAL DEL JUEGO -->
+              <div class="game-overlay-screen" id="game-start-overlay">
+                <div class="game-overlay-card">
+                  <span style="font-size: 2.8rem; display: block; margin-bottom: 0.35rem;">🕊️📚</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">Flappy Pet: Vuelo de Estudio</h3>
+                  <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    ¡Desafío dinámico! Tu mascota debe volar entre columnas de libros y obstáculos sin tocar el suelo ni chocar.
+                  </p>
+
+                  <div style="text-align: left; background: var(--bg-subtle); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.78rem; margin-bottom: 1.25rem;">
+                    <div style="margin-bottom: 0.35rem;">👆 <strong>Toca / Clic / Espacio:</strong> Aletea hacia arriba</div>
+                    <div style="margin-bottom: 0.35rem;">🧱 <strong>Esquiva:</strong> Pilares de procrastinación y fatiga</div>
+                    <div>🍪 <strong>Recompensa:</strong> ¡Ganas 1 bocadito cada 4 obstáculos superados!</div>
+                  </div>
+
+                  <button type="button" class="btn-primary" id="btn-start-arcade">
+                    ¡Toca para Despegar! 🚀
+                  </button>
+                  
+                  <div class="game-instructions-box" style="margin-top: 0.75rem;">
+                    <span>📱 En Celular: Toca la pantalla</span>
+                    <span>💻 En PC: Clic o Barra Espaciadora</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PANTALLA DE GAME OVER -->
+              <div class="game-overlay-screen hidden" id="game-over-overlay">
+                <div class="game-overlay-card">
+                  <span style="font-size: 2.5rem; display: block; margin-bottom: 0.35rem;">💥</span>
+                  <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.25rem;">¡Chocaste con la Distracción!</h3>
+                  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;" id="game-over-feedback">
+                    ¡Buen intento! Cada vuelo afina tu ritmo y reflejos.
+                  </p>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem;">
+                    <div style="background: var(--bg-subtle); padding: 0.65rem; border-radius: var(--radius-md);">
+                      <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Obstáculos Superados</span>
+                      <strong style="font-size: 1.25rem; color: var(--primary);" id="game-final-score">0</strong>
+                    </div>
+                    <div style="background: var(--bg-subtle); padding: 0.65rem; border-radius: var(--radius-md);">
+                      <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Bocaditos Ganados</span>
+                      <strong style="font-size: 1.25rem; color: var(--accent-green);" id="game-final-snacks">🍪 +0</strong>
+                    </div>
+                  </div>
+
+                  <button type="button" class="btn-primary" id="btn-restart-arcade">
+                    Intentar de Nuevo 🔄
+                  </button>
+                </div>
+              </div>
+
             </div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem;">
-              💡 Toca las burbujas flotantes para relajarte. ¡Cada 10 burbujas ganas 1 bocadito para tu mascota!
-            </p>
+
+            <div class="game-instructions-box">
+              <div class="game-instruction-item"><span>🎮 Control:</span> <strong>Toca o Clic para aletear</strong></div>
+              <div class="game-instruction-item"><span>🍪 Recompensa:</span> <strong>1 bocadito cada 4 puntos</strong></div>
+            </div>
           </div>
 
           <!-- MODO 2: RESPIRACIÓN 4-7-8 -->
           <div id="mode-breathing-478" style="display: none;">
             <div class="breathing-mode-card">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Técnica de Respiración 4-7-8</h3>
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Técnica de Respiración 4-7-8 🧘</h3>
               <p style="font-size: 0.85rem; color: var(--text-muted);">
-                Sigue el ritmo del círculo para activar el sistema parasimpático y reducir la ansiedad.
+                Sigue el ritmo del círculo para activar el sistema parasimpático y relajar tu mente.
               </p>
 
               <div class="breathing-circle-outer" id="breath-circle-anim">

@@ -855,7 +855,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 /* --------------------------------------------------------------------------
-   8. MINIJUEGO: PAUSA ZEN & BURBUJAS ANTIESTRÉS
+   8. MINIJUEGO DINÁMICO: NEURO-CATCH & RESPIRACIÓN 4-7-8
    -------------------------------------------------------------------------- */
 .minigame-container {
   display: flex;
@@ -863,46 +863,132 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   gap: 1.25rem;
 }
 
-.game-canvas-wrapper {
+.arcade-game-wrapper {
   position: relative;
   width: 100%;
-  height: 380px;
-  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-subtle) 100%);
+  height: 440px;
+  background: radial-gradient(circle at 50% 20%, var(--bg-card) 0%, var(--bg-subtle) 100%);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   overflow: hidden;
   box-shadow: var(--shadow-subtle);
   touch-action: none;
-  cursor: crosshair;
+  user-select: none;
 }
 
-#zen-bubbles-canvas {
+#neuro-catch-canvas, #flappy-pet-canvas {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.game-hud {
+.game-hud-top {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  right: 1rem;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   pointer-events: none;
+  z-index: 5;
 }
 
-.game-score-badge {
-  background: rgba(255, 255, 255, 0.85);
+.hud-stat-pill {
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(8px);
-  padding: 0.4rem 0.85rem;
+  padding: 0.35rem 0.75rem;
   border-radius: var(--radius-full);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-main);
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+[data-theme="dark"] .hud-stat-pill {
+  background: rgba(28, 32, 51, 0.88);
+  color: #F1F5F9;
+  border-color: #2D334D;
+}
+
+.game-lives-display {
+  display: flex;
+  gap: 0.2rem;
+  font-size: 1.15rem;
+}
+
+.game-combo-badge {
+  position: absolute;
+  top: 3.5rem;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: linear-gradient(135deg, #ECC94B, #ED8936);
+  color: #FFF;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.85rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(237, 137, 54, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 5;
+}
+
+.game-combo-badge.active {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.05);
+}
+
+.game-overlay-screen {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 20, 31, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  color: #FFF;
+  z-index: 10;
+  transition: opacity 0.2s ease;
+}
+
+.game-overlay-screen.hidden {
+  display: none !important;
+}
+
+.game-overlay-card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  max-width: 380px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.game-instructions-box {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.game-instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .breathing-mode-card {
@@ -938,6 +1024,16 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   justify-content: center;
   font-weight: 800;
   font-size: 0.95rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.breathing-expand {
+  transform: scale(1.35);
+}
+
+.breathing-contract {
+  transform: scale(0.9);
+}
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
