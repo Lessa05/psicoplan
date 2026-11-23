@@ -5,7 +5,8 @@
 /* --------------------------------------------------------------------------
    1. VARIABLES Y TEMAS DE COLOR
    -------------------------------------------------------------------------- */
-:root, [data-theme="pastel"] {
+:root,
+[data-theme="pastel"] {
   /* Tema Pastel Clásico (Salud Mental y Bienestar) */
   --bg-primary: #F8F9FE;
   --bg-card: #FFFFFF;
@@ -177,7 +178,9 @@
 /* --------------------------------------------------------------------------
    2. RESET Y BASES
    -------------------------------------------------------------------------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -196,18 +199,29 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, h4, .font-heading {
+h1,
+h2,
+h3,
+h4,
+.font-heading {
   font-family: 'Poppins', sans-serif;
   color: var(--text-main);
   line-height: 1.3;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
 
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
@@ -256,7 +270,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   justify-content: center;
   font-size: 1.75rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .login-brand-header h1 {
@@ -322,11 +336,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   transition: var(--transition);
 }
 
-.theme-pill-btn.active, .theme-pill-btn:hover {
+.theme-pill-btn.active,
+.theme-pill-btn:hover {
   border-color: #343A40;
   background: #FFFFFF;
   color: #212529;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .login-guest-divider {
@@ -338,7 +353,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   font-weight: 600;
 }
 
-.login-guest-divider::before, .login-guest-divider::after {
+.login-guest-divider::before,
+.login-guest-divider::after {
   content: "";
   flex: 1;
   height: 1px;
@@ -485,7 +501,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   margin: 0 auto;
 }
 
-.sidebar-left, .sidebar-right {
+.sidebar-left,
+.sidebar-right {
   display: none;
 }
 
@@ -530,7 +547,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   min-height: 2.75rem;
 }
 
-.nav-item-btn.active, .nav-item-btn:hover {
+.nav-item-btn.active,
+.nav-item-btn:hover {
   color: var(--primary);
 }
 
@@ -597,7 +615,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     transition: var(--transition);
   }
 
-  .sidebar-link.active, .sidebar-link:hover {
+  .sidebar-link.active,
+  .sidebar-link:hover {
     background-color: var(--primary-light);
     color: var(--primary);
   }
@@ -767,7 +786,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pet-info-box {
@@ -836,8 +855,15 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 @keyframes petHop {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 .floating-heart {
@@ -850,8 +876,15 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 @keyframes floatUpFade {
-  0% { transform: translateY(0) scale(0.7); opacity: 1; }
-  100% { transform: translateY(-40px) scale(1.3); opacity: 0; }
+  0% {
+    transform: translateY(0) scale(0.7);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-40px) scale(1.3);
+    opacity: 0;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -876,7 +909,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   user-select: none;
 }
 
-#neuro-catch-canvas, #flappy-pet-canvas {
+#neuro-catch-canvas,
+#flappy-pet-canvas {
   width: 100%;
   height: 100%;
   display: block;
@@ -903,7 +937,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   font-size: 0.8rem;
   color: var(--text-main);
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -954,13 +988,27 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 @keyframes overlayCardPop {
-  0% { transform: scale(0.92); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes floatBadge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .game-hero-badge {
@@ -992,7 +1040,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   bottom: -4px;
   right: -4px;
   font-size: 1.05rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .game-card-title {
@@ -1074,25 +1122,25 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .btn-game-launch {
   width: 100%;
-  padding: 0.8rem 1.25rem;
-  background: linear-gradient(135deg, var(--brand-primary) 0%, #6366F1 100%);
-  color: #FFF;
+  padding: 0.85rem 1.4rem;
+  background: linear-gradient(135deg, #8B7CE6 0%, #6366F1 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 1rem;
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+  gap: 0.55rem;
+  box-shadow: 0 6px 20px rgba(139, 124, 230, 0.4);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-game-launch:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 10px 24px rgba(139, 124, 230, 0.55);
 }
 
 .btn-game-launch:active {
@@ -1158,7 +1206,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .val-score {
-  color: var(--brand-primary);
+  color: var(--primary);
 }
 
 .val-cookies {
@@ -1224,7 +1272,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .breathing-contract {
   transform: scale(0.9);
 }
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .breathing-expand {
