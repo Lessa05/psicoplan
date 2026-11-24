@@ -30,27 +30,52 @@
     bear: ['Bruno', 'Baloo', 'Teddy', 'Zen']
   };
 
-  const DEFAULT_STATE = {
-    user: {
-      isLoggedIn: false,
-      name: 'Estudiante',
-      email: '',
-      points: 0,
-      streak: 1,
-      lastActiveDate: new Date().toISOString().split('T')[0],
-      badges: ['primer_paso'],
-      mealsGiven: 0
-    },
-    pet: null, // Se genera aleatoriamente al registrarse/ingresar
-    tasks: [],
-    weeklyActivity: {
-      'Lun': 1, 'Mar': 2, 'Mié': 3, 'Jue': 1, 'Vie': 2, 'Sáb': 0, 'Dom': 1
-    },
-    settings: {
-      theme: 'pastel',
-      geminiApiKey: ''
+  function getDefaultState(uid = '') {
+    return {
+      user: {
+        isLoggedIn: false,
+        uid: uid,
+        name: 'Estudiante',
+        email: '',
+        points: 0,
+        streak: 1,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        badges: ['primer_paso'],
+        mealsGiven: 0,
+        hasSeenTutorial: false,
+        hasAdoptedPet: false
+      },
+      pet: null,
+      tasks: [],
+      weeklyActivity: {
+        'Lun': 0, 'Mar': 0, 'Mié': 0, 'Jue': 0, 'Vie': 0, 'Sáb': 0, 'Dom': 0
+      },
+      settings: {
+        theme: 'pastel',
+        geminiApiKey: ''
+      }
+    };
+  }
+
+  function getStorageKey(uid) {
+    return uid ? `psicoplan_state_${uid}` : 'psicoplan_state_guest';
+  }
+
+  function loadState(uid = '') {
+    try {
+      const activeUid = uid || (typeof appState !== 'undefined' && appState?.user?.uid) || '';
+      const key = getStorageKey(activeUid);
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        checkDailyStreak(parsed);
+        return parsed;
+      }
+    } catch (e) {
+      console.warn('Error al leer de localStorage', e);
     }
-  };
+    return getDefaultState(uid);
+  }
 
   let appState = loadState();
   let currentWizardData = null;
@@ -62,6 +87,18 @@
   let isFirebaseReady = false;
   let pendingVerificationUser = null;
 
+  // Variables de Gestión de Tareas y Adjuntos
+  let editingTaskId = null;
+  let editingAttachments = [];
+  let wizardAttachments = [];
+
+  // Variables del Tutorial
+  let currentTutorialStep = 0;
+
+  // Variables de Adopción de Mascota
+  let selectedSpecies = 'bear';
+  let selectedFurColor = '#ECC94B';
+
   // Variables del Minijuego
   let gameMode = 'arcade'; // 'arcade' o 'breathing'
   let zenPoints = 0;
@@ -69,23 +106,10 @@
   let bubbleAnimId = null;
   let breathingInterval = null;
 
-  function loadState() {
-    try {
-      const saved = localStorage.getItem('psicoplan_state');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        checkDailyStreak(parsed);
-        return parsed;
-      }
-    } catch (e) {
-      console.warn('Error al leer de localStorage', e);
-    }
-    return JSON.parse(JSON.stringify(DEFAULT_STATE));
-  }
-
   function saveState() {
     try {
-      localStorage.setItem('psicoplan_state', JSON.stringify(appState));
+      const key = getStorageKey(appState?.user?.uid);
+      localStorage.setItem(key, JSON.stringify(appState));
       renderUI();
       syncStateToFirestore();
     } catch (e) {
@@ -110,14 +134,24 @@
           if (user) {
             const isSocial = user.providerData && user.providerData.some(p => p.providerId === 'google.com' || p.providerId === 'facebook.com');
             if (user.emailVerified || isSocial) {
+              const alertBox = document.getElementById('email-verification-alert');
+              if (alertBox) alertBox.style.display = 'none';
+
+              // Cargar estado aislado para este usuario específico
+              appState = loadState(user.uid);
               appState.user.isLoggedIn = true;
               appState.user.uid = user.uid;
               appState.user.email = user.email || '';
-              appState.user.name = user.displayName || (user.email ? user.email.split('@')[0] : 'Estudiante');
+              if (!appState.user.name || appState.user.name === 'Estudiante') {
+                appState.user.name = user.displayName || (user.email ? user.email.split('@')[0] : 'Estudiante');
+              }
 
               await loadUserFromFirestore(user.uid);
               saveState();
               switchView('inicio');
+
+              // Flujo inicial para usuarios nuevos
+              checkFirstTimeUserFlow();
             } else {
               showEmailVerificationPrompt(user, false);
               await firebaseAuth.signOut();
@@ -213,15 +247,22 @@
         if (data.points !== undefined) appState.user.points = data.points;
         if (data.streak !== undefined) appState.user.streak = data.streak;
         if (data.settings) appState.settings = data.settings;
+        if (data.hasSeenTutorial !== undefined) appState.user.hasSeenTutorial = data.hasSeenTutorial;
+        if (data.hasAdoptedPet !== undefined) appState.user.hasAdoptedPet = data.hasAdoptedPet;
       } else {
-        if (!appState.pet) appState.pet = createRandomPet();
+        // Nuevo usuario limpio: NO hereda puntos ni comida de sesiones previas
+        if (!appState.pet) {
+          appState.pet = createRandomPet();
+        }
         await docRef.set({
           name: appState.user.name,
           email: appState.user.email,
           pet: appState.pet,
-          tasks: appState.tasks,
-          points: appState.user.points || 0,
-          streak: appState.user.streak || 1,
+          tasks: [],
+          points: 0,
+          streak: 1,
+          hasSeenTutorial: false,
+          hasAdoptedPet: false,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
       }
@@ -231,7 +272,7 @@
   }
 
   async function syncStateToFirestore() {
-    if (!firestoreDb || !appState.user.uid) return;
+    if (!firestoreDb || !appState.user.uid || !appState.user.isLoggedIn) return;
     try {
       await firestoreDb.collection('users').doc(appState.user.uid).set({
         name: appState.user.name,
@@ -241,6 +282,8 @@
         points: appState.user.points,
         streak: appState.user.streak,
         settings: appState.settings,
+        hasSeenTutorial: appState.user.hasSeenTutorial || false,
+        hasAdoptedPet: appState.user.hasAdoptedPet || false,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     } catch (e) {
@@ -282,10 +325,176 @@
       name: randomName,
       furColor: randomColor,
       outfit: randomOutfit,
-      hunger: 75,
-      foodStock: 2,
-      mood: 'happy'
+      hunger: 100, // Comienza 100% satisfecho para cada usuario nuevo
+      foodStock: 0, // Inicia con 0 galletitas para ganarlas con esfuerzo real
+      mood: 'happy',
+      hungerAlertSent: false,
+      lastFedTimestamp: Date.now()
     };
+  }
+
+  // Comprobación de flujo para usuarios que ingresan por primera vez
+  function checkFirstTimeUserFlow() {
+    if (!appState.user.hasAdoptedPet) {
+      setTimeout(openPetAdoptionModal, 400);
+    } else if (!appState.user.hasSeenTutorial) {
+      setTimeout(openTutorialModal, 400);
+    }
+  }
+
+  // Decremento gradual de satisfacción y guardia de notificaciones de hambre
+  function checkPetHungerDecay() {
+    if (!appState.user.isLoggedIn || !appState.pet) return;
+    const now = Date.now();
+    appState.pet.lastFedTimestamp = appState.pet.lastFedTimestamp || now;
+    const elapsedMinutes = (now - appState.pet.lastFedTimestamp) / (1000 * 60);
+
+    // Cada 40 minutos baja un 5% de satisfacción hasta un piso seguro de 25%
+    if (elapsedMinutes >= 40) {
+      const dropCount = Math.floor(elapsedMinutes / 40);
+      appState.pet.hunger = Math.max(25, appState.pet.hunger - (dropCount * 5));
+      appState.pet.lastFedTimestamp = now;
+      appState.pet.mood = getPetMood(appState.pet);
+
+      // Notificación de hambre sólo una vez cuando desciende a 40% o menos
+      if (appState.pet.hunger <= 40 && !appState.pet.hungerAlertSent) {
+        appState.pet.hungerAlertSent = true;
+        showToast(`🥣 ¡${appState.pet.name} tiene hambre! (Satisfacción al ${appState.pet.hunger}%). Dale un bocadito 🍪`);
+      }
+      saveState();
+    }
+  }
+
+  // =========================================================================
+  // TUTORIAL DE BIENVENIDA (7 PASOS)
+  // =========================================================================
+  const TUTORIAL_SLIDES = [
+    {
+      icon: '🧠',
+      title: '¡Bienvenido/a a PsicoPlan!',
+      desc: 'Tu plataforma de bienestar y organización universitaria para superar la procrastinación combinando psicología aplicada, inteligencia artificial y gamificación con tu mascota.'
+    },
+    {
+      icon: '📝',
+      title: 'Registra tus Tareas Académicas',
+      desc: 'Ingresa los temas de tus trabajos, asignaturas y fechas de entrega. Además, ahora puedes adjuntar documentos en PDF, Word o fotos con tus rúbricas y apuntes.'
+    },
+    {
+      icon: '🤖',
+      title: 'Asistente de Inteligencia Artificial',
+      desc: 'Responde 3 preguntas sencillas y nuestra IA dividirá tu tarea en subtareas manejables, recomendando lecturas académicas, normas APA y herramientas de psicología.'
+    },
+    {
+      icon: '🎯',
+      title: 'Tu Plan de Actividades a Medida',
+      desc: 'Monitorea tu avance paso a paso con una barra de progreso en tiempo real. Cada paso te acerca a tu meta académica sin ansiedad ni bloqueos mentales.'
+    },
+    {
+      icon: '🐾',
+      title: 'Tu Mascota y Compañero Emocional',
+      desc: 'Tu compañero refleja tu ritmo de estudio. Si dejas tus actividades de lado, su satisfacción disminuye paulatinamente. ¡Cuídalo y mantenlo feliz!'
+    },
+    {
+      icon: '🍪',
+      title: 'Galletas y Recompensas Equitativas',
+      desc: 'Las galletas 🍪 y puntos de experiencia se ganan completando subtareas según su esfuerzo y tiempo estimado, o jugando en el vuelo de pausa activa Flappy Pet.'
+    },
+    {
+      icon: '🔥',
+      title: 'Racha Diaria y Subida de Nivel',
+      desc: 'Estudia día a día para acumular rachas de disciplina, desbloquear insignias y alcanzar el rango de Maestro Zen. ¡Comienza hoy tu semestre con éxito!'
+    }
+  ];
+
+  function openTutorialModal() {
+    currentTutorialStep = 0;
+    renderTutorialSlide();
+    document.getElementById('tutorial-modal')?.classList.add('active');
+  }
+
+  function closeTutorialModal() {
+    document.getElementById('tutorial-modal')?.classList.remove('active');
+    if (appState.user && !appState.user.hasSeenTutorial) {
+      appState.user.hasSeenTutorial = true;
+      saveState();
+    }
+  }
+
+  function renderTutorialSlide() {
+    const slide = TUTORIAL_SLIDES[currentTutorialStep];
+    const total = TUTORIAL_SLIDES.length;
+    const counterEl = document.getElementById('tutorial-step-counter');
+    const fillEl = document.getElementById('tutorial-progress-fill');
+    const contentEl = document.getElementById('tutorial-slide-content');
+    const prevBtn = document.getElementById('btn-tutorial-prev');
+    const nextBtn = document.getElementById('btn-tutorial-next');
+    const dotsContainer = document.getElementById('tutorial-dots-container');
+
+    if (counterEl) counterEl.innerText = `Paso ${currentTutorialStep + 1} de ${total}`;
+    if (fillEl) fillEl.style.width = `${((currentTutorialStep + 1) / total) * 100}%`;
+
+    if (contentEl && slide) {
+      contentEl.innerHTML = `
+        <div class="tutorial-slide-icon">${slide.icon}</div>
+        <h3 class="tutorial-slide-title">${slide.title}</h3>
+        <p class="tutorial-slide-desc">${slide.desc}</p>
+      `;
+    }
+
+    if (prevBtn) {
+      prevBtn.style.visibility = currentTutorialStep > 0 ? 'visible' : 'hidden';
+    }
+
+    if (nextBtn) {
+      nextBtn.innerText = currentTutorialStep === total - 1 ? '¡Comenzar! 🚀' : 'Siguiente →';
+    }
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement('div');
+        dot.className = `tutorial-dot ${i === currentTutorialStep ? 'active' : ''}`;
+        dotsContainer.appendChild(dot);
+      }
+    }
+  }
+
+  // =========================================================================
+  // ADOPCIÓN INICIAL DE MASCOTA
+  // =========================================================================
+  function openPetAdoptionModal() {
+    selectedSpecies = 'bear';
+    selectedFurColor = '#ECC94B';
+    const inputName = document.getElementById('adoption-name-input');
+    if (inputName) inputName.value = 'Mimi';
+    updateAdoptionPreview();
+    document.getElementById('pet-adoption-modal')?.classList.add('active');
+  }
+
+  function closePetAdoptionModal() {
+    document.getElementById('pet-adoption-modal')?.classList.remove('active');
+  }
+
+  function updateAdoptionPreview() {
+    const emojis = { bear: '🐻', cat: '🐱', dog: '🐶', owl: '🦉', bunny: '🐰' };
+    const speciesNames = {
+      bear: 'Osito Calma',
+      cat: 'Gatito Enfoque',
+      dog: 'Perrito Ánimo',
+      owl: 'Búho Sabio',
+      bunny: 'Conejito Paz'
+    };
+    const avatarEl = document.getElementById('adoption-preview-avatar');
+    const emojiEl = document.getElementById('adoption-preview-emoji');
+    const nameEl = document.getElementById('adoption-preview-name');
+    const speciesEl = document.getElementById('adoption-preview-species');
+    const inputName = document.getElementById('adoption-name-input');
+
+    if (avatarEl) avatarEl.style.backgroundColor = selectedFurColor;
+    if (emojiEl) emojiEl.innerText = emojis[selectedSpecies] || '🐻';
+    const petName = inputName?.value.trim() || 'Mimi';
+    if (nameEl) nameEl.innerText = petName;
+    if (speciesEl) speciesEl.innerText = `(${speciesNames[selectedSpecies] || 'Compañero'})`;
   }
 
   function getPetMood(pet) {
@@ -600,6 +809,10 @@
 
     appState.pet.foodStock -= 1;
     appState.pet.hunger = Math.min(100, appState.pet.hunger + 25);
+    if (appState.pet.hunger > 40) {
+      appState.pet.hungerAlertSent = false;
+    }
+    appState.pet.lastFedTimestamp = Date.now();
     appState.user.mealsGiven = (appState.user.mealsGiven || 0) + 1;
     appState.pet.mood = getPetMood(appState.pet);
 
@@ -794,7 +1007,7 @@
       x: 75,
       y: 200,
       vy: 0,
-      radius: 20,
+      radius: 18,
       gravity: 0.27, // Gravedad suave para dar tiempo de reacción perfecto
       jump: -5.6,    // Impulso balanceado y agradable
       rotation: 0
@@ -1078,9 +1291,10 @@
       const p = flappyState.pipes[i];
       p.x -= speed * dt;
 
-      // Colisión con la columna superior o inferior
-      if (b.x + b.radius > p.x && b.x - b.radius < p.x + p.width) {
-        if (b.y - b.radius < p.topHeight || b.y + b.radius > p.bottomY) {
+      // Colisión con la columna superior o inferior (hitbox perdonador para evitar roces injustos)
+      const hitRadius = 13;
+      if (b.x + hitRadius > p.x && b.x - hitRadius < p.x + p.width) {
+        if (b.y - hitRadius < p.topHeight || b.y + hitRadius > p.bottomY) {
           endFlappyGame();
           return;
         }
@@ -1449,6 +1663,239 @@
     }
   }
 
+  // =========================================================================
+  // GESTIÓN DE ARCHIVOS ADJUNTOS EN TAREAS (PDF, DOCX, JPG, PNG < 5MB)
+  // =========================================================================
+  function initTaskAttachmentsHandler() {
+    // 1. Adjuntos en Wizard Paso 2
+    const wizardDropzone = document.getElementById('task-file-dropzone');
+    const wizardInput = document.getElementById('task-attachments-input');
+    const btnBrowseWizard = document.getElementById('btn-browse-files');
+    const wizardList = document.getElementById('task-attachments-list');
+
+    btnBrowseWizard?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      wizardInput?.click();
+    });
+
+    wizardDropzone?.addEventListener('click', () => {
+      wizardInput?.click();
+    });
+
+    wizardDropzone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      wizardDropzone.classList.add('dragover');
+    });
+
+    wizardDropzone?.addEventListener('dragleave', () => {
+      wizardDropzone.classList.remove('dragover');
+    });
+
+    wizardDropzone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      wizardDropzone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files) {
+        processUploadedFiles(Array.from(e.dataTransfer.files), wizardAttachments, wizardList);
+      }
+    });
+
+    wizardInput?.addEventListener('change', (e) => {
+      if (e.target.files) {
+        processUploadedFiles(Array.from(e.target.files), wizardAttachments, wizardList);
+      }
+    });
+
+    // 2. Adjuntos en Modal de Edición
+    const editDropzone = document.getElementById('edit-task-dropzone');
+    const editInput = document.getElementById('edit-task-attachments-input');
+    const btnBrowseEdit = document.getElementById('btn-browse-edit-files');
+    const editList = document.getElementById('edit-task-attachments-list');
+
+    btnBrowseEdit?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editInput?.click();
+    });
+
+    editDropzone?.addEventListener('click', () => {
+      editInput?.click();
+    });
+
+    editDropzone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      editDropzone.classList.add('dragover');
+    });
+
+    editDropzone?.addEventListener('dragleave', () => {
+      editDropzone.classList.remove('dragover');
+    });
+
+    editDropzone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      editDropzone.classList.remove('dragover');
+      if (e.dataTransfer && e.dataTransfer.files) {
+        processUploadedFiles(Array.from(e.dataTransfer.files), editingAttachments, editList);
+      }
+    });
+
+    editInput?.addEventListener('change', (e) => {
+      if (e.target.files) {
+        processUploadedFiles(Array.from(e.target.files), editingAttachments, editList);
+      }
+    });
+  }
+
+  function processUploadedFiles(files, targetArray, listContainer) {
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB límite
+    const ALLOWED_EXT = /\.(pdf|docx|doc|jpg|jpeg|png)$/i;
+
+    files.forEach(file => {
+      if (file.size > MAX_SIZE) {
+        showToast(`⚠️ "${file.name}" supera el límite de 5MB`);
+        return;
+      }
+      if (!ALLOWED_EXT.test(file.name)) {
+        showToast(`⚠️ "${file.name}" formato no permitido. Usa PDF, Word o fotos.`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        targetArray.push({
+          id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          dataUrl: evt.target.result
+        });
+        renderAttachmentsChips(targetArray, listContainer, false);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderAttachmentsChips(attachments, container, isReadOnly = false) {
+    if (!container) return;
+    container.innerHTML = '';
+    if (!attachments || attachments.length === 0) return;
+
+    attachments.forEach((att, idx) => {
+      const chip = document.createElement('div');
+      chip.className = 'attachment-chip';
+      const isImg = att.type?.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(att.name);
+      const icon = isImg ? '🖼️' : '📄';
+      const sizeStr = att.size ? (att.size > 1048576 ? (att.size / 1048576).toFixed(1) + ' MB' : Math.round(att.size / 1024) + ' KB') : '';
+
+      chip.innerHTML = `
+        <div class="attachment-meta">
+          <span class="attachment-icon">${icon}</span>
+          <span class="attachment-name" title="${att.name}">${att.name}</span>
+          <span class="attachment-size">${sizeStr}</span>
+        </div>
+        <div class="attachment-actions">
+          <a class="attachment-btn" href="${att.dataUrl}" download="${att.name}" title="Descargar archivo" target="_blank">⬇️</a>
+          ${!isReadOnly ? `<button type="button" class="attachment-btn btn-del" data-idx="${idx}" title="Eliminar adjunto">✕</button>` : ''}
+        </div>
+      `;
+
+      if (!isReadOnly) {
+        chip.querySelector('.btn-del')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          attachments.splice(idx, 1);
+          renderAttachmentsChips(attachments, container, isReadOnly);
+        });
+      }
+
+      container.appendChild(chip);
+    });
+  }
+
+  // =========================================================================
+  // GESTIÓN DE EDICIÓN Y ELIMINACIÓN DE TAREAS
+  // =========================================================================
+  function openEditTaskModal(taskId) {
+    const task = appState.tasks.find(t => t.id === taskId);
+    if (!task) return;
+    editingTaskId = taskId;
+
+    const idInput = document.getElementById('edit-task-id');
+    const titleInput = document.getElementById('edit-task-title-input');
+    const courseInput = document.getElementById('edit-task-course-input');
+    const deadlineInput = document.getElementById('edit-task-deadline-input');
+    const notesInput = document.getElementById('edit-task-notes-input');
+
+    if (idInput) idInput.value = task.id;
+    if (titleInput) titleInput.value = task.title || '';
+    if (courseInput) courseInput.value = task.course || '';
+    if (deadlineInput) deadlineInput.value = task.deadline || '';
+    if (notesInput) notesInput.value = task.notes || '';
+
+    editingAttachments = Array.isArray(task.attachments) ? JSON.parse(JSON.stringify(task.attachments)) : [];
+    renderAttachmentsChips(editingAttachments, document.getElementById('edit-task-attachments-list'), false);
+
+    document.getElementById('edit-task-modal')?.classList.add('active');
+  }
+
+  function closeEditTaskModal() {
+    editingTaskId = null;
+    editingAttachments = [];
+    document.getElementById('edit-task-modal')?.classList.remove('active');
+  }
+
+  function saveEditedTask(e) {
+    e.preventDefault();
+    if (!editingTaskId) return;
+    const task = appState.tasks.find(t => t.id === editingTaskId);
+    if (!task) return;
+
+    task.title = document.getElementById('edit-task-title-input').value.trim();
+    task.course = document.getElementById('edit-task-course-input').value.trim();
+    task.deadline = document.getElementById('edit-task-deadline-input').value;
+    task.notes = document.getElementById('edit-task-notes-input').value.trim();
+    task.attachments = [...editingAttachments];
+
+    saveState();
+    closeEditTaskModal();
+    renderTasksList();
+
+    if (currentViewingTask && currentViewingTask.id === task.id) {
+      currentViewingTask = task;
+      renderStep4Plan(task);
+    }
+
+    showToast('✅ Tarea actualizada correctamente');
+  }
+
+  function confirmDeleteTask(taskId) {
+    const task = appState.tasks.find(t => t.id === taskId);
+    if (!task) return;
+    const hiddenId = document.getElementById('delete-task-id-hidden');
+    const titleEl = document.getElementById('delete-task-title');
+
+    if (hiddenId) hiddenId.value = taskId;
+    if (titleEl) titleEl.innerText = `¿Eliminar "${task.title}"?`;
+    document.getElementById('delete-task-modal')?.classList.add('active');
+  }
+
+  function executeDeleteTask() {
+    const hiddenId = document.getElementById('delete-task-id-hidden');
+    const taskId = hiddenId ? hiddenId.value : null;
+    if (!taskId) return;
+
+    // Eliminar la tarea manteniendo íntegros los puntos, galletas y experiencia
+    appState.tasks = appState.tasks.filter(t => t.id !== taskId);
+    saveState();
+
+    document.getElementById('delete-task-modal')?.classList.remove('active');
+    renderTasksList();
+
+    if (currentViewingTask && currentViewingTask.id === taskId) {
+      currentViewingTask = null;
+      switchView('inicio');
+    }
+
+    showToast('🗑️ Tarea eliminada exitosamente');
+  }
+
   function setupWizardSteps() {
     const btnToStep3 = document.getElementById('btn-to-step-3');
     const btnBackTo2 = document.getElementById('btn-back-to-step-2');
@@ -1468,11 +1915,16 @@
       const deadline = document.getElementById('task-deadline-input').value;
 
       if (!title || !course || !deadline) {
-        alert('Por favor completa todos los campos requeridos (*)');
+        showToast('Por favor completa los campos requeridos (*)');
         return;
       }
 
-      currentWizardData = { title, course, deadline };
+      currentWizardData = {
+        title,
+        course,
+        deadline,
+        attachments: [...wizardAttachments]
+      };
       document.getElementById('wizard-step-2').style.display = 'none';
       document.getElementById('wizard-step-3').style.display = 'block';
       updateStepperIndicator(3);
@@ -1498,11 +1950,14 @@
       document.getElementById('wizard-step-4').style.display = 'block';
       updateStepperIndicator(4);
 
+      // Crear tarea: NO otorga galletas automáticamente por registrarla
       const newTask = {
         id: 'task_' + Date.now(),
         title: currentWizardData.title,
         course: currentWizardData.course,
         deadline: currentWizardData.deadline,
+        notes: '',
+        attachments: currentWizardData.attachments || [],
         createdAt: new Date().toISOString(),
         subtasks: planResult.subtareas.map((st, idx) => ({
           id: 'sub_' + idx,
@@ -1510,15 +1965,21 @@
           descripcion: st.descripcion,
           fecha_sugerida: st.fecha_sugerida,
           minutos_estimados: st.minutos_estimados || 30,
-          completed: false
+          completed: false,
+          rewardClaimed: false // Blindaje contra reclamo repetido
         })),
-        tools: planResult.herramientas_recomendadas || []
+        tools: planResult.herramientas_recomendadas || [],
+        fullRewardClaimed: false
       };
 
       appState.tasks.unshift(newTask);
       currentViewingTask = newTask;
-      saveState();
 
+      // Limpiar adjuntos del wizard
+      wizardAttachments = [];
+      renderAttachmentsChips(wizardAttachments, document.getElementById('task-attachments-list'), false);
+
+      saveState();
       renderStep4Plan(newTask);
       launchConfetti();
     });
@@ -1565,6 +2026,8 @@
     document.getElementById('q1-input').value = '';
     document.getElementById('q2-input').value = '';
     document.getElementById('q3-input').value = '';
+    wizardAttachments = [];
+    renderAttachmentsChips(wizardAttachments, document.getElementById('task-attachments-list'), false);
     document.getElementById('wizard-step-2').style.display = 'block';
     document.getElementById('wizard-step-3').style.display = 'none';
     document.getElementById('wizard-step-4').style.display = 'none';
@@ -1579,6 +2042,38 @@
     const progressBar = document.getElementById('plan-progress-bar');
     const progressPercent = document.getElementById('plan-progress-percent');
 
+    // Metadatos y acciones en cabecera
+    const titleEl = document.getElementById('plan-task-main-title');
+    const courseEl = document.getElementById('plan-task-course-tag');
+    const deadlineEl = document.getElementById('plan-task-deadline-pill');
+
+    if (titleEl) titleEl.innerText = task.title;
+    if (courseEl) courseEl.innerText = task.course;
+    if (deadlineEl) deadlineEl.innerText = `📅 Entrega: ${task.deadline}`;
+
+    // Botones de editar y eliminar tarea en el plan
+    const btnEdit = document.getElementById('btn-edit-current-task');
+    const btnDelete = document.getElementById('btn-delete-current-task');
+
+    if (btnEdit) {
+      btnEdit.onclick = () => openEditTaskModal(task.id);
+    }
+    if (btnDelete) {
+      btnDelete.onclick = () => confirmDeleteTask(task.id);
+    }
+
+    // Archivos adjuntos de la tarea
+    const attachWrapper = document.getElementById('plan-attachments-wrapper');
+    const attachContainer = document.getElementById('plan-attachments-container');
+    if (attachWrapper && attachContainer) {
+      if (task.attachments && task.attachments.length > 0) {
+        attachWrapper.style.display = 'block';
+        renderAttachmentsChips(task.attachments, attachContainer, true);
+      } else {
+        attachWrapper.style.display = 'none';
+      }
+    }
+
     if (!listContainer) return;
     listContainer.innerHTML = '';
 
@@ -1590,6 +2085,17 @@
     if (progressPercent) progressPercent.innerText = `${pct}%`;
 
     task.subtasks.forEach((subtask) => {
+      const minutes = subtask.minutos_estimados || 30;
+      let snackBonus = 1;
+      let xpBonus = 10;
+      if (minutes > 60) {
+        snackBonus = 2;
+        xpBonus = 25;
+      } else if (minutes > 30) {
+        snackBonus = 1;
+        xpBonus = 15;
+      }
+
       const item = document.createElement('div');
       item.className = `subtask-item ${subtask.completed ? 'completed' : ''}`;
       item.innerHTML = `
@@ -1601,10 +2107,10 @@
           <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.2rem 0;">
             ${subtask.descripcion}
           </p>
-          <div style="font-size: 0.75rem; color: var(--text-light); display: flex; gap: 0.75rem;">
+          <div style="font-size: 0.75rem; color: var(--text-light); display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <span>📅 Sugerido: ${subtask.fecha_sugerida}</span>
-            <span>⏱️ ~${subtask.minutos_estimados} min</span>
-            <span style="color: var(--accent-green); font-weight: 700;">+1 Bocadito 🍪</span>
+            <span>⏱️ ~${minutes} min</span>
+            <span style="color: var(--accent-green); font-weight: 700;">+${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''} 🍪</span>
           </div>
         </div>
       `;
@@ -1612,16 +2118,31 @@
       const checkbox = item.querySelector('input[type="checkbox"]');
       checkbox.addEventListener('change', () => {
         subtask.completed = checkbox.checked;
+
         if (subtask.completed) {
-          addPoints(10, 1); // +10 puntos y +1 bocadito para la mascota
-          launchConfetti();
-          showToast('✨ ¡Paso terminado! +10 pts y +1 Bocadito 🍪 para tu mascota.');
+          // Recompensa balanceada: solo se entrega una vez por subtarea
+          if (!subtask.rewardClaimed) {
+            subtask.rewardClaimed = true;
+            addPoints(xpBonus, snackBonus);
+            launchConfetti();
+            showToast(`✨ ¡Paso terminado! +${xpBonus} pts y +${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''} 🍪`);
+          } else {
+            showToast('✨ Paso completado');
+          }
         }
+
+        // Si se completaron todas las subtareas de la tarea
         if (task.subtasks.every(s => s.completed)) {
-          addPoints(50, 3); // +50 puntos y +3 bocaditos
-          launchConfetti(true);
-          showToast('🏆 ¡Completaste toda la tarea! +50 pts y +3 Bocaditos 🍪.');
+          if (!task.fullRewardClaimed) {
+            task.fullRewardClaimed = true;
+            const totalMins = task.subtasks.reduce((sum, s) => sum + (s.minutos_estimados || 30), 0);
+            const taskBonusCookies = totalMins >= 120 ? 3 : 2;
+            addPoints(50, taskBonusCookies);
+            launchConfetti(true);
+            showToast(`🏆 ¡Completaste toda la tarea! +50 pts y +${taskBonusCookies} Bocaditos 🍪.`);
+          }
         }
+
         saveState();
         renderStep4Plan(task);
       });
@@ -1882,15 +2403,23 @@
       const completedCount = task.subtasks.filter(s => s.completed).length;
       const totalCount = task.subtasks.length;
       const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      const attachCount = task.attachments ? task.attachments.length : 0;
 
       const card = document.createElement('div');
       card.className = 'task-item-card';
       card.innerHTML = `
-        <div class="task-item-header">
-          <span class="task-tag">${task.course}</span>
-          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Entrega: ${task.deadline}</span>
+        <div class="task-card-header">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <span class="task-tag">${task.course}</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Entrega: ${task.deadline}</span>
+            ${attachCount > 0 ? `<span style="font-size: 0.75rem; background: var(--bg-subtle); padding: 0.15rem 0.45rem; border-radius: var(--radius-full); color: var(--text-muted);">📎 ${attachCount}</span>` : ''}
+          </div>
+          <div class="task-card-menu-btns">
+            <button type="button" class="task-mini-btn" data-edit-task="${task.id}" title="Editar tarea">✏️</button>
+            <button type="button" class="task-mini-btn btn-mini-delete" data-delete-task="${task.id}" title="Eliminar tarea">🗑️</button>
+          </div>
         </div>
-        <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">${task.title}</h4>
+        <h4 style="font-size: 1.05rem; margin: 0.4rem 0 0.5rem 0;">${task.title}</h4>
         <div class="progress-container">
           <div class="progress-fill" style="width: ${pct}%;"></div>
         </div>
@@ -1910,6 +2439,16 @@
         document.getElementById('wizard-step-4').style.display = 'block';
         updateStepperIndicator(4);
         renderStep4Plan(task);
+      });
+
+      card.querySelector('[data-edit-task]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openEditTaskModal(task.id);
+      });
+
+      card.querySelector('[data-delete-task]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        confirmDeleteTask(task.id);
       });
 
       container.appendChild(card);
@@ -2178,16 +2717,17 @@
           }
         }
       } else {
-        // Modo demo local sin backend
+        // Modo demo local sin backend: almacenamiento aislado por identificador de correo
+        const simulatedUid = 'local_' + btoa(email).replace(/=/g, '');
+        appState = loadState(simulatedUid);
         appState.user.isLoggedIn = true;
+        appState.user.uid = simulatedUid;
         appState.user.email = email;
         appState.user.name = name || 'Estudiante';
-        if (!appState.pet) {
-          appState.pet = createRandomPet();
-        }
         saveState();
         showToast(`¡Bienvenido/a, ${appState.user.name}!`);
         switchView('inicio');
+        checkFirstTimeUserFlow();
       }
     });
 
@@ -2216,6 +2756,93 @@
     document.getElementById('btn-pet-advice')?.addEventListener('click', () => givePetAdvice(true));
     document.getElementById('pet-dialogue-text')?.addEventListener('click', () => givePetAdvice(false));
 
+    // Botón de información (i) de la mascota
+    document.getElementById('btn-pet-info')?.addEventListener('click', () => {
+      document.getElementById('pet-info-modal')?.classList.add('active');
+    });
+    document.getElementById('btn-close-pet-info')?.addEventListener('click', () => {
+      document.getElementById('pet-info-modal')?.classList.remove('active');
+    });
+    document.getElementById('btn-pet-info-ok')?.addEventListener('click', () => {
+      document.getElementById('pet-info-modal')?.classList.remove('active');
+    });
+
+    // Tutorial de bienvenida interactivo
+    document.getElementById('tutorial-btn')?.addEventListener('click', openTutorialModal);
+    document.getElementById('sidebar-tutorial-btn')?.addEventListener('click', openTutorialModal);
+    document.getElementById('btn-tutorial-skip')?.addEventListener('click', closeTutorialModal);
+    document.getElementById('btn-tutorial-prev')?.addEventListener('click', () => {
+      if (currentTutorialStep > 0) {
+        currentTutorialStep--;
+        renderTutorialSlide();
+      }
+    });
+    document.getElementById('btn-tutorial-next')?.addEventListener('click', () => {
+      if (currentTutorialStep < TUTORIAL_SLIDES.length - 1) {
+        currentTutorialStep++;
+        renderTutorialSlide();
+      } else {
+        closeTutorialModal();
+      }
+    });
+
+    // Adopción de mascota inicial
+    document.querySelectorAll('#adoption-species-selector .species-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#adoption-species-selector .species-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSpecies = btn.getAttribute('data-species') || 'bear';
+        updateAdoptionPreview();
+      });
+    });
+
+    document.querySelectorAll('#adoption-color-swatches .color-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#adoption-color-swatches .color-swatch-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedFurColor = btn.getAttribute('data-color') || '#ECC94B';
+        updateAdoptionPreview();
+      });
+    });
+
+    document.getElementById('adoption-name-input')?.addEventListener('input', updateAdoptionPreview);
+    document.getElementById('btn-confirm-adoption')?.addEventListener('click', () => {
+      const chosenName = document.getElementById('adoption-name-input')?.value.trim() || 'Mimi';
+      const chosenOutfit = document.getElementById('adoption-outfit-select')?.value || 'none';
+      appState.pet = {
+        species: selectedSpecies,
+        name: chosenName,
+        furColor: selectedFurColor,
+        outfit: chosenOutfit,
+        hunger: 100,
+        foodStock: 0,
+        mood: 'happy',
+        hungerAlertSent: false,
+        lastFedTimestamp: Date.now()
+      };
+      appState.user.hasAdoptedPet = true;
+      saveState();
+      closePetAdoptionModal();
+      showToast(`¡Adoptaste a ${chosenName}! 🎉`);
+      if (!appState.user.hasSeenTutorial) {
+        setTimeout(openTutorialModal, 300);
+      }
+    });
+
+    // Edición y eliminación de tareas
+    document.getElementById('edit-task-form')?.addEventListener('submit', saveEditedTask);
+    document.getElementById('btn-close-edit-task')?.addEventListener('click', closeEditTaskModal);
+    document.getElementById('btn-cancel-edit-task')?.addEventListener('click', closeEditTaskModal);
+
+    document.getElementById('btn-cancel-delete-task')?.addEventListener('click', () => {
+      document.getElementById('delete-task-modal')?.classList.remove('active');
+    });
+    document.getElementById('btn-confirm-delete-task')?.addEventListener('click', executeDeleteTask);
+
+    // Inicializar gestión de adjuntos
+    initTaskAttachmentsHandler();
+
+    // Personalización continua de la mascota
     document.getElementById('btn-open-customize-pet')?.addEventListener('click', openCustomizePetModal);
     document.getElementById('btn-close-custom-pet')?.addEventListener('click', () => {
       document.getElementById('customize-pet-modal')?.classList.remove('active');
@@ -2334,14 +2961,15 @@
       showToast('Perfil actualizado');
     });
 
-    // Cerrar sesión
+    // Cerrar sesión con reinicio de estado aislado
     document.getElementById('btn-logout')?.addEventListener('click', async () => {
       profileModal?.classList.remove('active');
       if (isFirebaseReady && firebaseAuth) {
         await firebaseAuth.signOut();
       }
-      appState.user.isLoggedIn = false;
+      appState = getDefaultState('');
       saveState();
+      switchView('inicio');
       showToast('Has cerrado sesión');
     });
 
@@ -2368,9 +2996,10 @@
     initFirebaseServices();
     renderUI();
 
-    // La mascota habla periódicamente (cada 40s) para dar consejos, avisar hambre o tristeza por tareas pausadas
+    // Chequeo periódico de hambre y frases motivadoras cada 40s
     setInterval(() => {
       if (appState.user.isLoggedIn && appState.pet) {
+        checkPetHungerDecay();
         givePetAdvice(false);
       }
     }, 40000);

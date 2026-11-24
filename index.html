@@ -121,6 +121,11 @@
     </a>
 
     <div class="top-actions">
+      <!-- Tutorial de Bienvenida -->
+      <button class="icon-btn" id="tutorial-btn" title="Tutorial de bienvenida" aria-label="Tutorial de bienvenida">
+        <span>❓</span>
+      </button>
+
       <!-- Selector de Tema Rápido -->
       <button class="icon-btn" id="theme-selector-btn" title="Cambiar tema de color" aria-label="Cambiar tema">
         <span>🎨</span>
@@ -173,6 +178,10 @@
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
           Mi Desempeño
         </button>
+        <button class="sidebar-link" id="sidebar-tutorial-btn" type="button">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Guía / Tutorial
+        </button>
       </nav>
 
       <!-- Perfil en el menú lateral -->
@@ -204,9 +213,10 @@
 
           <div class="pet-info-box">
             <div class="pet-name-title">
-              <h3 style="font-size: 1.15rem; font-weight: 800;">
+              <h3 style="font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
                 <span id="pet-display-name">Mascota</span>
-                <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-left: 0.4rem;" id="pet-species-name">(Gatito Zen)</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);" id="pet-species-name">(Gatito Zen)</span>
+                <button type="button" class="btn-pet-info-circle" id="btn-pet-info" title="¿Cómo funciona tu mascota?" aria-label="Información de la mascota">ℹ️</button>
               </h3>
               <button type="button" class="btn-secondary" id="btn-open-customize-pet" style="padding: 0.25rem 0.65rem; font-size: 0.75rem; min-height: 28px;">
                 Personalizar 🎨
@@ -333,6 +343,22 @@
                 <input type="date" id="task-deadline-input" class="form-control" required>
               </div>
 
+              <!-- Archivos Adjuntos a la tarea -->
+              <div class="form-group">
+                <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>📎 Archivos o apuntes adjuntos (opcional)</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">PDF, DOCX, JPG, PNG (máx. 5MB)</span>
+                </label>
+                <div class="file-drop-area" id="task-file-dropzone">
+                  <input type="file" id="task-attachments-input" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display: none;">
+                  <button type="button" class="btn-secondary" id="btn-browse-files" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.35rem;">
+                    📁 Seleccionar archivos
+                  </button>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);" id="file-drop-text">o arrastra tus documentos aquí</span>
+                </div>
+                <div class="attachments-list" id="task-attachments-list"></div>
+              </div>
+
               <div style="display: flex; gap: 0.75rem; margin-top: 1.75rem;">
                 <button type="button" class="btn-secondary" id="btn-cancel-wizard" style="flex: 1;">Cancelar</button>
                 <button type="button" class="btn-primary" id="btn-to-step-3" style="flex: 2;">Siguiente →</button>
@@ -383,10 +409,26 @@
 
           <!-- PASO 4: TU PLAN GENERADO -->
           <div id="wizard-step-4" style="display: none;">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-              <span style="font-size: 2.5rem;">🏆</span>
-              <h2 style="font-size: 1.35rem; font-weight: 700;">¡Listo! Aquí tienes tu plan</h2>
-              <p style="color: var(--text-muted); font-size: 0.9rem;">Cada paso completado le dará un bocadito 🍪 a tu mascota.</p>
+            <!-- Cabecera de acciones de la tarea (Editar / Eliminar) -->
+            <div class="task-plan-actions-bar" id="plan-task-header-actions">
+              <div class="plan-task-meta">
+                <span class="task-tag" id="plan-task-course-tag">Psicología</span>
+                <span class="plan-deadline-pill" id="plan-task-deadline-pill">📅 Entrega: --/--/----</span>
+              </div>
+              <div class="plan-actions-btns">
+                <button type="button" class="btn-secondary btn-plan-action" id="btn-edit-current-task" title="Editar tarea y fecha">
+                  ✏️ Editar
+                </button>
+                <button type="button" class="btn-secondary btn-plan-action btn-action-danger" id="btn-delete-current-task" title="Eliminar tarea">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </div>
+
+            <div style="text-align: center; margin: 1rem 0 1.25rem 0;">
+              <span style="font-size: 2.2rem;">🏆</span>
+              <h2 style="font-size: 1.35rem; font-weight: 800;" id="plan-task-main-title">¡Listo! Aquí tienes tu plan</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Completa tus subtareas para mantener a tu mascota satisfecha y ganar galletas 🍪.</p>
             </div>
 
             <!-- Progreso en Tiempo Real -->
@@ -398,6 +440,14 @@
               <div class="progress-container">
                 <div class="progress-fill" id="plan-progress-bar" style="width: 0%;"></div>
               </div>
+            </div>
+
+            <!-- Archivos Adjuntos de la Tarea -->
+            <div id="plan-attachments-wrapper" style="display: none; margin-bottom: 1.25rem;">
+              <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                <span>📎</span> Archivos y Apuntes Adjuntos:
+              </h4>
+              <div id="plan-attachments-container" class="attachments-list"></div>
             </div>
 
             <!-- Checklist de Subtareas -->
@@ -854,6 +904,250 @@
         <!-- Inyectado por app.js -->
       </div>
       <button class="btn-secondary" id="btn-close-notif" style="width: 100%; margin-top: 1rem;">Entendido</button>
+    </div>
+  </div>
+
+  <!-- 6. MODAL: EDITAR TAREA -->
+  <div class="modal-overlay" id="edit-task-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-modal-title">
+    <div class="modal-box modal-box-large">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 id="edit-task-modal-title" style="margin: 0; font-size: 1.25rem;">✏️ Editar Tarea Académica</h3>
+        <button type="button" class="btn-icon-close" id="btn-close-edit-task" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <form id="edit-task-form">
+        <input type="hidden" id="edit-task-id">
+        <div class="form-group">
+          <label class="form-label" for="edit-task-title-input">Nombre o tema de la tarea:</label>
+          <input type="text" id="edit-task-title-input" class="form-control" required>
+        </div>
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="edit-task-course-input">Curso / Asignatura:</label>
+            <input type="text" id="edit-task-course-input" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-task-deadline-input">Fecha de entrega:</label>
+            <input type="date" id="edit-task-deadline-input" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-task-notes-input">Notas o indicaciones:</label>
+          <textarea id="edit-task-notes-input" class="form-control" rows="3" placeholder="Detalles, rúbrica o criterios de evaluación..."></textarea>
+        </div>
+        <!-- Adjuntos en edición -->
+        <div class="form-group">
+          <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>📎 Documentos o apuntes</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">PDF, DOCX, JPG, PNG (&lt;5MB)</span>
+          </label>
+          <div class="file-drop-area" id="edit-task-dropzone">
+            <input type="file" id="edit-task-attachments-input" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display: none;">
+            <button type="button" class="btn-secondary" id="btn-browse-edit-files" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.35rem;">
+              📁 Agregar más archivos
+            </button>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">o arrástralos aquí</span>
+          </div>
+          <div class="attachments-list" id="edit-task-attachments-list"></div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-secondary" id="btn-cancel-edit-task" style="flex: 1;">Cancelar</button>
+          <button type="submit" class="btn-primary" id="btn-save-edit-task" style="flex: 2;">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. MODAL: CONFIRMAR ELIMINACIÓN DE TAREA -->
+  <div class="modal-overlay" id="delete-task-modal" role="dialog" aria-modal="true" aria-labelledby="delete-task-title">
+    <div class="modal-box" style="text-align: center; max-width: 420px;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🗑️</div>
+      <h3 id="delete-task-title" style="margin-bottom: 0.5rem; font-size: 1.25rem;">¿Eliminar esta tarea?</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.45;">
+        Esta acción eliminará el plan de actividades y sus archivos adjuntos. Tu progreso actual y nivel de mascota se conservarán intactos.
+      </p>
+      <input type="hidden" id="delete-task-id-hidden">
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn-secondary" id="btn-cancel-delete-task" style="flex: 1;">Conservar</button>
+        <button type="button" class="btn-danger-solid" id="btn-confirm-delete-task" style="flex: 1;">Sí, Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. MODAL: INFORMACIÓN DE LA MASCOTA Y GAMIFICACIÓN (i) -->
+  <div class="modal-overlay" id="pet-info-modal" role="dialog" aria-modal="true" aria-labelledby="pet-info-title">
+    <div class="modal-box modal-box-large">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.6rem;">ℹ️</span>
+          <h3 id="pet-info-title" style="margin: 0; font-size: 1.25rem;">Guía de tu Mascota y Bienestar</h3>
+        </div>
+        <button type="button" class="btn-icon-close" id="btn-close-pet-info" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="pet-info-grid">
+        <div class="pet-info-card">
+          <div class="pet-info-icon">🐾</div>
+          <div class="pet-info-content">
+            <h4>¿Qué representa tu mascota?</h4>
+            <p>Es tu compañero de apoyo psicológico para combatir la procrastinación. Su energía refleja tu constancia y ritmo académico.</p>
+          </div>
+        </div>
+
+        <div class="pet-info-card">
+          <div class="pet-info-icon">📉</div>
+          <div class="pet-info-content">
+            <h4>¿Cómo disminuye su satisfacción?</h4>
+            <p>Baja de forma natural y paulatina con el paso de las horas si dejas de avanzar. Si llega a 40% o menos, sentirá hambre y te avisará.</p>
+          </div>
+        </div>
+
+        <div class="pet-info-card">
+          <div class="pet-info-icon">🍪</div>
+          <div class="pet-info-content">
+            <h4>¿Cómo se consiguen las galletas?</h4>
+            <p>Completando subtareas académicas reales (1 a 2 galletas según la duración estimada) y recolectándolas en el minijuego de vuelo.</p>
+          </div>
+        </div>
+
+        <div class="pet-info-card">
+          <div class="pet-info-icon">🥣</div>
+          <div class="pet-info-content">
+            <h4>¿Cómo alimentarla?</h4>
+            <p>Toca el botón <strong>"Alimentar"</strong> en el panel de inicio. Cada galleta restaura su satisfacción y le devuelve la alegría.</p>
+          </div>
+        </div>
+
+        <div class="pet-info-card">
+          <div class="pet-info-icon">🌱</div>
+          <div class="pet-info-content">
+            <h4>¿Cómo influyen tus tareas?</h4>
+            <p>Completar planes enteros otorga 50 puntos de experiencia y bonificaciones especiales, subiendo tu rango desde <em>Novato</em> hasta <em>Maestro Zen</em>.</p>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" id="btn-pet-info-ok" style="width: 100%; margin-top: 1.25rem;">¡Entendido, a cuidar de mi compañero!</button>
+    </div>
+  </div>
+
+  <!-- 9. MODAL: TUTORIAL DE BIENVENIDA INTERACTIVO (7 PASOS) -->
+  <div class="modal-overlay" id="tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="tutorial-step-title">
+    <div class="modal-box modal-box-large tutorial-box">
+      <!-- Indicador de progreso del tutorial -->
+      <div class="tutorial-header">
+        <div class="tutorial-badge">
+          <span>Tutorial</span> • <span id="tutorial-step-counter">Paso 1 de 7</span>
+        </div>
+        <button type="button" class="tutorial-skip-btn" id="btn-tutorial-skip">Omitir</button>
+      </div>
+      <div class="tutorial-progress-bar">
+        <div class="tutorial-progress-fill" id="tutorial-progress-fill" style="width: 14.3%;"></div>
+      </div>
+
+      <!-- Contenedor de diapositiva actual -->
+      <div class="tutorial-slide" id="tutorial-slide-content">
+        <!-- Inyectado dinámicamente según el paso actual (1 al 7) -->
+      </div>
+
+      <!-- Controles de navegación del tutorial -->
+      <div class="tutorial-footer">
+        <button type="button" class="btn-secondary" id="btn-tutorial-prev" style="visibility: hidden;">← Anterior</button>
+        <div class="tutorial-dots" id="tutorial-dots-container"></div>
+        <button type="button" class="btn-primary" id="btn-tutorial-next">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. MODAL: ADOPCIÓN Y PERSONALIZACIÓN INICIAL DE MASCOTA -->
+  <div class="modal-overlay" id="pet-adoption-modal" role="dialog" aria-modal="true" aria-labelledby="adoption-modal-title">
+    <div class="modal-box modal-box-large">
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <span style="font-size: 2.5rem;">🎉</span>
+        <h3 id="adoption-modal-title" style="font-size: 1.35rem; font-weight: 800; margin-top: 0.25rem;">¡Elige a tu Compañero de Estudio!</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">
+          Tu mascota te acompañará en cada entrega académica. Elige su especie, color y dale un nombre especial.
+        </p>
+      </div>
+
+      <!-- Vista previa en tiempo real -->
+      <div class="adoption-preview-card">
+        <div class="adoption-avatar-circle" id="adoption-preview-avatar" style="background-color: #ECC94B;">
+          <span id="adoption-preview-emoji" style="font-size: 3rem;">🐻</span>
+        </div>
+        <div style="text-align: center; margin-top: 0.5rem;">
+          <strong id="adoption-preview-name" style="font-size: 1.1rem; color: var(--text-main);">Mimi</strong>
+          <span id="adoption-preview-species" style="display: block; font-size: 0.78rem; color: var(--text-muted);">(Osito Calma)</span>
+        </div>
+      </div>
+
+      <!-- Especie -->
+      <div class="form-group">
+        <label class="form-label">1. Elige la especie:</label>
+        <div class="pet-species-selector" id="adoption-species-selector">
+          <button type="button" class="species-btn active" data-species="bear" data-emoji="🐻" data-sname="Osito Calma">
+            <span class="s-emoji">🐻</span>
+            <span class="s-title">Osito</span>
+            <span class="s-sub">Calma</span>
+          </button>
+          <button type="button" class="species-btn" data-species="cat" data-emoji="🐱" data-sname="Gatito Enfoque">
+            <span class="s-emoji">🐱</span>
+            <span class="s-title">Gatito</span>
+            <span class="s-sub">Enfoque</span>
+          </button>
+          <button type="button" class="species-btn" data-species="dog" data-emoji="🐶" data-sname="Perrito Ánimo">
+            <span class="s-emoji">🐶</span>
+            <span class="s-title">Perrito</span>
+            <span class="s-sub">Ánimo</span>
+          </button>
+          <button type="button" class="species-btn" data-species="owl" data-emoji="🦉" data-sname="Búho Sabio">
+            <span class="s-emoji">🦉</span>
+            <span class="s-title">Búho</span>
+            <span class="s-sub">Sabio</span>
+          </button>
+          <button type="button" class="species-btn" data-species="bunny" data-emoji="🐰" data-sname="Conejito Paz">
+            <span class="s-emoji">🐰</span>
+            <span class="s-title">Conejito</span>
+            <span class="s-sub">Paz</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tono de Pelaje -->
+      <div class="form-group">
+        <label class="form-label">2. Color favorito de pelaje:</label>
+        <div class="pet-color-swatches" id="adoption-color-swatches">
+          <button type="button" class="color-swatch-btn active" data-color="#ECC94B" style="background: #ECC94B;" title="Dorado Miel"></button>
+          <button type="button" class="color-swatch-btn" data-color="#F687B3" style="background: #F687B3;" title="Rosa Pastel"></button>
+          <button type="button" class="color-swatch-btn" data-color="#63B3ED" style="background: #63B3ED;" title="Celeste Cielo"></button>
+          <button type="button" class="color-swatch-btn" data-color="#68D391" style="background: #68D391;" title="Menta Suave"></button>
+          <button type="button" class="color-swatch-btn" data-color="#B794F4" style="background: #B794F4;" title="Lavanda Dulce"></button>
+          <button type="button" class="color-swatch-btn" data-color="#CBD5E0" style="background: #CBD5E0;" title="Gris Perla"></button>
+        </div>
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label class="form-label" for="adoption-name-input">3. Nombre de tu compañero:</label>
+        <input type="text" id="adoption-name-input" class="form-control" value="Mimi" maxlength="20" placeholder="Ej. Mimi, Toby, Atenea, Zen...">
+      </div>
+
+      <!-- Accesorio -->
+      <div class="form-group">
+        <label class="form-label" for="adoption-outfit-select">4. Accesorio inicial (opcional):</label>
+        <select id="adoption-outfit-select" class="form-control">
+          <option value="none">✨ Al natural (Sin accesorio)</option>
+          <option value="glasses">👓 Gafas de Psicólogo</option>
+          <option value="scarf">🧣 Bufanda Abrigadora</option>
+          <option value="hat">🎓 Birrete de Graduación</option>
+          <option value="bowtie">🎀 Moño Elegante</option>
+          <option value="flower">🌸 Flor Zen en la Cabeza</option>
+          <option value="cape">🦸 Capa de Superestudiante</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="btn-confirm-adoption" style="width: 100%; margin-top: 1.25rem; padding: 0.9rem; font-size: 1rem;">
+        ¡Adoptar a mi Compañero y Comenzar! 🚀
+      </button>
     </div>
   </div>
 
