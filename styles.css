@@ -2146,37 +2146,478 @@ textarea.form-control {
   transform: scale(1.1);
 }
 
-/* Mobile Optimizations */
+/* =========================================================================
+   UI ICONS SYSTEM (Clean SVGs)
+   ========================================================================= */
+.ui-icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  stroke-width: 2;
+  stroke: currentColor;
+  fill: none;
+  vertical-align: -0.18em;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, stroke 0.15s ease;
+}
+
+.ui-icon-sm {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.12em;
+}
+
+.ui-icon-lg {
+  width: 1.45em;
+  height: 1.45em;
+  vertical-align: -0.22em;
+}
+
+.ui-icon-xl {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.species-svg {
+  width: 2rem;
+  height: 2rem;
+  display: block;
+  margin: 0 auto;
+}
+
+.species-btn .s-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  color: var(--primary);
+}
+
+/* Theme color dots */
+.theme-dot {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+  vertical-align: middle;
+  margin-right: 0.45rem;
+  flex-shrink: 0;
+}
+
+.dot-neutral { background: linear-gradient(135deg, #718096, #4A5568); }
+.dot-pastel  { background: linear-gradient(135deg, #8B7CE6, #F6AD55); }
+.dot-forest  { background: linear-gradient(135deg, #38A169, #2F855A); }
+.dot-ocean   { background: linear-gradient(135deg, #3182CE, #2B6CB0); }
+.dot-sunset  { background: linear-gradient(135deg, #ED8936, #D69E2E); }
+.dot-dark    { background: linear-gradient(135deg, #4A5568, #1A202C); }
+
+/* =========================================================================
+   RESPONSIVE DESIGN: MÓVILES Y RESOLUCIONES BAJAS (320px - 640px)
+   ========================================================================= */
+
+/* Prevención global de desbordamiento horizontal */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 @media (max-width: 640px) {
+  /* Espaciado base y contenedor */
   .app-container {
-    padding-bottom: 5.5rem !important;
+    padding: 0.65rem 0.65rem 5.5rem 0.65rem !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
   }
-  
-  .pet-species-selector {
-    grid-template-columns: repeat(3, 1fr) !important;
+
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
   }
-  
-  .modal-box {
-    padding: 1.25rem !important;
-    max-height: 94vh !important;
-    width: 95% !important;
+
+  /* Top Nav / Encabezado */
+  .top-nav {
+    padding: 0.45rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .top-actions {
+    gap: 0.3rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* En móvil: ocultar tutorial y tema del top (menos urgentes) */
+  #tutorial-btn,
+  #theme-selector-btn,
+  #nav-minigame-btn {
+    display: none !important;
+  }
+
+  /* Solo mostrar: notificaciones, ajustes, perfil */
+  .icon-btn {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .icon-btn svg {
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+  }
+
+  .brand-name {
+    font-size: 1.1rem !important;
+  }
+
+  /* Tarjeta de Mascota en Dashboard */
+  .pet-showcase-card {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 1.15rem 0.85rem !important;
+    gap: 0.85rem !important;
+  }
+
+  .pet-avatar-wrapper {
+    margin: 0 auto !important;
+    width: 78px !important;
+    height: 78px !important;
+  }
+
+  .pet-content {
+    width: 100% !important;
+  }
+
+  .pet-header-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    justify-content: center !important;
+  }
+
+  .pet-speech-bubble {
+    width: 100% !important;
+    margin: 0.5rem 0 !important;
+    text-align: center !important;
+    font-size: 0.82rem !important;
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  .pet-actions-row {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 0.5rem !important;
+  }
+
+  .pet-feed-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Racha y Puntos */
+  .streak-banner {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Wizard de Creación de Tareas */
+  .wizard-card {
+    padding: 1.15rem 0.85rem !important;
+  }
+
+  .wizard-step-header {
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
   }
 
   .task-plan-actions-bar {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.6rem !important;
   }
 
   .plan-actions-btns {
-    width: 100%;
+    width: 100% !important;
+    display: flex !important;
+    gap: 0.5rem !important;
   }
 
   .btn-plan-action {
-    flex: 1;
-    justify-content: center;
+    flex: 1 !important;
+    justify-content: center !important;
   }
 
   .form-row {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Lista de Tareas Activas */
+  .task-item-card {
+    padding: 1rem 0.85rem !important;
+  }
+
+  .task-header-actions {
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+  }
+
+  .subtask-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.35rem !important;
+    padding: 0.65rem !important;
+  }
+
+  .subtask-top-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .subtask-meta-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.35rem !important;
+    width: 100% !important;
+    padding-left: 1.65rem !important;
+  }
+
+  /* Vista de Desempeño */
+  .stats-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+  }
+
+  /* Arcade / Minijuego Flappy Pet */
+  .arcade-game-wrapper {
+    height: clamp(340px, 62vh, 460px) !important;
+  }
+
+  .game-overlay-card {
+    width: 92% !important;
+    max-width: 320px !important;
+    padding: 1.15rem 0.85rem !important;
+    margin: 0 auto !important;
+  }
+
+  .game-hero-badge {
+    width: 3.25rem !important;
+    height: 3.25rem !important;
+    margin: 0 auto 0.65rem auto !important;
+  }
+
+  .game-card-title {
+    font-size: 1.15rem !important;
+  }
+
+  .game-card-subtitle {
+    font-size: 0.78rem !important;
+  }
+
+  .game-rules-list {
+    gap: 0.45rem !important;
+    margin: 0.75rem 0 !important;
+  }
+
+  .game-rule-card {
+    padding: 0.5rem 0.65rem !important;
+    gap: 0.55rem !important;
+  }
+
+  .rule-icon-circle {
+    width: 1.85rem !important;
+    height: 1.85rem !important;
+    min-width: 1.85rem !important;
+  }
+
+  .btn-game-launch {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.92rem !important;
+  }
+
+  .game-controls-pill {
+    flex-direction: column !important;
+    gap: 0.2rem !important;
+    font-size: 0.72rem !important;
+    padding: 0.4rem 0.65rem !important;
+  }
+
+  .pill-divider {
+    display: none !important;
+  }
+
+  /* Modales en Móvil */
+  .modal-overlay {
+    padding: 0.5rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .modal-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.15rem 0.85rem !important;
+    max-height: 92vh !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .pet-species-selector {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.4rem !important;
+  }
+
+  .species-btn {
+    padding: 0.5rem 0.35rem !important;
+  }
+
+  .species-btn .s-title {
+    font-size: 0.72rem !important;
+  }
+
+  .species-btn .s-sub {
+    font-size: 0.6rem !important;
+  }
+}
+
+/* =========================================================================
+   RESOLUCIONES MUY BAJAS (<= 380px: iPhone SE, Galaxy Z Flip, pantalla 320-375)
+   ========================================================================= */
+@media (max-width: 380px) {
+  .top-nav {
+    padding: 0.4rem 0.5rem !important;
+  }
+
+  .brand-group {
+    gap: 0.35rem !important;
+  }
+
+  .brand-group span {
+    font-size: 1.05rem !important;
+  }
+
+  /* Ocultar botón duplicado de minijuego del top-nav en pantallas angostas (está en bottom-nav) */
+  #nav-minigame-btn,
+  #tutorial-btn,
+  #theme-selector-btn {
+    display: none !important;
+  }
+
+  .icon-btn {
+    width: 2.1rem !important;
+    height: 2.1rem !important;
+  }
+
+  .pet-species-selector {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  #in-app-theme-picker {
+    grid-template-columns: 1fr !important;
+    gap: 0.45rem !important;
+  }
+
+  .color-swatch-btn {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .btn-game-launch {
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .bottom-nav {
+    height: 3.75rem !important;
+    padding: 0 0.25rem !important;
+  }
+
+  .bottom-nav .nav-item-btn {
+    font-size: 0.68rem !important;
+    gap: 0.15rem !important;
+  }
+
+  .bottom-nav .nav-item-btn svg {
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+  }
+}
+
+/* =========================================================================
+   RESOLUCIONES ULTRA PEQUEÑAS (<= 340px: iPhone 5/SE gen 1, etc.)
+   ========================================================================= */
+@media (max-width: 340px) {
+  .brand-group span {
+    display: none !important; /* Muestra sólo el logo circular del cerebro */
+  }
+
+  .top-nav {
+    justify-content: space-between !important;
+  }
+
+  .nav-actions {
+    gap: 0.2rem !important;
+  }
+
+  .icon-btn {
+    width: 1.95rem !important;
+    height: 1.95rem !important;
+  }
+
+  .modal-box {
+    padding: 0.9rem 0.65rem !important;
+  }
+}
+
+/* Neuro-Catch Mobile Zen Button & HUD styles */
+.btn-touch-zen {
+  position: absolute;
+  bottom: 0.85rem;
+  right: 0.85rem;
+  z-index: 10;
+  background: linear-gradient(135deg, #38A169 0%, #2F855A 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.55rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 4px 15px rgba(56, 161, 105, 0.45);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-touch-zen:active {
+  transform: scale(0.92);
+}
+
+@media (min-width: 768px) {
+  .btn-touch-zen {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .hud-hide-mobile {
+    display: none !important;
   }
 }

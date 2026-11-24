@@ -63,7 +63,7 @@
 
   function loadState(uid = '') {
     try {
-      const activeUid = uid || (typeof appState !== 'undefined' && appState?.user?.uid) || '';
+      const activeUid = uid || '';
       const key = getStorageKey(activeUid);
       const saved = localStorage.getItem(key);
       if (saved) {
@@ -172,10 +172,10 @@
     if (!alertBox) return;
 
     if (isNew) {
-      if (titleEl) titleEl.innerText = '✉️ ¡Cuenta creada! Confirma tu correo';
+      if (titleEl) titleEl.innerText = '¡Cuenta creada! Confirma tu correo';
       if (descEl) descEl.innerText = `Enviamos un enlace de verificación a ${user.email}. Por favor haz clic en él para validar que el correo existe y poder entrar.`;
     } else {
-      if (titleEl) titleEl.innerText = '⚠️ Correo pendiente de verificación';
+      if (titleEl) titleEl.innerText = 'Correo pendiente de verificación';
       if (descEl) descEl.innerText = `El correo ${user.email} aún no ha sido confirmado. Revisa tu bandeja de entrada o spam para activar tu cuenta.`;
     }
     alertBox.style.display = 'flex';
@@ -189,7 +189,7 @@
     try {
       if (pendingVerificationUser.sendEmailVerification) {
         await pendingVerificationUser.sendEmailVerification();
-        showToast('✉️ Correo de verificación reenviado con éxito');
+        showToast('Correo de verificación reenviado con éxito');
       } else {
         showToast('Inicia sesión para reenviar el enlace');
       }
@@ -200,7 +200,7 @@
 
   async function loginWithGoogle() {
     if (!isFirebaseReady || !firebaseAuth) {
-      showToast('⚙️ Agrega tus credenciales de Firebase en config.js para usar Google');
+      showToast('Configura tus credenciales de Firebase en config.js para usar Google');
       return;
     }
     try {
@@ -219,7 +219,7 @@
 
   async function loginWithFacebook() {
     if (!isFirebaseReady || !firebaseAuth) {
-      showToast('⚙️ Agrega tus credenciales de Firebase en config.js para usar Facebook');
+      showToast('Configura tus credenciales de Firebase en config.js para usar Facebook');
       return;
     }
     try {
@@ -359,7 +359,7 @@
       // Notificación de hambre sólo una vez cuando desciende a 40% o menos
       if (appState.pet.hunger <= 40 && !appState.pet.hungerAlertSent) {
         appState.pet.hungerAlertSent = true;
-        showToast(`🥣 ¡${appState.pet.name} tiene hambre! (Satisfacción al ${appState.pet.hunger}%). Dale un bocadito 🍪`);
+        showToast(`¡${appState.pet.name} tiene hambre! (Satisfacción al ${appState.pet.hunger}%). Dale un bocadito.`);
       }
       saveState();
     }
@@ -370,37 +370,37 @@
   // =========================================================================
   const TUTORIAL_SLIDES = [
     {
-      icon: '🧠',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>',
       title: '¡Bienvenido/a a PsicoPlan!',
       desc: 'Tu plataforma de bienestar y organización universitaria para superar la procrastinación combinando psicología aplicada, inteligencia artificial y gamificación con tu mascota.'
     },
     {
-      icon: '📝',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
       title: 'Registra tus Tareas Académicas',
       desc: 'Ingresa los temas de tus trabajos, asignaturas y fechas de entrega. Además, ahora puedes adjuntar documentos en PDF, Word o fotos con tus rúbricas y apuntes.'
     },
     {
-      icon: '🤖',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><circle cx="15" cy="9" r="2"/><path d="m8 15 8 0"/></svg>',
       title: 'Asistente de Inteligencia Artificial',
       desc: 'Responde 3 preguntas sencillas y nuestra IA dividirá tu tarea en subtareas manejables, recomendando lecturas académicas, normas APA y herramientas de psicología.'
     },
     {
-      icon: '🎯',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
       title: 'Tu Plan de Actividades a Medida',
       desc: 'Monitorea tu avance paso a paso con una barra de progreso en tiempo real. Cada paso te acerca a tu meta académica sin ansiedad ni bloqueos mentales.'
     },
     {
-      icon: '🐾',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="9" r="2"/><path d="M11.5 8a5.5 5.5 0 0 0-5.5 5.5c0 1.5.8 3 2.5 3.5 1.5.5 2 1.5 3 1.5s1.5-1 3-1.5c1.7-.5 2.5-2 2.5-3.5A5.5 5.5 0 0 0 11.5 8z"/></svg>',
       title: 'Tu Mascota y Compañero Emocional',
       desc: 'Tu compañero refleja tu ritmo de estudio. Si dejas tus actividades de lado, su satisfacción disminuye paulatinamente. ¡Cuídalo y mantenlo feliz!'
     },
     {
-      icon: '🍪',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg>',
       title: 'Galletas y Recompensas Equitativas',
-      desc: 'Las galletas 🍪 y puntos de experiencia se ganan completando subtareas según su esfuerzo y tiempo estimado, o jugando en el vuelo de pausa activa Flappy Pet.'
+      desc: 'Las galletas y puntos de experiencia se ganan completando subtareas según su esfuerzo y tiempo estimado, o jugando Neuro-Catch en la sección de pausa activa.'
     },
     {
-      icon: '🔥',
+      icon: '<svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
       title: 'Racha Diaria y Subida de Nivel',
       desc: 'Estudia día a día para acumular rachas de disciplina, desbloquear insignias y alcanzar el rango de Maestro Zen. ¡Comienza hoy tu semestre con éxito!'
     }
@@ -446,7 +446,7 @@
     }
 
     if (nextBtn) {
-      nextBtn.innerText = currentTutorialStep === total - 1 ? '¡Comenzar! 🚀' : 'Siguiente →';
+      nextBtn.innerText = currentTutorialStep === total - 1 ? '¡Comenzar!' : 'Siguiente →';
     }
 
     if (dotsContainer) {
@@ -476,7 +476,6 @@
   }
 
   function updateAdoptionPreview() {
-    const emojis = { bear: '🐻', cat: '🐱', dog: '🐶', owl: '🦉', bunny: '🐰' };
     const speciesNames = {
       bear: 'Osito Calma',
       cat: 'Gatito Enfoque',
@@ -490,9 +489,16 @@
     const speciesEl = document.getElementById('adoption-preview-species');
     const inputName = document.getElementById('adoption-name-input');
 
-    if (avatarEl) avatarEl.style.backgroundColor = selectedFurColor;
-    if (emojiEl) emojiEl.innerText = emojis[selectedSpecies] || '🐻';
     const petName = inputName?.value.trim() || 'Mimi';
+    if (avatarEl) {
+      avatarEl.style.backgroundColor = 'transparent';
+      avatarEl.innerHTML = renderPetSVG({
+        species: selectedSpecies,
+        furColor: selectedFurColor,
+        outfit: selectedOutfit,
+        name: petName
+      }, null, 72);
+    }
     if (nameEl) nameEl.innerText = petName;
     if (speciesEl) speciesEl.innerText = `(${speciesNames[selectedSpecies] || 'Compañero'})`;
   }
@@ -525,41 +531,41 @@
 
   const PET_PHRASES = {
     starving: [
-      "¡Tengo mucha hambre! 🥺 ¿Hacemos una subtarea para ganar un rico bocadito?",
-      "Mi pancita hace ruidos... ¡termina un paso de tu plan y dame de comer! 🍪",
-      "Necesito nutrientes para seguir acompañándote a estudiar 🥺"
+      "¡Tengo mucha hambre! ¿Hacemos una subtarea para ganar un rico bocadito?",
+      "Mi pancita hace ruidos... ¡termina un paso de tu plan y dame de comer!",
+      "Necesito nutrientes para seguir acompañándote a estudiar"
     ],
     sad: [
-      "Veo que dejamos pausada la tarea... me da un poquito de tristeza 😢 ¡Hagamos aunque sea un pasito hoy!",
+      "Veo que dejamos pausada la tarea... ¡Hagamos aunque sea un pasito hoy!",
       "¡No procrastines! Recuerda que tu yo del futuro te agradecerá avanzar hoy.",
-      "Extraño verte tachar tareas en tu checklist... ¡yo sé que eres muy capaz! 💔",
-      "A veces empezar es lo más difícil. Comprométete solo con 5 minutos hoy, ¡hazlo por mí! 🥺"
+      "Extraño verte tachar tareas en tu checklist... ¡yo sé que eres muy capaz!",
+      "A veces empezar es lo más difícil. Comprométete solo con 5 minutos hoy, ¡hazlo por ti y por mí!"
     ],
     sleepy: [
-      "Un bostezo... ¿Será hora de una pausa activa de 5 minutos? 😴",
+      "Un bostezo... ¿Será hora de una pausa activa de 5 minutos?",
       "Descansar la mente también forma parte del aprendizaje según la neurociencia."
     ],
     happy: [
-      "¡Me siento genial! Listo para ayudarte a enfocar tus lecturas de psicología 📖",
-      "Cada paso que das fortalece tus hábitos de estudio ✨",
-      "Recuerda hidratarte y mantener una postura cómoda ♥"
+      "¡Me siento genial! Listo para ayudarte a enfocar tus lecturas de psicología.",
+      "Cada paso que das fortalece tus hábitos de estudio.",
+      "Recuerda hidratarte y mantener una postura cómoda."
     ],
     ecstatic: [
-      "¡Estoy súper feliz y motivado! 🥳 ¡Vamos a conquistar este semestre!",
-      "¡Qué orgullo! Tu corteza prefrontal está trabajando a toda máquina 🧠✨"
+      "¡Estoy súper feliz y motivado! Vamos a conquistar este semestre.",
+      "¡Qué orgullo! Tu mente está trabajando a toda máquina."
     ],
     zen: [
-      "Inhala profundamente... siente cómo tu cuerpo se relaja 🧘",
+      "Inhala profundamente... siente cómo tu cuerpo se relaja.",
       "La atención plena en el presente disipa la ansiedad del futuro."
     ],
     advice: [
-      "💡 Tip de psicología: La técnica de los 2 minutos dice que si empezar te cuesta, haz solo 2 minutos. ¡Casi siempre continúas!",
-      "🧠 Neurociencia: Tu memoria de trabajo rinde mucho mejor si alejas el celular de tu campo visual.",
-      "✨ Psicología de hábitos: No esperes a tener motivación para empezar; la acción precede a la motivación.",
-      "📚 Ley de Yerkes-Dodson: Un nivel moderado de activación es óptimo; respira hondo si sientes nervios.",
-      "♥ ¡Cada autor que citas y cada página que redactas te acerca a tu título de psicólogo/a!",
-      "🌱 El descanso es productivo: 5 minutos de pausa cada 25 minutos restauran tu dopamina y concentración.",
-      "📖 Efecto Zeigárnik: Las tareas incompletas ocupan espacio mental. ¡Terminar un paso pequeño te dará paz mental inmediata!"
+      "Tip de psicología: La técnica de los 2 minutos dice que si empezar te cuesta, haz solo 2 minutos. ¡Casi siempre continúas!",
+      "Neurociencia: Tu memoria de trabajo rinde mucho mejor si alejas el celular de tu campo visual.",
+      "Psicología de hábitos: No esperes a tener motivación para empezar; la acción precede a la motivación.",
+      "Ley de Yerkes-Dodson: Un nivel moderado de activación es óptimo; respira hondo si sientes nervios.",
+      "Cada autor que citas y cada página que redactas te acerca a tu título de psicólogo/a!",
+      "El descanso es productivo: 5 minutos de pausa cada 25 minutos restauran tu dopamina y concentración.",
+      "Efecto Zeigárnik: Las tareas incompletas ocupan espacio mental. ¡Terminar un paso pequeño te dará paz mental inmediata!"
     ]
   };
 
@@ -803,7 +809,7 @@
   function feedPet() {
     if (!appState.pet) return;
     if (appState.pet.foodStock <= 0) {
-      showToast('⚠️ No tienes bocaditos. ¡Completa subtareas para ganar más!');
+      showToast('No tienes bocaditos. ¡Completa subtareas para ganar más!');
       return;
     }
 
@@ -826,7 +832,7 @@
       // Crear corazoncito flotante
       const heart = document.createElement('div');
       heart.className = 'floating-heart';
-      heart.innerText = '💖';
+      heart.innerHTML = '<svg class="ui-icon" viewBox="0 0 24 24" fill="#E53E3E" stroke="#E53E3E" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
       heart.style.left = '45%';
       heart.style.top = '10%';
       avatarWrapper.appendChild(heart);
@@ -835,18 +841,18 @@
 
     playSweetChime();
     saveState();
-    showToast(`😋 ¡Le diste un rico bocadito a ${appState.pet.name}!`);
+    showToast(`¡Le diste un rico bocadito a ${appState.pet.name}!`);
   }
 
   // =========================================================================
   // 5. GAMIFICACIÓN: PUNTOS, NIVELES E INSIGNIAS
   // =========================================================================
   function calculateLevel(points) {
-    if (points >= 500) return { name: 'Maestro 🧠', min: 500, next: 1000 };
-    if (points >= 300) return { name: 'Experto 🎓', min: 300, next: 500 };
-    if (points >= 150) return { name: 'Estudioso 📚', min: 150, next: 300 };
-    if (points >= 50) return { name: 'Aprendiz 🌱', min: 50, next: 150 };
-    return { name: 'Novato ✨', min: 0, next: 50 };
+    if (points >= 500) return { name: 'Maestro', min: 500, next: 1000 };
+    if (points >= 300) return { name: 'Experto', min: 300, next: 500 };
+    if (points >= 150) return { name: 'Estudioso', min: 150, next: 300 };
+    if (points >= 50) return { name: 'Aprendiz', min: 50, next: 150 };
+    return { name: 'Novato', min: 0, next: 50 };
   }
 
   function addPoints(amount, snackBonus = 0) {
@@ -864,16 +870,16 @@
 
     if (appState.user.points >= 50 && !appState.user.badges.includes('nivel_aprendiz')) {
       appState.user.badges.push('nivel_aprendiz');
-      showToast('🎉 ¡Insignia desbloqueada: Nivel Aprendiz!');
+      showToast('¡Insignia desbloqueada: Nivel Aprendiz!');
     }
     if (appState.user.streak >= 3 && !appState.user.badges.includes('racha_3')) {
       appState.user.badges.push('racha_3');
-      showToast('🔥 ¡Insignia desbloqueada: Racha de 3 Días!');
+      showToast('¡Insignia desbloqueada: Racha de 3 Días!');
     }
 
     if (newLevel.name !== prevLevel.name) {
       launchConfetti(true);
-      showToast(`⭐ ¡Subiste de Nivel a ${newLevel.name}!`);
+      showToast(`¡Subiste de Nivel a ${newLevel.name}!`);
     }
 
     playSweetChime();
@@ -995,35 +1001,39 @@
   }
 
   // =========================================================================
-  // 7. MINIJUEGO: FLAPPY PET (VUELO ACADÉMICO CON OBSTÁCULOS) 🚀📚
+  // 7. MINIJUEGO DINÁMICO: NEURO-CATCH (REFLEJOS, ATENCIÓN Y PSICOLOGÍA)
   // =========================================================================
-  let flappyState = {
+  let neuroState = {
     running: false,
-    hasStartedFlight: false, // Levita plácidamente en el centro hasta que el usuario dé el primer toque
     score: 0,
     cookiesCollected: 0,
-    highScore: parseInt(localStorage.getItem('psicoplan_flappy_high') || '0', 10),
-    bird: {
-      x: 75,
-      y: 200,
-      vy: 0,
-      radius: 18,
-      gravity: 0.27, // Gravedad suave para dar tiempo de reacción perfecto
-      jump: -5.6,    // Impulso balanceado y agradable
-      rotation: 0
+    lives: 3,
+    combo: 0,
+    flowMode: false,
+    flowTimer: 0,
+    highScore: parseInt(localStorage.getItem('psicoplan_neuro_high') || '0', 10),
+    pet: {
+      x: 180,
+      y: 0,
+      targetX: 180,
+      vx: 0,
+      width: 52,
+      height: 52,
+      facing: 1,
+      hopOffset: 0,
+      hopTimer: 0
     },
-    pipes: [],
+    zenCooldown: 0,
+    zenWaves: [],
+    items: [],
     particles: [],
     floatingTexts: [],
+    neuralNodes: [],
     spawnTimer: 0,
-    bgClouds: [
-      { x: 30, y: 50, s: 0.6 },
-      { x: 180, y: 80, s: 0.8 },
-      { x: 320, y: 40, s: 0.5 }
-    ]
+    keys: { left: false, right: false }
   };
 
-  let flappyAnimId = null;
+  let neuroAnimId = null;
   let sharedAudioCtx = null;
 
   function getAudioContext() {
@@ -1041,99 +1051,98 @@
     }
   }
 
-  function playFlapSound() {
+  function playNeuroTone(freq, type = 'sine', duration = 0.15, gainVal = 0.12) {
+    const ctx = getAudioContext();
+    if (!ctx) return;
     try {
-      const audioCtx = getAudioContext();
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(320, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(560, audioCtx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(ctx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.08);
+      osc.stop(ctx.currentTime + duration);
+    } catch (err) {}
+  }
+
+  function playDopamineSound() {
+    playNeuroTone(587.33, 'triangle', 0.1, 0.14); // D5
+    setTimeout(() => playNeuroTone(880, 'sine', 0.16, 0.15), 60); // A5
+  }
+
+  function playSerotoninSound() {
+    playNeuroTone(523.25, 'sine', 0.12, 0.12); // C5
+    setTimeout(() => playNeuroTone(659.25, 'sine', 0.14, 0.13), 80); // E5
+    setTimeout(() => playNeuroTone(783.99, 'triangle', 0.22, 0.16), 160); // G5 (Galleta)
+  }
+
+  function playBookSound() {
+    playNeuroTone(440, 'triangle', 0.1, 0.13);
+    setTimeout(() => playNeuroTone(659.25, 'triangle', 0.18, 0.15), 70);
+  }
+
+  function playZenSound() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      [329.63, 440, 523.25, 659.25].forEach((freq, idx) => {
+        setTimeout(() => playNeuroTone(freq, 'sine', 0.5, 0.08), idx * 80);
+      });
     } catch (e) {}
   }
 
-  function playPointSound() {
-    try {
-      const audioCtx = getAudioContext();
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.12); // A5
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.12);
-    } catch (e) {}
+  function playStressHitSound() {
+    playNeuroTone(146.83, 'sawtooth', 0.22, 0.18); // D3
   }
 
-  function playCrashSound() {
-    try {
-      const audioCtx = getAudioContext();
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.25);
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.25);
-    } catch (e) {}
-  }
-
-  function spawnParticles(x, y, color = '#ECC94B', count = 8) {
+  function spawnParticles(x, y, color, count = 8, speedMult = 1) {
     for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 40 + Math.random() * 80;
-      flappyState.particles.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        color: color,
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5);
+      const spd = (2 + Math.random() * 4) * speedMult;
+      neuroState.particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        color,
         size: 3 + Math.random() * 3,
-        life: 0.45 + Math.random() * 0.3
+        alpha: 1,
+        life: 0.6 + Math.random() * 0.4
       });
     }
   }
 
-  function showFloatingText(x, y, text, color = '#48BB78', size = 18) {
-    flappyState.floatingTexts.push({
-      x: x,
-      y: y,
-      text: text,
-      color: color,
-      size: size,
-      alpha: 1.0
+  function showFloatingText(x, y, text, color = '#FFFFFF', size = 15) {
+    neuroState.floatingTexts.push({
+      x,
+      y,
+      text,
+      color,
+      size,
+      alpha: 1,
+      vy: -1.4
     });
   }
 
-  function safeRoundRect(ctx, x, y, w, h, radii) {
-    if (w <= 0 || h <= 0) return;
-    if (typeof ctx.roundRect === 'function') {
-      try {
-        ctx.roundRect(x, y, w, h, radii);
-        return;
-      } catch (e) {}
+  function initNeuralNodes(w, h) {
+    neuroState.neuralNodes = [];
+    const count = Math.min(24, Math.floor((w * h) / 14000));
+    for (let i = 0; i < count; i++) {
+      neuroState.neuralNodes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        radius: 2 + Math.random() * 2
+      });
     }
-    ctx.rect(x, y, w, h);
   }
 
   function initFlappyGame() {
+    // Reutiliza el canvas del minijuego para Neuro-Catch
     const canvas = document.getElementById('flappy-pet-canvas');
     if (!canvas) return;
 
@@ -1144,353 +1153,617 @@
     }
 
     const highDisplay = document.getElementById('game-high-score-display');
-    if (highDisplay) highDisplay.innerText = `${flappyState.highScore}`;
+    if (highDisplay) highDisplay.innerText = `${neuroState.highScore}`;
 
-    // Listener de aleteo (salto) con un toque o clic en la pantalla
-    const jumpHandler = (e) => {
-      // Ignorar si el clic fue en un botón de overlay
-      if (e.target && (e.target.closest('#game-start-overlay') || e.target.closest('#game-over-overlay'))) return;
-      if (!flappyState.running) return;
-      e.preventDefault();
-      flappyJump();
+    initNeuralNodes(canvas.width, canvas.height);
+    neuroState.pet.x = canvas.width / 2;
+    neuroState.pet.targetX = canvas.width / 2;
+
+    // Control táctil suave en celular
+    const handleTouchMove = (e) => {
+      if (!neuroState.running) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0] || e.changedTouches[0];
+      if (touch) {
+        const clientX = touch.clientX - rect.left;
+        const scaleX = canvas.width / rect.width;
+        neuroState.pet.targetX = Math.max(30, Math.min(canvas.width - 30, clientX * scaleX));
+      }
     };
 
-    if (wrapper) {
-      wrapper.onpointerdown = jumpHandler;
-    } else {
-      canvas.onpointerdown = jumpHandler;
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.target && e.target.closest('#game-start-overlay')) return;
+      handleTouchMove(e);
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (!neuroState.running) return;
+      handleTouchMove(e);
+    }, { passive: true });
+
+    // Control de mouse en PC
+    canvas.addEventListener('mousemove', (e) => {
+      if (!neuroState.running) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const clientX = (e.clientX - rect.left) * scaleX;
+      neuroState.pet.targetX = Math.max(30, Math.min(canvas.width - 30, clientX));
+    });
+
+    // Clic o doble toque para activar la Onda Zen
+    canvas.addEventListener('click', (e) => {
+      if (e.target && e.target.closest('#game-start-overlay')) return;
+      if (!neuroState.running) return;
+      activateZenWave();
+    });
+
+    // Botón flotante móvil para la Onda Zen
+    const zenBtn = document.getElementById('btn-touch-zen');
+    if (zenBtn) {
+      zenBtn.onclick = (e) => {
+        e.stopPropagation();
+        activateZenWave();
+      };
     }
 
+    // Teclado en PC: Flechas o A/D, y Espacio para Onda Zen
     window.onkeydown = (e) => {
       const minijuegoView = document.getElementById('view-minijuego');
       if (!minijuegoView || minijuegoView.style.display === 'none') return;
-      if (!flappyState.running) return;
-      if (e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp') {
+      if (!neuroState.running) return;
+
+      if (e.code === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        neuroState.keys.left = true;
+      }
+      if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        neuroState.keys.right = true;
+      }
+      if (e.code === 'Space' || e.key === ' ' || e.code === 'ArrowUp') {
         e.preventDefault();
-        flappyJump();
+        activateZenWave();
+      }
+    };
+
+    window.onkeyup = (e) => {
+      if (e.code === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        neuroState.keys.left = false;
+      }
+      if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        neuroState.keys.right = false;
       }
     };
   }
 
-  function flappyJump() {
-    if (!flappyState.running) return;
-    flappyState.hasStartedFlight = true; // Activa el vuelo al primer toque del jugador
-    const b = flappyState.bird;
-    b.vy = b.jump;
-    playFlapSound();
-
-    // Partículas de aleteo detrás de la mascota
-    for (let i = 0; i < 4; i++) {
-      flappyState.particles.push({
-        x: b.x - 12,
-        y: b.y + 10,
-        vx: -30 - Math.random() * 30,
-        vy: (Math.random() - 0.5) * 40,
-        color: 'rgba(255, 255, 255, 0.7)',
-        size: 3 + Math.random() * 3,
-        life: 0.3
-      });
+  function activateZenWave() {
+    if (!neuroState.running) return;
+    if (neuroState.zenCooldown > 0) {
+      showFloatingText(neuroState.pet.x, canvasHeight() - 75, 'Recargando...', '#A0AEC0', 12);
+      return;
     }
+
+    neuroState.zenCooldown = 180; // ~3 segundos de cooldown
+    playZenSound();
+
+    // Pulso expansivo
+    neuroState.zenWaves.push({
+      x: neuroState.pet.x,
+      y: canvasHeight() - 40,
+      radius: 20,
+      maxRadius: 220,
+      alpha: 1
+    });
+
+    // Pequeño salto feliz de la mascota
+    neuroState.pet.hopOffset = 18;
+    spawnParticles(neuroState.pet.x, canvasHeight() - 40, '#48BB78', 12, 1.2);
+    showFloatingText(neuroState.pet.x, canvasHeight() - 80, '¡Onda Zen Activada! (-Estrés)', '#48BB78', 15);
+  }
+
+  function canvasHeight() {
+    const c = document.getElementById('flappy-pet-canvas');
+    return c ? c.height : 450;
   }
 
   function startFlappyGame() {
+    getAudioContext();
     const canvas = document.getElementById('flappy-pet-canvas');
     if (!canvas) return;
 
-    const wrapper = canvas.parentElement;
-    if (wrapper) {
-      canvas.width = wrapper.clientWidth || 360;
-      canvas.height = wrapper.clientHeight || 450;
-    }
-
-    flappyState.running = true;
-    flappyState.hasStartedFlight = false; // ¡Mascota levitando pacíficamente hasta el primer toque!
-    flappyState.score = 0;
-    flappyState.cookiesCollected = 0;
-    flappyState.bird.y = canvas.height * 0.42;
-    flappyState.bird.vy = 0;
-    flappyState.bird.rotation = 0;
-    flappyState.pipes = [];
-    flappyState.particles = [];
-    flappyState.floatingTexts = [];
-    flappyState.spawnTimer = 0;
+    initFlappyGame();
 
     document.getElementById('game-start-overlay')?.classList.add('hidden');
     document.getElementById('game-over-overlay')?.classList.add('hidden');
 
-    updateFlappyHUD();
+    neuroState.running = true;
+    neuroState.score = 0;
+    neuroState.cookiesCollected = 0;
+    neuroState.lives = 3;
+    neuroState.combo = 0;
+    neuroState.flowMode = false;
+    neuroState.flowTimer = 0;
+    neuroState.zenCooldown = 0;
+    neuroState.zenWaves = [];
+    neuroState.items = [];
+    neuroState.particles = [];
+    neuroState.floatingTexts = [];
+    neuroState.spawnTimer = 0;
+    neuroState.pet.x = canvas.width / 2;
+    neuroState.pet.targetX = canvas.width / 2;
+    neuroState.pet.hopOffset = 0;
 
-    cancelAnimationFrame(flappyAnimId);
+    updateNeuroHUD();
+
+    cancelAnimationFrame(neuroAnimId);
     let lastTime = performance.now();
 
-    function flappyLoop(now) {
-      const dt = Math.min(0.04, (now - lastTime) / 1000);
+    function neuroLoop(now) {
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
 
-      if (flappyState.running) {
-        try {
-          updateFlappyPhysics(dt, canvas);
-          renderFlappyScene(canvas);
-        } catch (err) {
-          console.error('Flappy error:', err);
-        }
-        flappyAnimId = requestAnimationFrame(flappyLoop);
+      if (neuroState.running) {
+        updateNeuroGame(dt, canvas);
+        drawNeuroGame(canvas);
+        neuroAnimId = requestAnimationFrame(neuroLoop);
       }
     }
 
-    flappyAnimId = requestAnimationFrame(flappyLoop);
+    neuroAnimId = requestAnimationFrame(neuroLoop);
   }
 
-  function updateFlappyPhysics(dt, canvas) {
-    const b = flappyState.bird;
+  function updateNeuroGame(dt, canvas) {
+    const p = neuroState.pet;
 
-    // Nubes de fondo deslizándose suavemente
-    flappyState.bgClouds.forEach(c => {
-      c.x -= 15 * dt * c.s;
-      if (c.x < -60) c.x = canvas.width + 50;
-    });
-
-    // MODO LEVITACIÓN PRE-VUELO: Si el jugador no ha tocado la pantalla, la mascota flota en el centro
-    if (!flappyState.hasStartedFlight) {
-      b.y = canvas.height * 0.42 + Math.sin(Date.now() * 0.005) * 6;
-      b.vy = 0;
-      b.rotation = Math.sin(Date.now() * 0.004) * 0.05;
-      return;
+    // 1. Movimiento por teclado si se presionan teclas
+    if (neuroState.keys.left) {
+      p.targetX = Math.max(30, p.targetX - 320 * dt);
+    }
+    if (neuroState.keys.right) {
+      p.targetX = Math.min(canvas.width - 30, p.targetX + 320 * dt);
     }
 
-    // Física de caída y gravedad
-    b.vy += b.gravity;
-    b.y += b.vy;
-    b.rotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, b.vy * 0.08));
-
-    // Colisión con suelo o techo
-    if (b.y + b.radius >= canvas.height - 18) {
-      b.y = canvas.height - 18 - b.radius;
-      endFlappyGame();
-      return;
-    }
-    if (b.y - b.radius <= 0) {
-      b.y = b.radius;
-      b.vy = 0;
+    // Suavizado cinético hacia targetX
+    const dx = p.targetX - p.x;
+    p.vx = dx * 10;
+    p.x += p.vx * dt;
+    if (Math.abs(dx) > 2) {
+      p.facing = dx > 0 ? 1 : -1;
+      p.hopTimer += dt * 14;
+      p.hopOffset = Math.abs(Math.sin(p.hopTimer)) * 6;
+    } else {
+      p.hopOffset = Math.max(0, p.hopOffset - dt * 20);
     }
 
-    // Spawn de columnas de libros (obstáculos) solo tras haber iniciado el vuelo
-    flappyState.spawnTimer += dt;
-    const spawnRate = Math.max(1.6, 2.4 - Math.min(0.6, flappyState.score * 0.03));
-
-    if (flappyState.spawnTimer >= spawnRate) {
-      flappyState.spawnTimer = 0;
-      spawnFlappyPillars(canvas);
+    // 2. Cooldown de la Onda Zen
+    if (neuroState.zenCooldown > 0) {
+      neuroState.zenCooldown -= dt * 60;
     }
 
-    // Velocidad de avance de las columnas
-    const speed = 120 + Math.min(70, flappyState.score * 3.5);
+    // 3. Estado de Flow Cognitivo
+    if (neuroState.flowMode) {
+      neuroState.flowTimer -= dt;
+      if (neuroState.flowTimer <= 0) {
+        neuroState.flowMode = false;
+        showFloatingText(p.x, canvas.height - 70, 'Fin del Flow', '#A0AEC0', 13);
+      }
+    }
 
-    // Mover y verificar columnas
-    for (let i = flappyState.pipes.length - 1; i >= 0; i--) {
-      const p = flappyState.pipes[i];
-      p.x -= speed * dt;
+    // 4. Ondas Zen activas (purifican Cortisol)
+    for (let i = neuroState.zenWaves.length - 1; i >= 0; i--) {
+      const wave = neuroState.zenWaves[i];
+      wave.radius += 260 * dt;
+      wave.alpha = Math.max(0, 1 - wave.radius / wave.maxRadius);
 
-      // Colisión con la columna superior o inferior (hitbox perdonador para evitar roces injustos)
-      const hitRadius = 13;
-      if (b.x + hitRadius > p.x && b.x - hitRadius < p.x + p.width) {
-        if (b.y - hitRadius < p.topHeight || b.y + hitRadius > p.bottomY) {
-          endFlappyGame();
-          return;
+      // Colisión de onda zen con cortisol
+      neuroState.items.forEach(item => {
+        if (item.type === 'cortisol' && !item.dissolved) {
+          const dist = Math.hypot(item.x - wave.x, item.y - wave.y);
+          if (dist <= wave.radius) {
+            item.dissolved = true;
+            spawnParticles(item.x, item.y, '#48BB78', 8);
+            showFloatingText(item.x, item.y, '¡Estrés Disuelto! +5', '#48BB78', 13);
+            neuroState.score += 5;
+            updateNeuroHUD();
+          }
         }
-      }
+      });
 
-      // Recolectar bocadito flotante entre las columnas
-      if (p.hasCookie && !p.cookieCollected) {
-        const distCookie = Math.hypot(b.x - (p.x + p.width / 2), b.y - p.cookieY);
-        if (distCookie < b.radius + 16) {
-          p.cookieCollected = true;
-          flappyState.cookiesCollected += 1;
-          playPointSound();
-          spawnParticles(b.x, b.y, '#48BB78', 12);
-          showFloatingText(b.x, b.y - 15, '+1 🍪', '#48BB78', 18);
-          updateFlappyHUD();
-        }
-      }
-
-      // Superar la columna con éxito
-      if (p.x + p.width < b.x && !p.passed) {
-        p.passed = true;
-        flappyState.score += 1;
-        playPointSound();
-        spawnParticles(p.x + p.width, canvas.height / 2, '#ECC94B', 8);
-        updateFlappyHUD();
-      }
-
-      // Eliminar columnas fuera de pantalla
-      if (p.x + p.width < -20) {
-        flappyState.pipes.splice(i, 1);
+      if (wave.radius >= wave.maxRadius || wave.alpha <= 0) {
+        neuroState.zenWaves.splice(i, 1);
       }
     }
 
-    // Actualizar partículas
-    for (let i = flappyState.particles.length - 1; i >= 0; i--) {
-      const pt = flappyState.particles[i];
-      pt.x += pt.vx * dt;
-      pt.y += pt.vy * dt;
+    // 5. Generación de estímulos psicológicos
+    neuroState.spawnTimer += dt;
+    const spawnInterval = Math.max(0.65, 1.25 - Math.min(0.55, neuroState.score * 0.003));
+    if (neuroState.spawnTimer >= spawnInterval) {
+      neuroState.spawnTimer = 0;
+      spawnNeuroItem(canvas);
+    }
+
+    // 6. Caída y captura de estímulos
+    const petHitBox = {
+      x: p.x - 24,
+      y: canvas.height - 62,
+      w: 48,
+      h: 50
+    };
+
+    const speedBase = 110 + Math.min(100, neuroState.score * 1.5);
+
+    for (let i = neuroState.items.length - 1; i >= 0; i--) {
+      const it = neuroState.items[i];
+      it.y += (speedBase * it.speedMult) * dt;
+      it.rotation += (it.rotSpeed || 0) * dt;
+
+      // Colisión con la mascota
+      const collided = (
+        it.x >= petHitBox.x &&
+        it.x <= petHitBox.x + petHitBox.w &&
+        it.y >= petHitBox.y &&
+        it.y <= petHitBox.y + petHitBox.h
+      );
+
+      if (collided && !it.dissolved) {
+        handleItemCatch(it, p.x, petHitBox.y);
+        neuroState.items.splice(i, 1);
+        continue;
+      }
+
+      // Caída al fondo
+      if (it.y > canvas.height - 20) {
+        if (it.type !== 'cortisol' && !it.dissolved) {
+          // Perder combo si se deja caer un estímulo positivo
+          neuroState.combo = 0;
+        }
+        neuroState.items.splice(i, 1);
+      }
+    }
+
+    // 7. Actualización de partículas y textos
+    for (let i = neuroState.particles.length - 1; i >= 0; i--) {
+      const pt = neuroState.particles[i];
+      pt.x += pt.vx;
+      pt.y += pt.vy;
       pt.life -= dt;
-      if (pt.life <= 0) flappyState.particles.splice(i, 1);
+      if (pt.life <= 0) neuroState.particles.splice(i, 1);
     }
 
-    // Actualizar textos flotantes
-    for (let i = flappyState.floatingTexts.length - 1; i >= 0; i--) {
-      const ft = flappyState.floatingTexts[i];
-      ft.y -= 35 * dt;
-      ft.alpha -= dt * 1.2;
-      if (ft.alpha <= 0) flappyState.floatingTexts.splice(i, 1);
+    for (let i = neuroState.floatingTexts.length - 1; i >= 0; i--) {
+      const ft = neuroState.floatingTexts[i];
+      ft.y += ft.vy;
+      ft.alpha -= dt * 0.85;
+      if (ft.alpha <= 0) neuroState.floatingTexts.splice(i, 1);
     }
-  }
 
-  function spawnFlappyPillars(canvas) {
-    const gap = Math.max(105, 128 - Math.min(20, flappyState.score * 0.8));
-    const minTop = 45;
-    const maxTop = canvas.height - gap - 65;
-    const topHeight = minTop + Math.random() * (maxTop - minTop);
-    const bottomY = topHeight + gap;
-    const width = 54;
-
-    const hasCookie = Math.random() < 0.45; // 45% de columnas tienen un bocadito flotante
-    const cookieY = topHeight + gap / 2;
-
-    flappyState.pipes.push({
-      x: canvas.width + 10,
-      width,
-      topHeight,
-      bottomY,
-      passed: false,
-      hasCookie,
-      cookieCollected: false,
-      cookieY
+    // 8. Nodos sinápticos en el fondo
+    neuroState.neuralNodes.forEach(node => {
+      node.x += node.vx;
+      node.y += node.vy;
+      if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+      if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
     });
   }
 
-  function updateFlappyHUD() {
-    const scoreEl = document.getElementById('game-score-display');
-    const cookiesEl = document.getElementById('flappy-cookies-display');
+  function spawnNeuroItem(canvas) {
+    const r = Math.random();
+    let type = 'dopamine';
+    let label = 'Dopamina';
+    let color = '#ED8936';
+    let speedMult = 1.0;
+    let radius = 13;
 
-    if (scoreEl) scoreEl.innerText = flappyState.score;
-    if (cookiesEl) cookiesEl.innerText = `🍪 ${flappyState.cookiesCollected}`;
+    if (r < 0.40) {
+      type = 'dopamine';
+      label = 'Dopamina';
+      color = '#ECC94B';
+      speedMult = 1.0;
+    } else if (r < 0.65) {
+      type = 'serotonin';
+      label = 'Serotonina';
+      color = '#4299E1';
+      speedMult = 1.05;
+    } else if (r < 0.82) {
+      type = 'book';
+      const books = ['DSM-5', 'Piaget', 'Freud', 'Vygotsky', 'APA 7ma'];
+      label = books[Math.floor(Math.random() * books.length)];
+      color = '#8B7CE6';
+      speedMult = 0.95;
+      radius = 16;
+    } else {
+      type = 'cortisol';
+      label = 'Cortisol';
+      color = '#E53E3E';
+      speedMult = 1.15;
+      radius = 14;
+    }
+
+    neuroState.items.push({
+      x: 35 + Math.random() * (canvas.width - 70),
+      y: -20,
+      type,
+      label,
+      color,
+      radius,
+      speedMult,
+      rotation: 0,
+      rotSpeed: (Math.random() - 0.5) * 2,
+      pulse: 0,
+      dissolved: false
+    });
   }
 
-  function renderFlappyScene(canvas) {
+  function handleItemCatch(item, petX, petY) {
+    const mult = neuroState.flowMode ? 2 : 1;
+
+    if (item.type === 'dopamine') {
+      playDopamineSound();
+      const pts = 10 * mult;
+      neuroState.score += pts;
+      neuroState.combo += 1;
+      spawnParticles(item.x, petY, '#ECC94B', 10);
+      showFloatingText(item.x, petY - 15, `+${pts} Dopamina`, '#ECC94B', 14);
+      checkFlowActivation();
+    } else if (item.type === 'serotonin') {
+      playSerotoninSound();
+      const pts = 15 * mult;
+      neuroState.score += pts;
+      neuroState.cookiesCollected += 1;
+      neuroState.combo += 1;
+      spawnParticles(item.x, petY, '#4299E1', 12);
+      showFloatingText(item.x, petY - 15, `+${pts} Serotonina (+1 Galleta)`, '#4299E1', 14);
+      checkFlowActivation();
+    } else if (item.type === 'book') {
+      playBookSound();
+      const pts = 25 * mult;
+      neuroState.score += pts;
+      neuroState.combo += 1;
+      spawnParticles(item.x, petY, '#8B7CE6', 14);
+      showFloatingText(item.x, petY - 15, `+${pts} ${item.label}`, '#8B7CE6', 15);
+      checkFlowActivation();
+    } else if (item.type === 'cortisol') {
+      playStressHitSound();
+      neuroState.lives -= 1;
+      neuroState.combo = 0;
+      neuroState.flowMode = false;
+      spawnParticles(item.x, petY, '#E53E3E', 15, 1.3);
+      showFloatingText(item.x, petY - 15, '¡Cortisol! -1 Atención', '#E53E3E', 15);
+
+      if (neuroState.lives <= 0) {
+        endFlappyGame();
+      }
+    }
+
+    updateNeuroHUD();
+  }
+
+  function checkFlowActivation() {
+    if (neuroState.combo >= 4 && !neuroState.flowMode) {
+      neuroState.flowMode = true;
+      neuroState.flowTimer = 7.0; // 7 segundos de Estado de Flow
+      playZenSound();
+      showFloatingText(neuroState.pet.x, canvasHeight() - 95, '¡ESTADO DE FLOW! (Puntos x2)', '#ECC94B', 17);
+      spawnParticles(neuroState.pet.x, canvasHeight() - 50, '#ECC94B', 20, 1.5);
+    }
+  }
+
+  function updateNeuroHUD() {
+    const scoreEl = document.getElementById('game-score-display');
+    const cookiesEl = document.getElementById('flappy-cookies-num');
+    const livesEl = document.getElementById('game-lives-display');
+
+    if (scoreEl) scoreEl.innerText = neuroState.score;
+    if (cookiesEl) cookiesEl.innerText = neuroState.cookiesCollected;
+    if (livesEl) {
+      const dots = '● '.repeat(Math.max(0, neuroState.lives)).trim();
+      livesEl.innerText = `${neuroState.lives}/3 ${dots}`;
+      livesEl.style.color = neuroState.lives === 1 ? '#E53E3E' : (neuroState.lives === 2 ? '#DD6B20' : '#38A169');
+    }
+  }
+
+  function drawNeuroGame(canvas) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 1. Cielo Pastel
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    skyGrad.addColorStop(0, '#EBF4FF');
-    skyGrad.addColorStop(1, '#F7FAFC');
-    ctx.fillStyle = skyGrad;
+    // 1. Fondo dinámico de red neuronal cognitiva
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    bgGrad.addColorStop(0, '#1A202C');
+    bgGrad.addColorStop(0.7, '#2D3748');
+    bgGrad.addColorStop(1, '#171923');
+    ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. Nubes flotantes de fondo
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    flappyState.bgClouds.forEach(c => {
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, 25 * c.s, 0, Math.PI * 2);
-      ctx.arc(c.x + 20 * c.s, c.y - 10 * c.s, 30 * c.s, 0, Math.PI * 2);
-      ctx.arc(c.x + 45 * c.s, c.y, 22 * c.s, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // 3. Columnas de Libros y Pilares Académicos (Obstáculos)
-    flappyState.pipes.forEach((p, idx) => {
-      const isAlt = idx % 2 === 0;
-      const pipeColor = isAlt ? '#8B7CE6' : '#54B4D3';
-      const capColor = isAlt ? '#7665DE' : '#3E9FB8';
-
-      // Columna superior (Libros cayendo)
-      ctx.fillStyle = pipeColor;
-      ctx.beginPath();
-      safeRoundRect(ctx, p.x, 0, p.width, p.topHeight, [0, 0, 6, 6]);
-      ctx.fill();
-      // Borde de libro
-      ctx.fillStyle = capColor;
-      ctx.fillRect(p.x - 3, Math.max(0, p.topHeight - 16), p.width + 6, 16);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(p.x + 8, Math.max(0, p.topHeight - 12), p.width - 16, 2);
-
-      // Columna inferior (Pila de libros)
-      const bHeight = Math.max(0, canvas.height - p.bottomY);
-      ctx.fillStyle = pipeColor;
-      ctx.beginPath();
-      safeRoundRect(ctx, p.x, p.bottomY, p.width, bHeight, [6, 6, 0, 0]);
-      ctx.fill();
-      // Borde de libro inferior
-      ctx.fillStyle = capColor;
-      ctx.fillRect(p.x - 3, p.bottomY, p.width + 6, 16);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(p.x + 8, p.bottomY + 10, p.width - 16, 2);
-
-      // Bocadito flotante 🍪
-      if (p.hasCookie && !p.cookieCollected) {
-        ctx.font = '22px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🍪', p.x + p.width / 2, p.cookieY);
+    // Conexiones sinápticas sutiles
+    ctx.lineWidth = 1;
+    for (let i = 0; i < neuroState.neuralNodes.length; i++) {
+      for (let j = i + 1; j < neuroState.neuralNodes.length; j++) {
+        const n1 = neuroState.neuralNodes[i];
+        const n2 = neuroState.neuralNodes[j];
+        const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+        if (dist < 90) {
+          const alpha = (1 - dist / 90) * 0.18;
+          ctx.strokeStyle = `rgba(139, 124, 230, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(n1.x, n1.y);
+          ctx.lineTo(n2.x, n2.y);
+          ctx.stroke();
+        }
       }
+    }
+
+    // Puntos de neuronas
+    neuroState.neuralNodes.forEach(n => {
+      ctx.fillStyle = 'rgba(237, 242, 247, 0.25)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+      ctx.fill();
     });
 
-    // 4. Suelo de césped suave
-    ctx.fillStyle = '#48BB78';
-    ctx.fillRect(0, canvas.height - 16, canvas.width, 16);
-    ctx.fillStyle = '#38A169';
-    ctx.fillRect(0, canvas.height - 16, canvas.width, 3);
+    // 2. Ondas Zen expansivas (Mindfulness)
+    neuroState.zenWaves.forEach(w => {
+      ctx.save();
+      ctx.strokeStyle = `rgba(72, 187, 120, ${w.alpha})`;
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // 3. Estímulos cayendo
+    neuroState.items.forEach(it => {
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.rotation);
+
+      if (it.type === 'book') {
+        // Cuaderno / Libro académico
+        ctx.fillStyle = it.color;
+        ctx.fillRect(-15, -12, 30, 24);
+        // Lomo y borde de páginas
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(-13, -10, 26, 4);
+        ctx.fillStyle = '#4A5568';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(it.label, 0, 7);
+      } else if (it.type === 'cortisol') {
+        // Nube de estrés espinosa
+        ctx.fillStyle = '#E53E3E';
+        ctx.beginPath();
+        for (let a = 0; a < 8; a++) {
+          const ang = (Math.PI / 4) * a;
+          const rad = a % 2 === 0 ? it.radius : it.radius * 0.65;
+          const px = Math.cos(ang) * rad;
+          const py = Math.sin(ang) * rad;
+          if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#9B2C2C';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      } else {
+        // Dopamina o Serotonina (Esfera brillante)
+        const radGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, it.radius);
+        radGrad.addColorStop(0, '#FFFFFF');
+        radGrad.addColorStop(0.4, it.color);
+        radGrad.addColorStop(1, 'rgba(0,0,0,0.15)');
+        ctx.fillStyle = radGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, it.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = it.color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(it.type === 'dopamine' ? 'DA' : '5-HT', 0, 3);
+      }
+
+      ctx.restore();
+    });
+
+    // 4. Suelo de concentración
+    const floorY = canvas.height - 24;
+    ctx.fillStyle = '#2D3748';
+    ctx.fillRect(0, floorY, canvas.width, 24);
+    ctx.fillStyle = neuroState.flowMode ? '#ECC94B' : '#8B7CE6';
+    ctx.fillRect(0, floorY, canvas.width, 2.5);
 
     // 5. Partículas
-    flappyState.particles.forEach(pt => {
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+    neuroState.particles.forEach(pt => {
+      ctx.save();
       ctx.fillStyle = pt.color;
       ctx.globalAlpha = Math.max(0, pt.life);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
       ctx.fill();
-      ctx.globalAlpha = 1;
+      ctx.restore();
     });
 
-    // 6. Mascota Voladora (Personaje con inclinación y alas)
-    const b = flappyState.bird;
+    // 6. Mascota del Usuario en Acción
+    const p = neuroState.pet;
+    const petDrawY = floorY - 26 - p.hopOffset;
+
     ctx.save();
-    ctx.translate(b.x, b.y);
-    ctx.rotate(b.rotation);
+    ctx.translate(p.x, petDrawY);
+    ctx.scale(p.facing, 1);
 
-    // Sombra suave
+    // Aura dorada si está en Estado de Flow
+    if (neuroState.flowMode) {
+      ctx.save();
+      ctx.shadowBlur = 18;
+      ctx.shadowColor = '#ECC94B';
+      ctx.strokeStyle = '#ECC94B';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, 24, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Cuerpo base
+    const fur = appState.pet?.furColor || '#ECC94B';
+    ctx.fillStyle = fur;
     ctx.beginPath();
-    ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
-    ctx.fillStyle = appState.pet?.furColor || '#ECC94B';
+    ctx.arc(0, 0, 19, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = '#2D3748';
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Alita aleteando
-    const wingY = Math.sin(Date.now() * 0.02) * 5;
-    ctx.beginPath();
-    ctx.ellipse(-8, wingY, 9, 6, -0.2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    ctx.fill();
-    ctx.strokeStyle = '#2D3748';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    // Orejitas según especie
+    const sp = appState.pet?.species || 'bear';
+    if (sp === 'cat') {
+      ctx.fillStyle = fur;
+      ctx.beginPath(); ctx.moveTo(-14, -14); ctx.lineTo(-7, -24); ctx.lineTo(-2, -15); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(14, -14); ctx.lineTo(7, -24); ctx.lineTo(2, -15); ctx.fill(); ctx.stroke();
+    } else if (sp === 'bunny') {
+      ctx.fillStyle = fur;
+      ctx.beginPath(); ctx.ellipse(-6, -26, 4, 12, -0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(6, -26, 4, 12, 0.1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    } else if (sp === 'owl') {
+      ctx.fillStyle = '#ED8936';
+      ctx.beginPath(); ctx.moveTo(-10, -16); ctx.lineTo(-6, -23); ctx.lineTo(-2, -16); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(10, -16); ctx.lineTo(6, -23); ctx.lineTo(2, -16); ctx.fill();
+    } else {
+      // Oso / Perro
+      ctx.fillStyle = fur;
+      ctx.beginPath(); ctx.arc(-13, -15, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(13, -15, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
 
-    // Emoji de la especie
-    const petEmoji = appState.pet?.species === 'cat' ? '🐱' :
-                     appState.pet?.species === 'dog' ? '🐶' :
-                     appState.pet?.species === 'owl' ? '🦉' :
-                     appState.pet?.species === 'bunny' ? '🐰' : '🐻';
+    // Ojos curiosos
+    ctx.fillStyle = '#2D3748';
+    ctx.beginPath(); ctx.arc(-5, -2, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -2, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath(); ctx.arc(-6, -3, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(4, -3, 1, 0, Math.PI * 2); ctx.fill();
 
-    ctx.font = '28px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(petEmoji, 2, -2);
+    // Hocico o pico
+    if (sp === 'owl') {
+      ctx.fillStyle = '#ED8936';
+      ctx.beginPath(); ctx.moveTo(-3, 2); ctx.lineTo(3, 2); ctx.lineTo(0, 6); ctx.closePath(); ctx.fill();
+    } else {
+      ctx.fillStyle = '#2D3748';
+      ctx.beginPath(); ctx.ellipse(0, 2, 2.5, 2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#2D3748'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(0, 3, 3, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    }
+
+    // Patitas corriendo
+    ctx.fillStyle = '#2D3748';
+    ctx.beginPath(); ctx.arc(-8, 18, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(8, 18, 3, 0, Math.PI * 2); ctx.fill();
+
     ctx.restore();
 
-    // 7. Textos flotantes
-    flappyState.floatingTexts.forEach(ft => {
+    // 7. Textos flotantes psicológicos
+    neuroState.floatingTexts.forEach(ft => {
       ctx.save();
       ctx.font = `bold ${ft.size}px Nunito, sans-serif`;
       ctx.fillStyle = ft.color;
@@ -1500,123 +1773,65 @@
       ctx.restore();
     });
 
-    // 8. Aviso flotante de inicio esperando el primer toque
-    if (!flappyState.hasStartedFlight) {
-      ctx.save();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.beginPath();
-      safeRoundRect(ctx, canvas.width / 2 - 135, canvas.height * 0.42 + 45, 270, 36, [18, 18, 18, 18]);
-      ctx.fill();
-      ctx.strokeStyle = '#8B7CE6';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      ctx.fillStyle = '#2D3748';
-      ctx.font = 'bold 13px Nunito, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('👆 ¡Toca la pantalla o Espacio para volar!', canvas.width / 2, canvas.height * 0.42 + 63);
-      ctx.restore();
+    // 8. Barra de Cooldown de la Onda Zen
+    if (neuroState.zenCooldown > 0) {
+      const barW = 80;
+      const pct = Math.max(0, 1 - neuroState.zenCooldown / 180);
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(p.x - barW / 2, petDrawY - 32, barW, 4);
+      ctx.fillStyle = '#48BB78';
+      ctx.fillRect(p.x - barW / 2, petDrawY - 32, barW * pct, 4);
     }
   }
 
   function endFlappyGame() {
-    flappyState.running = false;
-    cancelAnimationFrame(flappyAnimId);
-    playCrashSound();
+    neuroState.running = false;
+    cancelAnimationFrame(neuroAnimId);
 
-    // Recompensa real: 1 bocadito cada 4 obstáculos + los bocaditos atrapados en el vuelo
-    const snacksEarned = Math.floor(flappyState.score / 4) + flappyState.cookiesCollected;
-    if (snacksEarned > 0 && appState.pet) {
+    // Recompensas reales directas a la mascota
+    const snacksEarned = neuroState.cookiesCollected;
+    const pointsEarned = Math.round(neuroState.score * 0.5);
+
+    if (snacksEarned > 0) {
       appState.pet.foodStock = (appState.pet.foodStock || 0) + snacksEarned;
-      saveState();
-      renderPetDisplay();
     }
+    if (pointsEarned > 0) {
+      appState.user.points = (appState.user.points || 0) + pointsEarned;
+    }
+    saveAppState(true);
 
-    // Guardar récord si superó el anterior
-    if (flappyState.score > flappyState.highScore) {
-      flappyState.highScore = flappyState.score;
-      localStorage.setItem('psicoplan_flappy_high', flappyState.score.toString());
-      launchConfetti(true);
-      showToast('🏆 ¡NUEVO RÉCORD DE VUELO ACADÉMICO!');
+    if (neuroState.score > neuroState.highScore) {
+      neuroState.highScore = neuroState.score;
+      localStorage.setItem('psicoplan_neuro_high', neuroState.score.toString());
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+      }
+      showToast('¡NUEVO RÉCORD DE ENFOQUE NEUROCOGNITIVO!');
     }
 
     const finalScoreEl = document.getElementById('game-final-score');
-    const finalSnacksEl = document.getElementById('game-final-snacks');
+    const finalSnacksEl = document.getElementById('game-final-snacks-num');
     const feedbackEl = document.getElementById('game-over-feedback');
 
-    if (finalScoreEl) finalScoreEl.innerText = flappyState.score;
-    if (finalSnacksEl) finalSnacksEl.innerText = `🍪 +${snacksEarned}`;
+    if (finalScoreEl) finalScoreEl.innerText = neuroState.score;
+    if (finalSnacksEl) finalSnacksEl.innerText = `+${snacksEarned}`;
 
     if (feedbackEl) {
-      if (flappyState.score >= 15) {
-        feedbackEl.innerText = `¡Maestría en concentración! Tu mascota ${appState.pet?.name || ''} voló como profesional.`;
-      } else if (flappyState.score >= 6) {
-        feedbackEl.innerText = `¡Gran ritmo y control de reflejos! Esquivaste los distractores con soltura.`;
+      if (neuroState.score >= 120) {
+        feedbackEl.innerText = '¡Fascinante! Tu circuito dopaminérgico y atención ejecutiva están en su punto óptimo para estudiar.';
+      } else if (neuroState.score >= 60) {
+        feedbackEl.innerText = '¡Gran sesión de enfoque! Lograste una regulación efectiva del cortisol con tu mascota.';
       } else {
-        feedbackEl.innerText = `¡Buen vuelo! Con cada intento mejorarás tu ritmo y coordinación.`;
+        feedbackEl.innerText = '¡Buen intento! Cada ronda entrena tu inhibición de distractores y tiempo de reacción.';
       }
     }
 
     const highDisplay = document.getElementById('game-high-score-display');
-    if (highDisplay) highDisplay.innerText = `${flappyState.highScore}`;
+    if (highDisplay) highDisplay.innerText = `${neuroState.highScore}`;
 
     document.getElementById('game-over-overlay')?.classList.remove('hidden');
+    renderUI();
   }
-
-  function startBreathingSession() {
-    const actionText = document.getElementById('breath-action-text');
-    const timerText = document.getElementById('breath-timer-text');
-    const circle = document.getElementById('breath-circle-anim');
-    const btn = document.getElementById('btn-start-breathing');
-
-    if (breathingInterval) {
-      clearInterval(breathingInterval);
-      breathingInterval = null;
-      btn.innerText = 'Iniciar Sesión';
-      actionText.innerText = 'Listo';
-      timerText.innerText = '';
-      circle.className = 'breathing-circle-outer';
-      return;
-    }
-
-    btn.innerText = 'Detener Pausa';
-    let phase = 'inhale'; // inhale (4s), hold (7s), exhale (8s)
-    let count = 4;
-
-    actionText.innerText = 'Inhala';
-    timerText.innerText = count;
-    circle.classList.add('breathing-expand');
-
-    breathingInterval = setInterval(() => {
-      count--;
-      timerText.innerText = count;
-
-      if (count <= 0) {
-        if (phase === 'inhale') {
-          phase = 'hold';
-          count = 7;
-          actionText.innerText = 'Mantén';
-          circle.classList.remove('breathing-expand');
-        } else if (phase === 'hold') {
-          phase = 'exhale';
-          count = 8;
-          actionText.innerText = 'Exhala';
-          circle.classList.add('breathing-contract');
-        } else {
-          phase = 'inhale';
-          count = 4;
-          actionText.innerText = 'Inhala';
-          circle.classList.remove('breathing-contract');
-          circle.classList.add('breathing-expand');
-        }
-      }
-    }, 1000);
-  }
-
-  // =========================================================================
-  // 8. GESTIÓN DE TEMAS
-  // =========================================================================
   function applyTheme(themeName) {
     document.documentElement.setAttribute('data-theme', themeName);
     appState.settings.theme = themeName;
@@ -1654,8 +1869,8 @@
     if (viewName === 'minijuego') {
       setTimeout(initFlappyGame, 100);
     } else {
-      flappyState.running = false;
-      cancelAnimationFrame(flappyAnimId);
+      neuroState.running = false;
+      cancelAnimationFrame(neuroAnimId);
     }
 
     if (viewName === 'desempeno') {
@@ -1750,11 +1965,11 @@
 
     files.forEach(file => {
       if (file.size > MAX_SIZE) {
-        showToast(`⚠️ "${file.name}" supera el límite de 5MB`);
+        showToast(`"${file.name}" supera el límite de 5MB`);
         return;
       }
       if (!ALLOWED_EXT.test(file.name)) {
-        showToast(`⚠️ "${file.name}" formato no permitido. Usa PDF, Word o fotos.`);
+        showToast(`"${file.name}" formato no permitido. Usa PDF, Word o fotos.`);
         return;
       }
 
@@ -1782,7 +1997,9 @@
       const chip = document.createElement('div');
       chip.className = 'attachment-chip';
       const isImg = att.type?.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(att.name);
-      const icon = isImg ? '🖼️' : '📄';
+      const icon = isImg ?
+        '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>' :
+        '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>';
       const sizeStr = att.size ? (att.size > 1048576 ? (att.size / 1048576).toFixed(1) + ' MB' : Math.round(att.size / 1024) + ' KB') : '';
 
       chip.innerHTML = `
@@ -1792,8 +2009,8 @@
           <span class="attachment-size">${sizeStr}</span>
         </div>
         <div class="attachment-actions">
-          <a class="attachment-btn" href="${att.dataUrl}" download="${att.name}" title="Descargar archivo" target="_blank">⬇️</a>
-          ${!isReadOnly ? `<button type="button" class="attachment-btn btn-del" data-idx="${idx}" title="Eliminar adjunto">✕</button>` : ''}
+          <a class="attachment-btn" href="${att.dataUrl}" download="${att.name}" title="Descargar archivo" target="_blank"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+          ${!isReadOnly ? `<button type="button" class="attachment-btn btn-del" data-idx="${idx}" title="Eliminar adjunto"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
         </div>
       `;
 
@@ -1862,7 +2079,7 @@
       renderStep4Plan(task);
     }
 
-    showToast('✅ Tarea actualizada correctamente');
+    showToast('Tarea actualizada correctamente');
   }
 
   function confirmDeleteTask(taskId) {
@@ -1893,7 +2110,7 @@
       switchView('inicio');
     }
 
-    showToast('🗑️ Tarea eliminada exitosamente');
+    showToast('Tarea eliminada exitosamente');
   }
 
   function setupWizardSteps() {
@@ -2049,7 +2266,7 @@
 
     if (titleEl) titleEl.innerText = task.title;
     if (courseEl) courseEl.innerText = task.course;
-    if (deadlineEl) deadlineEl.innerText = `📅 Entrega: ${task.deadline}`;
+    if (deadlineEl) deadlineEl.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.3rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg> Entrega: ${task.deadline}</span>`;
 
     // Botones de editar y eliminar tarea en el plan
     const btnEdit = document.getElementById('btn-edit-current-task');
@@ -2108,9 +2325,9 @@
             ${subtask.descripcion}
           </p>
           <div style="font-size: 0.75rem; color: var(--text-light); display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <span>📅 Sugerido: ${subtask.fecha_sugerida}</span>
-            <span>⏱️ ~${minutes} min</span>
-            <span style="color: var(--accent-green); font-weight: 700;">+${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''} 🍪</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg> Sugerido: ${subtask.fecha_sugerida}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ~${minutes} min</span>
+            <span style="color: var(--accent-green); font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> +${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''}</span>
           </div>
         </div>
       `;
@@ -2125,9 +2342,9 @@
             subtask.rewardClaimed = true;
             addPoints(xpBonus, snackBonus);
             launchConfetti();
-            showToast(`✨ ¡Paso terminado! +${xpBonus} pts y +${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''} 🍪`);
+            showToast(`¡Paso terminado! +${xpBonus} pts y +${snackBonus} Bocadito${snackBonus > 1 ? 's' : ''}`);
           } else {
-            showToast('✨ Paso completado');
+            showToast('Paso completado');
           }
         }
 
@@ -2139,7 +2356,7 @@
             const taskBonusCookies = totalMins >= 120 ? 3 : 2;
             addPoints(50, taskBonusCookies);
             launchConfetti(true);
-            showToast(`🏆 ¡Completaste toda la tarea! +50 pts y +${taskBonusCookies} Bocaditos 🍪.`);
+            showToast(`¡Completaste toda la tarea! +50 pts y +${taskBonusCookies} Bocaditos.`);
           }
         }
 
@@ -2158,7 +2375,7 @@
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         link.className = 'tool-badge-link';
-        link.innerHTML = `<span>🔗</span> <strong>${tool.nombre}:</strong> ${tool.para_que_sirve}`;
+        link.innerHTML = `<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> <strong>${tool.nombre}:</strong> ${tool.para_que_sirve}`;
         toolsContainer.appendChild(link);
       });
     }
@@ -2209,7 +2426,7 @@
     if (streakDays) streakDays.innerText = appState.user.streak;
 
     const ptsBadge = document.getElementById('points-badge-quick');
-    if (ptsBadge) ptsBadge.innerText = `✨ ${appState.user.points} pts`;
+    if (ptsBadge) ptsBadge.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${appState.user.points} pts</span>`;
 
     // Panel Derecho
     const rightLvl = document.getElementById('right-panel-level');
@@ -2259,11 +2476,11 @@
 
     // Nombres y especies
     const speciesLabels = {
-      cat: 'Gatito Zen 🐱',
-      dog: 'Perrito Guía 🐶',
-      owl: 'Búho Sabio 🦉',
-      bunny: 'Conejita Ágil 🐰',
-      bear: 'Osito Calma 🐻'
+      cat: 'Gatito Zen',
+      dog: 'Perrito Guía',
+      owl: 'Búho Sabio',
+      bunny: 'Conejita Ágil',
+      bear: 'Osito Calma'
     };
 
     const petNameEl = document.getElementById('pet-display-name');
@@ -2288,34 +2505,28 @@
     if (rightName) rightName.innerText = pet.name;
 
     const rightSnacks = document.getElementById('right-pet-snacks-count');
-    if (rightSnacks) rightSnacks.innerText = `🍪 ${pet.foodStock} bocadito${pet.foodStock === 1 ? '' : 's'}`;
+    if (rightSnacks) rightSnacks.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> ${pet.foodStock} bocadito${pet.foodStock === 1 ? '' : 's'}</span>`;
 
     const rightHunger = document.getElementById('right-pet-hunger-bar');
     if (rightHunger) rightHunger.style.width = `${pet.hunger}%`;
 
-    // Badge de ánimo
-    const moodEmojis = {
-      starving: '🥺',
-      sad: '😢',
-      sleepy: '😴',
-      happy: '😊',
-      ecstatic: '🥳',
-      zen: '🧘'
-    };
+    // Estado de ánimo
     const moodBadge = document.getElementById('pet-mood-badge-icon');
-    if (moodBadge) moodBadge.innerText = moodEmojis[pet.mood] || '😊';
+    if (moodBadge) {
+      moodBadge.innerHTML = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
+    }
 
     const rightMoodText = document.getElementById('right-pet-mood-text');
     if (rightMoodText) {
       const moodLabels = {
-        starving: 'Hambriento 🥺',
-        sad: 'Triste 😢',
-        sleepy: 'Somnoliento 😴',
-        happy: 'Feliz 😊',
-        ecstatic: '¡Eufórico! 🥳',
-        zen: 'Zen 🧘'
+        starving: 'Hambriento',
+        sad: 'Triste',
+        sleepy: 'Somnoliento',
+        happy: 'Feliz',
+        ecstatic: '¡Eufórico!',
+        zen: 'Zen'
       };
-      rightMoodText.innerText = moodLabels[pet.mood] || 'Feliz 😊';
+      rightMoodText.innerText = moodLabels[pet.mood] || 'Feliz';
     }
 
     // Barra de satisfacción
@@ -2327,7 +2538,7 @@
 
     // Botón de comida y stock
     const stockBadge = document.getElementById('pet-food-stock-badge');
-    if (stockBadge) stockBadge.innerText = `🍪 ${pet.foodStock}`;
+    if (stockBadge) stockBadge.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.2rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> ${pet.foodStock}</span>`;
 
     const feedBtn = document.getElementById('btn-feed-action');
     if (feedBtn) {
@@ -2391,7 +2602,7 @@
     if (tasks.length === 0) {
       container.innerHTML = `
         <div style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-color);">
-          <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">🌱</span>
+          <div style="display: flex; justify-content: center; margin-bottom: 0.5rem; color: var(--primary);"><svg class="ui-icon" style="width: 3rem; height: 3rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10a6 6 0 0 0-6-6H3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6-6h3v2a6 6 0 0 1-6 6h-3"/><line x1="12" y1="10" x2="12" y2="22"/></svg></div>
           <p style="font-weight: 700;">No tienes tareas pendientes todavía</p>
           <p style="font-size: 0.85rem; margin-top: 0.25rem;">Toca en <strong>Agregar tarea +</strong> para que la IA diseñe tu plan.</p>
         </div>
@@ -2412,11 +2623,11 @@
           <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
             <span class="task-tag">${task.course}</span>
             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Entrega: ${task.deadline}</span>
-            ${attachCount > 0 ? `<span style="font-size: 0.75rem; background: var(--bg-subtle); padding: 0.15rem 0.45rem; border-radius: var(--radius-full); color: var(--text-muted);">📎 ${attachCount}</span>` : ''}
+            ${attachCount > 0 ? `<span style="font-size: 0.75rem; background: var(--bg-subtle); padding: 0.15rem 0.45rem; border-radius: var(--radius-full); color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.2rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> ${attachCount}</span>` : ''}
           </div>
           <div class="task-card-menu-btns">
-            <button type="button" class="task-mini-btn" data-edit-task="${task.id}" title="Editar tarea">✏️</button>
-            <button type="button" class="task-mini-btn btn-mini-delete" data-delete-task="${task.id}" title="Eliminar tarea">🗑️</button>
+            <button type="button" class="task-mini-btn" data-edit-task="${task.id}" title="Editar tarea"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button type="button" class="task-mini-btn btn-mini-delete" data-delete-task="${task.id}" title="Eliminar tarea"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
           </div>
         </div>
         <h4 style="font-size: 1.05rem; margin: 0.4rem 0 0.5rem 0;">${task.title}</h4>
@@ -2461,10 +2672,10 @@
     container.innerHTML = '';
 
     const allBadges = [
-      { id: 'primer_paso', icon: '🌱', title: 'Primer Paso', desc: 'Iniciaste tu camino' },
-      { id: 'nivel_aprendiz', icon: '📚', title: 'Aprendiz', desc: 'Alcanzaste 50 pts' },
-      { id: 'racha_3', icon: '🔥', title: 'Racha 3 Días', desc: 'Consistencia activa' },
-      { id: 'pet_friend', icon: '🐾', title: 'Amigo Fiel', desc: 'Alimentaste a tu mascota' }
+      { id: 'primer_paso', icon: '<svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10a6 6 0 0 0-6-6H3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6-6h3v2a6 6 0 0 1-6 6h-3"/><line x1="12" y1="10" x2="12" y2="22"/></svg>', title: 'Primer Paso', desc: 'Iniciaste tu camino' },
+      { id: 'nivel_aprendiz', icon: '<svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>', title: 'Aprendiz', desc: 'Alcanzaste 50 pts' },
+      { id: 'racha_3', icon: '<svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>', title: 'Racha 3 Días', desc: 'Consistencia activa' },
+      { id: 'pet_friend', icon: '<svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="9" r="2"/><path d="M11.5 8a5.5 5.5 0 0 0-5.5 5.5c0 1.5.8 3 2.5 3.5 1.5.5 2 1.5 3 1.5s1.5-1 3-1.5c1.7-.5 2.5-2 2.5-3.5A5.5 5.5 0 0 0 11.5 8z"/></svg>', title: 'Amigo Fiel', desc: 'Alimentaste a tu mascota' }
     ];
 
     allBadges.forEach(b => {
@@ -2545,11 +2756,11 @@
 
     if (notifList) {
       if (urgentTasks.length === 0) {
-        notifList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">No tienes entregas urgentes en las próximas 48 horas. ¡Vas al día! 🌸</p>`;
+        notifList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">No tienes entregas urgentes en las próximas 48 horas. ¡Vas al día!</p>`;
       } else {
         notifList.innerHTML = urgentTasks.map(t => `
           <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 0.65rem;">
-            <strong style="display: block;">⚠️ Entrega próxima: ${t.title}</strong>
+            <strong style="display: block; color: #D97706;">Entrega próxima: ${t.title}</strong>
             <span style="font-size: 0.8rem; color: var(--text-muted);">Fecha límite: ${t.deadline} (${t.course})</span>
           </div>
         `).join('');
@@ -2613,6 +2824,61 @@
   // =========================================================================
   // 12. CONFIGURACIÓN DE EVENTOS
   // =========================================================================
+
+  // =========================================================================
+  // BREATHING SESSION (Técnica 4-7-8)
+  // =========================================================================
+  function startBreathingSession() {
+    clearInterval(breathingInterval);
+
+    const circle = document.getElementById('breath-circle-anim');
+    const actionText = document.getElementById('breath-action-text');
+    const timerText = document.getElementById('breath-timer-text');
+    const startBtn = document.getElementById('btn-start-breathing');
+
+    if (!circle || !actionText || !timerText) return;
+
+    // Phases: [label, duration in seconds, animation class]
+    const phases = [
+      { label: 'Inhala', seconds: 4, cls: 'breath-inhale' },
+      { label: 'Retén',  seconds: 7, cls: 'breath-hold'   },
+      { label: 'Exhala', seconds: 8, cls: 'breath-exhale' }
+    ];
+
+    let phaseIdx = 0;
+    let countdown = phases[0].seconds;
+
+    if (startBtn) startBtn.disabled = true;
+
+    function runPhase() {
+      const phase = phases[phaseIdx];
+      actionText.textContent = phase.label;
+      timerText.textContent = countdown;
+      circle.className = 'breathing-circle-outer ' + phase.cls;
+    }
+
+    runPhase();
+
+    breathingInterval = setInterval(() => {
+      countdown--;
+      if (countdown <= 0) {
+        phaseIdx = (phaseIdx + 1) % phases.length;
+        countdown = phases[phaseIdx].seconds;
+      }
+      runPhase();
+    }, 1000);
+
+    // Auto-stop after 3 full cycles (~57 seconds)
+    setTimeout(() => {
+      clearInterval(breathingInterval);
+      if (actionText) actionText.textContent = 'Listo';
+      if (timerText) timerText.textContent = '';
+      if (circle) circle.className = 'breathing-circle-outer';
+      if (startBtn) startBtn.disabled = false;
+      showToast('Sesión de respiración completada');
+    }, (4 + 7 + 8) * 3 * 1000);
+  }
+
   function setupEvents() {
     // 1. Navegación
     document.querySelectorAll('[data-view]').forEach(btn => {
@@ -2681,7 +2947,7 @@
             showEmailVerificationPrompt({ email }, true);
             // Salir de sesión inmediatamente hasta que el usuario confirme su correo
             await firebaseAuth.signOut();
-            showToast('✉️ Correo de verificación enviado');
+            showToast('Correo de verificación enviado');
             tabLogin?.click();
           } catch (err) {
             console.error('Error Registro Firebase:', err);
@@ -2823,7 +3089,7 @@
       appState.user.hasAdoptedPet = true;
       saveState();
       closePetAdoptionModal();
-      showToast(`¡Adoptaste a ${chosenName}! 🎉`);
+      showToast(`¡Adoptaste a ${chosenName}!`);
       if (!appState.user.hasSeenTutorial) {
         setTimeout(openTutorialModal, 300);
       }
@@ -2874,11 +3140,11 @@
         appState.pet = JSON.parse(JSON.stringify(petCustomTemp));
         saveState();
         document.getElementById('customize-pet-modal')?.classList.remove('active');
-        showToast('🎨 ¡Mascota actualizada con éxito!');
+        showToast('¡Mascota personalizada con éxito!');
       }
     });
 
-    // 4. Minijuego: Flappy Pet y Respiración
+    // 4. Minijuego: Neuro-Catch y Respiración
     document.getElementById('btn-start-arcade')?.addEventListener('click', startFlappyGame);
     document.getElementById('btn-restart-arcade')?.addEventListener('click', startFlappyGame);
 
@@ -2889,16 +3155,16 @@
 
       if (gameMode === 'arcade') {
         gameMode = 'breathing';
-        flappyState.running = false;
-        cancelAnimationFrame(flappyAnimId);
+        neuroState.running = false;
+        cancelAnimationFrame(neuroAnimId);
         if (modeArcade) modeArcade.style.display = 'none';
         if (modeBreathing) modeBreathing.style.display = 'block';
-        btn.innerText = 'Flappy Pet 🚀';
+        btn.innerText = 'Neuro-Catch';
       } else {
         gameMode = 'arcade';
         if (modeArcade) modeArcade.style.display = 'block';
         if (modeBreathing) modeBreathing.style.display = 'none';
-        btn.innerText = 'Modo Respiración 🧘';
+        btn.innerText = 'Modo Respiración';
         setTimeout(initFlappyGame, 50);
       }
     });

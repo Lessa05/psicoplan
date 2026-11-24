@@ -46,7 +46,7 @@ PsicoPlan es una aplicación web progresiva (**PWA**), multiplataforma y 100% gr
 - **Estilo Flappy Bird con física y control perfecto:**
   - **Modo Levitación Pre-Vuelo:** Al darle a *"¡Comenzar Vuelo!"*, la mascota se mantiene **flotando suavemente en el centro** y no cae de golpe. Tienes todo el tiempo que quieras para prepararte; el juego y los obstáculos arrancan solo cuando das tu primer toque en la pantalla o presionas Espacio.
   - Gravedad balanceada y suave para un control responsivo y divertido tanto en celular como en computadora.
-  - Tu mascota vuela a través de columnas de libros y manuales de psicología (DSM-5, Freud, Piaget, APA 7) que aparecen a diferentes alturas.
+  - Tu mascota vuela a través de columnas de obstáculos en una pausa activa de reflejos para despejar tu mente y ganar bocaditos.
   - Recolecta galletitas flotantes 🍪 en el aire y gana puntos al cruzar cada columna de libros.
   - Efectos de sonido sintetizados por Web Audio API: aleteo, campana de punto, mordisco de galleta y choque.
   - **Recompensa para tu mascota:** ¡Cada 4 columnas de libros cruzadas o galletas recogidas en vuelo te dan galletas reales para alimentar a tu mascota!

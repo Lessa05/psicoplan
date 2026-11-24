@@ -27,14 +27,14 @@
   <div class="login-screen-wrapper" id="view-login" style="display: none;">
     <div class="login-card-neutral">
       <div class="login-brand-header">
-        <div class="login-brand-icon">🧠</div>
+        <div class="login-brand-icon"><svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg></div>
         <h1>PsicoPlan</h1>
         <p>Tu asistente de bienestar y enfoque académico</p>
       </div>
 
       <!-- Alerta de Verificación de Correo -->
       <div id="email-verification-alert" class="verification-alert-box" style="display: none;">
-        <div class="verif-icon">✉️</div>
+        <div class="verif-icon"><svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
         <div class="verif-body">
           <strong id="verif-title">¡Verifica tu correo electrónico!</strong>
           <p id="verif-desc" style="font-size: 0.8rem; margin: 0.25rem 0 0.5rem 0; line-height: 1.3;">
@@ -96,12 +96,12 @@
         <!-- Selector de tema inicial -->
         <label class="form-label" style="margin-top: 1rem;">Elige tu tema preferido:</label>
         <div class="theme-palette-picker" id="login-theme-picker">
-          <button type="button" class="theme-pill-btn" data-set-theme="neutral">🕊️ Neutro</button>
-          <button type="button" class="theme-pill-btn active" data-set-theme="pastel">🎨 Pastel</button>
-          <button type="button" class="theme-pill-btn" data-set-theme="forest">🌿 Bosque</button>
-          <button type="button" class="theme-pill-btn" data-set-theme="ocean">🌊 Océano</button>
-          <button type="button" class="theme-pill-btn" data-set-theme="sunset">🌸 Atardecer</button>
-          <button type="button" class="theme-pill-btn" data-set-theme="dark">🌙 Noche</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="neutral"><span class="theme-dot dot-neutral"></span> Neutro</button>
+          <button type="button" class="theme-pill-btn active" data-set-theme="pastel"><span class="theme-dot dot-pastel"></span> Pastel</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="forest"><span class="theme-dot dot-forest"></span> Bosque</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="ocean"><span class="theme-dot dot-ocean"></span> Océano</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="sunset"><span class="theme-dot dot-sunset"></span> Atardecer</button>
+          <button type="button" class="theme-pill-btn" data-set-theme="dark"><span class="theme-dot dot-dark"></span> Noche</button>
         </div>
 
         <button type="submit" class="btn-neutral-primary" id="btn-submit-auth">
@@ -116,40 +116,44 @@
        ========================================================================= -->
   <header class="top-nav" id="app-header">
     <a href="#inicio" class="brand-container" id="nav-brand-logo">
-      <div class="brand-logo-icon" aria-hidden="true">🧠</div>
+      <div class="brand-logo-icon" aria-hidden="true">
+        <svg class="ui-icon ui-icon-lg" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04"/></svg>
+      </div>
       <span class="brand-name">PsicoPlan</span>
     </a>
 
     <div class="top-actions">
       <!-- Tutorial de Bienvenida -->
       <button class="icon-btn" id="tutorial-btn" title="Tutorial de bienvenida" aria-label="Tutorial de bienvenida">
-        <span>❓</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </button>
 
       <!-- Selector de Tema Rápido -->
       <button class="icon-btn" id="theme-selector-btn" title="Cambiar tema de color" aria-label="Cambiar tema">
-        <span>🎨</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
       </button>
 
       <!-- Minijuego / Pausa Zen -->
       <button class="icon-btn" id="nav-minigame-btn" title="Pausa Activa y Minijuego" aria-label="Minijuego antiestrés" data-view="minijuego">
-        <span>🎮</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
       </button>
 
       <!-- Notificaciones -->
       <button class="icon-btn" id="notif-bell-btn" title="Recordatorios de entrega" aria-label="Notificaciones">
-        <span>🔔</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="badge-dot" id="notif-badge" style="display: none;"></span>
       </button>
 
       <!-- Ajustes de IA -->
       <button class="icon-btn" id="settings-btn" title="Configurar API de Gemini" aria-label="Ajustes">
-        <span>⚙️</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
 
       <!-- Menú de Usuario / Perfil -->
       <button class="icon-btn" id="user-menu-btn" title="Perfil y cerrar sesión" aria-label="Perfil">
-        <span id="header-avatar-initial">👤</span>
+        <span id="header-avatar-initial">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
       </button>
     </div>
   </header>
@@ -172,7 +176,7 @@
         </button>
         <button class="sidebar-link" data-view="minijuego">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Pausa Zen 🎮
+          Pausa Zen
         </button>
         <button class="sidebar-link" data-view="desempeno">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -208,7 +212,9 @@
             <div class="pet-svg-container" id="pet-svg-display">
               <!-- SVG dinámico inyectado por app.js -->
             </div>
-            <div class="pet-mood-badge" id="pet-mood-badge-icon" title="Estado de ánimo">😊</div>
+            <div class="pet-mood-badge" id="pet-mood-badge-icon" title="Estado de ánimo">
+              <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
           </div>
 
           <div class="pet-info-box">
@@ -216,21 +222,25 @@
               <h3 style="font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
                 <span id="pet-display-name">Mascota</span>
                 <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);" id="pet-species-name">(Gatito Zen)</span>
-                <button type="button" class="btn-pet-info-circle" id="btn-pet-info" title="¿Cómo funciona tu mascota?" aria-label="Información de la mascota">ℹ️</button>
+                <button type="button" class="btn-pet-info-circle" id="btn-pet-info" title="¿Cómo funciona tu mascota?" aria-label="Información de la mascota">
+                  <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </button>
               </h3>
-              <button type="button" class="btn-secondary" id="btn-open-customize-pet" style="padding: 0.25rem 0.65rem; font-size: 0.75rem; min-height: 28px;">
-                Personalizar 🎨
+              <button type="button" class="btn-secondary" id="btn-open-customize-pet" style="padding: 0.3rem 0.65rem; font-size: 0.75rem; min-height: 30px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Personalizar</span>
               </button>
             </div>
 
             <!-- Diálogo de la mascota con consejos psicológicos y avisos de hambre/tristeza -->
             <div class="pet-speech-dialogue" id="pet-dialogue-text" style="cursor: pointer;" title="Toca para pedir otro consejo">
-              "¡Hola! Cada subtarea que cumplas me da bocaditos 🍪 para mantener mi energía."
+              "¡Hola! Cada subtarea que cumplas te da bocaditos para mantener mi energía y motivación."
             </div>
 
             <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <button type="button" class="btn-secondary" id="btn-pet-advice" style="padding: 0.22rem 0.6rem; font-size: 0.72rem; min-height: 26px; gap: 0.3rem;">
-                💡 Pedir Consejo
+              <button type="button" class="btn-secondary" id="btn-pet-advice" style="padding: 0.28rem 0.65rem; font-size: 0.75rem; min-height: 28px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+                <span>Pedir Consejo</span>
               </button>
             </div>
 
@@ -238,21 +248,22 @@
             <div class="pet-hunger-bar-wrapper">
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
                 <span>Satisfacción:</span>
-                <span id="pet-hunger-percent">75%</span>
+                <span id="pet-hunger-percent">100%</span>
               </div>
               <div class="progress-container" style="height: 6px; margin: 0.25rem 0;">
-                <div class="progress-fill" id="pet-hunger-bar" style="width: 75%; background: var(--accent-green);"></div>
+                <div class="progress-fill" id="pet-hunger-bar" style="width: 100%; background: var(--accent-green);"></div>
               </div>
             </div>
 
             <!-- Barra de acción de alimentar -->
             <div class="pet-feed-action-bar">
               <button type="button" class="btn-feed-pet" id="btn-feed-action">
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="10" cy="15.5" r="1" fill="currentColor"/><circle cx="15.5" cy="14" r="1" fill="currentColor"/></svg>
                 <span>Alimentar</span>
-                <span id="pet-food-stock-badge">🍪 2</span>
+                <span id="pet-food-stock-badge">0</span>
               </button>
               <span style="font-size: 0.75rem; color: var(--text-muted);">
-                Ganas +1 bocadito por cada subtarea completada
+                Ganas bocaditos por cada subtarea completada
               </span>
             </div>
           </div>
@@ -261,20 +272,21 @@
         <!-- Racha y Resumen Rápido -->
         <div class="streak-bar">
           <div class="streak-info">
-            <span style="font-size: 1.35rem;">🔥</span>
+            <svg class="ui-icon ui-icon-lg" style="color: #ED8936;" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-.74-.33-1.42-.87-1.87L12 12l-.63.63c-.54.45-.87 1.13-.87 1.87z"/><path d="M12 2c-4 4.5-8 8.5-8 13a8 8 0 0 0 16 0c0-4.5-4-8.5-8-13z"/></svg>
             <div>
               <span>Racha actual: <strong id="streak-days-count">1</strong> días</span>
             </div>
           </div>
-          <div style="font-weight: 800; color: var(--primary);" id="points-badge-quick">
-            ✨ 0 pts
+          <div style="font-weight: 800; color: var(--primary); display: inline-flex; align-items: center; gap: 0.35rem;" id="points-badge-quick">
+            <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" style="color: #ECC94B;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span id="header-points-num">0 pts</span>
           </div>
         </div>
 
         <!-- Botón Grande "Agregar tarea +" -->
-        <button class="btn-primary" id="btn-start-wizard" style="margin-bottom: 1.5rem;">
+        <button class="btn-primary" id="btn-start-wizard" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <svg class="ui-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Agregar tarea</span>
-          <span style="font-size: 1.3rem; font-weight: 800;">+</span>
         </button>
 
         <!-- Lista de Tareas Activas -->
@@ -312,7 +324,7 @@
 
           <!-- PASO 2: CUÉNTANOS SOBRE TU TAREA -->
           <div id="wizard-step-2">
-            <h3 style="margin-bottom: 0.5rem;">Paso 1: Cuéntanos sobre tu tarea 📝</h3>
+            <h3 style="margin-bottom: 0.5rem;">Paso 1: Cuéntanos sobre tu tarea</h3>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Describe lo que debes entregar y nuestro asistente te guiará paso a paso.</p>
 
             <form id="form-step-2" onsubmit="event.preventDefault();">
@@ -345,14 +357,18 @@
 
               <!-- Archivos Adjuntos a la tarea -->
               <div class="form-group">
-                <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span>📎 Archivos o apuntes adjuntos (opcional)</span>
+                <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.25rem;">
+                  <span style="display: flex; align-items: center; gap: 0.35rem;">
+                    <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    Archivos adjuntos (opcional)
+                  </span>
                   <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">PDF, DOCX, JPG, PNG (máx. 5MB)</span>
                 </label>
                 <div class="file-drop-area" id="task-file-dropzone">
                   <input type="file" id="task-attachments-input" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display: none;">
-                  <button type="button" class="btn-secondary" id="btn-browse-files" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.35rem;">
-                    📁 Seleccionar archivos
+                  <button type="button" class="btn-secondary" id="btn-browse-files" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.35rem; display: inline-flex; align-items: center;">
+                    <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    <span>Seleccionar archivos</span>
                   </button>
                   <span style="font-size: 0.78rem; color: var(--text-muted);" id="file-drop-text">o arrastra tus documentos aquí</span>
                 </div>
@@ -369,7 +385,7 @@
           <!-- PASO 3: PREGUNTAS DE IA -->
           <div id="wizard-step-3" style="display: none;">
             <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-              <span style="font-size: 2rem;">🤖</span>
+              <svg class="ui-icon ui-icon-lg" style="color: var(--primary);" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>
               <p style="font-size: 0.9rem; color: var(--text-main);">
                 <strong>¡Perfecto!</strong> Ahora responde 3 breves preguntas para que la IA diseñe subtareas realistas y adaptadas a tu tiempo.
               </p>
@@ -392,16 +408,19 @@
 
             <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
               <button type="button" class="btn-secondary" id="btn-back-to-step-2" style="flex: 1;">← Atrás</button>
-              <button type="button" class="btn-primary" id="btn-generate-plan" style="flex: 2;">
-                <span>Generar mi plan ✨</span>
+              <button type="button" class="btn-primary" id="btn-generate-plan" style="flex: 2; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>Generar mi plan</span>
               </button>
             </div>
           </div>
 
           <!-- ESTADO DE CARGA DE IA -->
           <div id="ai-loading-box" style="display: none; text-align: center; padding: 2.5rem 1rem;">
-            <div style="font-size: 3rem; animation: petHop 1.5s infinite alternate;">🤖</div>
-            <h3 style="margin-top: 1rem; color: var(--primary);">Tu asistente de psicología está pensando...</h3>
+            <div style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
+              <svg class="ui-icon ui-icon-xl" style="color: var(--primary);" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>
+            </div>
+            <h3 style="margin-top: 0.5rem; color: var(--primary);">Tu asistente de psicología está pensando...</h3>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;" id="ai-loading-tip">
               "Dividir una gran tarea reduce la sobrecarga cognitiva y alivia la procrastinación."
             </p>
@@ -413,22 +432,26 @@
             <div class="task-plan-actions-bar" id="plan-task-header-actions">
               <div class="plan-task-meta">
                 <span class="task-tag" id="plan-task-course-tag">Psicología</span>
-                <span class="plan-deadline-pill" id="plan-task-deadline-pill">📅 Entrega: --/--/----</span>
+                <span class="plan-deadline-pill" id="plan-task-deadline-pill">Entrega: --/--/----</span>
               </div>
               <div class="plan-actions-btns">
                 <button type="button" class="btn-secondary btn-plan-action" id="btn-edit-current-task" title="Editar tarea y fecha">
-                  ✏️ Editar
+                  <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                  <span>Editar</span>
                 </button>
                 <button type="button" class="btn-secondary btn-plan-action btn-action-danger" id="btn-delete-current-task" title="Eliminar tarea">
-                  🗑️ Eliminar
+                  <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <span>Eliminar</span>
                 </button>
               </div>
             </div>
 
             <div style="text-align: center; margin: 1rem 0 1.25rem 0;">
-              <span style="font-size: 2.2rem;">🏆</span>
+              <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;">
+                <svg class="ui-icon ui-icon-xl" style="color: var(--accent-green);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
               <h2 style="font-size: 1.35rem; font-weight: 800;" id="plan-task-main-title">¡Listo! Aquí tienes tu plan</h2>
-              <p style="color: var(--text-muted); font-size: 0.88rem;">Completa tus subtareas para mantener a tu mascota satisfecha y ganar galletas 🍪.</p>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Completa tus subtareas para mantener a tu mascota satisfecha y ganar galletas.</p>
             </div>
 
             <!-- Progreso en Tiempo Real -->
@@ -445,7 +468,8 @@
             <!-- Archivos Adjuntos de la Tarea -->
             <div id="plan-attachments-wrapper" style="display: none; margin-bottom: 1.25rem;">
               <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span>📎</span> Archivos y Apuntes Adjuntos:
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <span>Archivos y Apuntes Adjuntos:</span>
               </h4>
               <div id="plan-attachments-container" class="attachments-list"></div>
             </div>
@@ -459,7 +483,7 @@
             <!-- Sugerencias de Herramientas -->
             <div class="card" style="background: var(--bg-subtle); margin: 1.25rem 0; border: 1px dashed var(--border-color);">
               <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <span style="font-size: 1.25rem;">💡</span>
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
                 <strong>Herramientas recomendadas:</strong>
               </div>
               <div id="tools-list-container">
@@ -467,8 +491,9 @@
               </div>
             </div>
 
-            <button class="btn-secondary" id="btn-scholar-search" style="width: 100%; margin-bottom: 1rem;">
-              <span>📚 Buscar artículos en Google Académico</span>
+            <button class="btn-secondary" id="btn-scholar-search" style="width: 100%; margin-bottom: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+              <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Buscar referencias en Google Académico</span>
             </button>
 
             <button class="btn-primary" id="btn-finish-plan">
@@ -486,82 +511,90 @@
         <div class="card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-              <h2 style="font-size: 1.35rem; font-weight: 700;">Flappy Pet: Vuelo Académico 🚀</h2>
+              <h2 style="font-size: 1.35rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg> Neuro-Catch: Misión Sinapsis</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted);">
-                ¡Toca o haz clic para aletear, esquivar columnas de procrastinación y ganar bocaditos!
+                Controla a tu mascota, recolecta Dopamina, Serotonina y Manuales de Psicología y disuelve el estrés.
               </p>
             </div>
             <button class="btn-secondary" id="btn-toggle-game-mode" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
-              Modo Respiración 🧘
+              Modo Respiración
             </button>
           </div>
 
-          <!-- MODO FLAPPY PET -->
+          <!-- MODO NEURO-CATCH: PSICOLOGÍA Y ENFOQUE -->
           <div id="mode-arcade-game">
-            <div class="arcade-game-wrapper">
+            <div class="arcade-game-wrapper" id="neuro-game-wrapper">
               <canvas id="flappy-pet-canvas"></canvas>
 
-              <!-- HUD Superior -->
+              <!-- HUD Superior de Neuro-Catch -->
               <div class="game-hud-top">
                 <div class="hud-stat-pill">
-                  <span>Obstáculos: </span><strong id="game-score-display">0</strong>
+                  <span>Enfoque: </span><strong id="game-score-display">0</strong>
                 </div>
                 <div class="hud-stat-pill">
-                  <span>Bocaditos: </span><strong id="flappy-cookies-display" style="color: var(--accent-green);">🍪 0</strong>
+                  <span>Bocaditos: </span><strong id="flappy-cookies-display" style="color: var(--accent-green); display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg> <span id="flappy-cookies-num">0</span></strong>
                 </div>
                 <div class="hud-stat-pill">
-                  <span>🏆 Récord: </span><strong id="game-high-score-display">0</strong>
+                  <span>Atención: </span><strong id="game-lives-display" style="color: #E53E3E;">3/3</strong>
+                </div>
+                <div class="hud-stat-pill hud-hide-mobile">
+                  <span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> Récord: </span><strong id="game-high-score-display">0</strong>
                 </div>
               </div>
 
-              <!-- PANTALLA INICIAL DEL JUEGO -->
+              <!-- BOTÓN TÁCTIL ONDA ZEN (MÓVIL) -->
+              <button type="button" class="btn-touch-zen" id="btn-touch-zen" aria-label="Activar Onda Zen">
+                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 7v5l3 3"/></svg>
+                <span>Onda Zen</span>
+              </button>
+
+              <!-- PANTALLA INICIAL DE NEURO-CATCH -->
               <div class="game-overlay-screen" id="game-start-overlay">
                 <div class="game-overlay-card">
                   <div class="game-hero-badge">
-                    <span class="game-hero-emoji">🦅</span>
-                    <span class="game-hero-sub-emoji">📚</span>
+                    <svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
                   </div>
 
-                  <h3 class="game-card-title">Flappy Pet: Vuelo Académico</h3>
+                  <h3 class="game-card-title">Neuro-Catch: Misión Sinapsis</h3>
                   <p class="game-card-subtitle">
-                    Pausa activa para despejar tu mente, afinar reflejos y ganar premios para tu mascota.
+                    Controla a tu mascota en la sinapsis: recolecta neurotransmisores positivos y libros de psicología mientras disuelves el estrés.
                   </p>
 
                   <div class="game-rules-grid">
                     <div class="game-rule-card">
-                      <div class="rule-icon-circle rule-icon-tap">👆</div>
+                      <div class="rule-icon-circle rule-icon-tap"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></div>
                       <div class="rule-content">
-                        <strong>¿Cómo volar?</strong>
-                        <span>Toca la pantalla, haz clic o presiona Espacio para dar impulso a tu mascota.</span>
+                        <strong>Mueve a tu Mascota</strong>
+                        <span>Desliza con el dedo en celular o usa el ratón / flechas en PC para correr y atrapar.</span>
                       </div>
                     </div>
 
                     <div class="game-rule-card">
-                      <div class="rule-icon-circle rule-icon-book">📚</div>
+                      <div class="rule-icon-circle rule-icon-book"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
                       <div class="rule-content">
-                        <strong>Esquiva las columnas</strong>
-                        <span>Supera los obstáculos de libros (DSM-5, Piaget) sin caer ni estrellarte.</span>
+                        <strong>Dopamina, Serotonina & Libros</strong>
+                        <span>Atrapa esferas de Dopamina (+10), Serotonina (+15 y galleta) y Manuales de Psicología (+25).</span>
                       </div>
                     </div>
 
                     <div class="game-rule-card">
-                      <div class="rule-icon-circle rule-icon-cookie">🍪</div>
+                      <div class="rule-icon-circle rule-icon-cookie"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 7v5l3 3"/></svg></div>
                       <div class="rule-content">
-                        <strong>Gana galletitas reales</strong>
-                        <span>Atrapa bocaditos en vuelo o cruza 4 columnas para alimentar a tu compañero.</span>
+                        <strong>Onda Zen vs Cortisol</strong>
+                        <span>Esquiva el Cortisol rojo (estrés) o pulsa "Onda Zen" (Espacio en PC) para transmutarlo en calma.</span>
                       </div>
                     </div>
                   </div>
 
                   <button type="button" class="btn-game-launch" id="btn-start-arcade" style="background: linear-gradient(135deg, #8B7CE6 0%, #6366F1 100%); color: #FFFFFF;">
-                    <span>¡Comenzar Vuelo!</span>
-                    <span class="btn-game-icon">🚀</span>
+                    <span>¡Iniciar Entrenamiento Cognitivo!</span>
+                    <svg class="ui-icon ui-icon-sm btn-game-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   </button>
 
                   <div class="game-controls-pill">
-                    <span>📱 En Celular: <strong>Toca la pantalla</strong></span>
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> Celular: <strong>Arrastra para moverte</strong></span>
                     <span class="pill-divider">•</span>
-                    <span>💻 En PC: <strong>Espacio o Clic</strong></span>
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg> PC: <strong>Flechas / Mouse / Espacio</strong></span>
                   </div>
                 </div>
               </div>
@@ -570,29 +603,28 @@
               <div class="game-overlay-screen hidden" id="game-over-overlay">
                 <div class="game-overlay-card">
                   <div class="game-hero-badge game-badge-danger">
-                    <span class="game-hero-emoji">💫</span>
-                    <span class="game-hero-sub-emoji">📚</span>
+                    <svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                   </div>
 
-                  <h3 class="game-card-title">¡Fin del Vuelo!</h3>
+                  <h3 class="game-card-title">¡Sesión de Enfoque Completada!</h3>
                   <p class="game-card-subtitle" id="game-over-feedback">
-                    ¡Buen intento! Cada intento afina tu ritmo y coordinación.
+                    ¡Excelente entrenamiento neurocognitivo! Tu atención y reflejos se fortalecen con cada sesión.
                   </p>
 
                   <div class="game-results-row">
                     <div class="game-result-box">
-                      <span class="result-label">Obstáculos</span>
+                      <span class="result-label">Puntos de Enfoque</span>
                       <strong class="result-val val-score" id="game-final-score">0</strong>
                     </div>
                     <div class="game-result-box">
                       <span class="result-label">Bocaditos Ganados</span>
-                      <strong class="result-val val-cookies" id="game-final-snacks">🍪 +0</strong>
+                      <strong class="result-val val-cookies" id="game-final-snacks" style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> <span id="game-final-snacks-num">+0</span></strong>
                     </div>
                   </div>
 
                   <button type="button" class="btn-game-launch" id="btn-restart-arcade" style="background: linear-gradient(135deg, #8B7CE6 0%, #6366F1 100%); color: #FFFFFF;">
-                    <span>Volar de Nuevo</span>
-                    <span class="btn-game-icon">🔄</span>
+                    <span>Jugar Otra Sesión</span>
+                    <svg class="ui-icon ui-icon-sm btn-game-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                   </button>
                 </div>
               </div>
@@ -600,15 +632,15 @@
             </div>
 
             <div class="game-instructions-box">
-              <div class="game-instruction-item"><span>🎮 Control:</span> <strong>Toca o Clic para aletear</strong></div>
-              <div class="game-instruction-item"><span>🍪 Recompensa:</span> <strong>1 bocadito cada 4 puntos</strong></div>
+              <div class="game-instruction-item"><span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg> Psicología Cognitiva:</span> <strong>Dopamina (Motivación), Serotonina (Calma), DSM-5 & Piaget (Estudio)</strong></div>
+              <div class="game-instruction-item"><span style="display: inline-flex; align-items: center; gap: 0.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> Recompensa:</span> <strong>Ganas bocaditos y puntos reales para cuidar a tu mascota</strong></div>
             </div>
           </div>
 
           <!-- MODO 2: RESPIRACIÓN 4-7-8 -->
           <div id="mode-breathing-478" style="display: none;">
             <div class="breathing-mode-card">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Técnica de Respiración 4-7-8 🧘</h3>
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.45rem;"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 7v5l3 3"/></svg> Técnica de Respiración 4-7-8</h3>
               <p style="font-size: 0.85rem; color: var(--text-muted);">
                 Sigue el ritmo del círculo para activar el sistema parasimpático y relajar tu mente.
               </p>
@@ -633,24 +665,24 @@
            ========================================== -->
       <section id="view-desempeno" style="display: none;">
         <div class="card">
-          <h2 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Mi Desempeño 📊</h2>
+          <h2 style="font-size: 1.35rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Mi Desempeño</h2>
           <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
             Tu constancia académica y el cuidado de tu mascota.
           </p>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
             <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-              <span style="font-size: 1.5rem;">✨</span>
+              <svg class="ui-icon ui-icon-lg" style="color: var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               <p style="font-size: 0.75rem; color: var(--primary); font-weight: 700;">Puntos Totales</p>
               <h3 id="stats-total-points">0</h3>
             </div>
             <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-              <span style="font-size: 1.5rem;">🎯</span>
+              <svg class="ui-icon ui-icon-lg" style="color: var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
               <p style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700;">Nivel</p>
               <h3 id="stats-level-name">Novato</h3>
             </div>
             <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); text-align: center;">
-              <span style="font-size: 1.5rem;">🍪</span>
+              <svg class="ui-icon ui-icon-lg" style="color: var(--accent-green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg>
               <p style="font-size: 0.75rem; color: var(--accent-green); font-weight: 700;">Comidas Dadas</p>
               <h3 id="stats-meals-count">0</h3>
             </div>
@@ -677,7 +709,7 @@
       <div class="card" style="margin-bottom: 0;">
         <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
           <span style="display: flex; align-items: center; gap: 0.4rem;">
-            <span id="right-pet-icon">🐱</span> Tu Compañero
+            <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="9" r="2"/><path d="M11.5 8a5.5 5.5 0 0 0-5.5 5.5c0 1.5.8 3 2.5 3.5 1.5.5 2 1.5 3 1.5s1.5-1 3-1.5c1.7-.5 2.5-2 2.5-3.5A5.5 5.5 0 0 0 11.5 8z"/></svg> Tu Compañero
           </span>
           <span style="font-size: 0.75rem; color: var(--text-muted);" id="right-pet-name">Mascota</span>
         </h4>
@@ -688,12 +720,12 @@
           <div style="flex: 1;">
             <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700;">
               <span>Ánimo:</span>
-              <span id="right-pet-mood-text" style="color: var(--accent-green);">Feliz 😊</span>
+              <span id="right-pet-mood-text" style="color: var(--accent-green);">Feliz</span>
             </div>
             <div class="progress-container" style="height: 6px; margin: 0.25rem 0;">
               <div class="progress-fill" id="right-pet-hunger-bar" style="width: 75%;"></div>
             </div>
-            <span style="font-size: 0.75rem; color: var(--text-muted);" id="right-pet-snacks-count">🍪 2 bocaditos</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.25rem;" id="right-pet-snacks-count"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/></svg> <span id="right-pet-snacks-num">2</span> bocaditos</span>
           </div>
         </div>
       </div>
@@ -701,7 +733,7 @@
       <!-- Progreso General -->
       <div class="card" style="margin-bottom: 0;">
         <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-          <span>🎖️</span> Tu Progreso
+          <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg> Tu Progreso
         </h4>
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem;">
           <span id="right-panel-level">Nivel: Novato</span>
@@ -718,20 +750,20 @@
       <!-- Herramientas de Psicología -->
       <div class="card" style="margin-bottom: 0;">
         <h4 style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-          <span>📚</span> Recursos Frecuentes
+          <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Recursos Frecuentes
         </h4>
         <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
           <a href="https://scholar.google.com" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
-            🔍 Google Académico
+            Google Académico
           </a>
           <a href="https://scielo.org" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
-            🔬 SciELO Psicología
+            SciELO Psicología
           </a>
           <a href="https://apastyle.apa.org" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
-            📖 Normas APA 7ma Ed.
+            Normas APA 7ma Ed.
           </a>
           <a href="https://pomofocus.io" target="_blank" rel="noopener" class="tool-badge-link" style="margin: 0;">
-            ⏱️ Pomodoro Timer
+            Pomodoro Timer
           </a>
         </div>
       </div>
@@ -752,7 +784,7 @@
     </button>
     <button class="nav-item-btn" data-view="minijuego">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      Juego 🎮
+      Juego
     </button>
     <button class="nav-item-btn" data-view="desempeno">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -767,7 +799,7 @@
   <!-- 1. MODAL: PERSONALIZAR MASCOTA -->
   <div class="modal-overlay" id="customize-pet-modal" role="dialog" aria-modal="true" aria-labelledby="custom-pet-title">
     <div class="modal-box">
-      <h3 id="custom-pet-title" style="margin-bottom: 0.25rem;">Personaliza a tu Mascota 🎨</h3>
+      <h3 id="custom-pet-title" style="margin-bottom: 0.25rem;">Personaliza a tu Mascota</h3>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
         Adapta su color, ropa y especie a tu gusto.
       </p>
@@ -789,11 +821,11 @@
       <div class="form-group">
         <label class="form-label" for="custom-pet-species-select">Especie:</label>
         <select id="custom-pet-species-select" class="form-control">
-          <option value="cat">🐱 Gatito Zen</option>
-          <option value="dog">🐶 Perrito Guía</option>
-          <option value="owl">🦉 Búho Sabio</option>
-          <option value="bunny">🐰 Conejita Ágil</option>
-          <option value="bear">🐻 Osito Calma</option>
+          <option value="cat">Gatito Zen</option>
+          <option value="dog">Perrito Guía</option>
+          <option value="owl">Búho Sabio</option>
+          <option value="bunny">Conejita Ágil</option>
+          <option value="bear">Osito Calma</option>
         </select>
       </div>
 
@@ -807,13 +839,13 @@
       <div class="form-group">
         <label class="form-label" for="custom-pet-outfit-select">Vestimenta / Accesorio:</label>
         <select id="custom-pet-outfit-select" class="form-control">
-          <option value="none">✨ Al natural (Sin accesorio)</option>
-          <option value="glasses">👓 Gafas de Psicólogo</option>
-          <option value="scarf">🧣 Bufanda Abrigadora</option>
-          <option value="hat">🎓 Birrete de Graduación</option>
-          <option value="bowtie">🎀 Moño Elegante</option>
-          <option value="flower">🌸 Flor Zen en la Cabeza</option>
-          <option value="cape">🦸 Capa de Superestudiante</option>
+          <option value="none">Al natural (Sin accesorio)</option>
+          <option value="glasses">Gafas de Psicólogo</option>
+          <option value="scarf">Bufanda Abrigadora</option>
+          <option value="hat">Birrete de Graduación</option>
+          <option value="bowtie">Moño Elegante</option>
+          <option value="flower">Flor Zen en la Cabeza</option>
+          <option value="cape">Capa de Superestudiante</option>
         </select>
       </div>
 
@@ -827,18 +859,18 @@
   <!-- 2. MODAL: SELECTOR DE TEMAS -->
   <div class="modal-overlay" id="theme-modal" role="dialog" aria-modal="true" aria-labelledby="theme-title">
     <div class="modal-box">
-      <h3 id="theme-title" style="margin-bottom: 0.5rem;">Paleta de Color y Tema 🎨</h3>
+      <h3 id="theme-title" style="margin-bottom: 0.5rem;">Paleta de Color y Tema</h3>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
         Personaliza los tonos visuales de tu aplicación según tu estado de ánimo.
       </p>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;" id="in-app-theme-picker">
-        <button type="button" class="theme-pill-btn" data-set-theme="neutral">🕊️ Neutro Calmo</button>
-        <button type="button" class="theme-pill-btn" data-set-theme="pastel">🎨 Pastel Clásico</button>
-        <button type="button" class="theme-pill-btn" data-set-theme="forest">🌿 Bosque Sereno</button>
-        <button type="button" class="theme-pill-btn" data-set-theme="ocean">🌊 Océano Profundo</button>
-        <button type="button" class="theme-pill-btn" data-set-theme="sunset">🌸 Atardecer Rosa</button>
-        <button type="button" class="theme-pill-btn" data-set-theme="dark">🌙 Noche de Estudio</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="neutral"><span class="theme-dot dot-neutral"></span> Neutro Calmo</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="pastel"><span class="theme-dot dot-pastel"></span> Pastel Clásico</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="forest"><span class="theme-dot dot-forest"></span> Bosque Sereno</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="ocean"><span class="theme-dot dot-ocean"></span> Océano Profundo</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="sunset"><span class="theme-dot dot-sunset"></span> Atardecer Cálido</button>
+        <button type="button" class="theme-pill-btn" data-set-theme="dark"><span class="theme-dot dot-dark"></span> Noche de Estudio</button>
       </div>
 
       <button class="btn-secondary" id="btn-close-theme-modal" style="width: 100%; margin-top: 1.5rem;">Cerrar</button>
@@ -848,7 +880,7 @@
   <!-- 3. MODAL: AJUSTES Y GEMINI API KEY -->
   <div class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
     <div class="modal-box">
-      <h3 id="settings-title" style="margin-bottom: 0.5rem;">Configuración de IA 🤖</h3>
+      <h3 id="settings-title" style="margin-bottom: 0.5rem;">Configuración de Asistente IA</h3>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
         Ingresa tu API Key gratuita de Google Gemini o usa el modo Demo simulado.
       </p>
@@ -871,7 +903,7 @@
   <!-- 4. MODAL: PERFIL Y CERRAR SESIÓN -->
   <div class="modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
     <div class="modal-box">
-      <h3 id="profile-title" style="margin-bottom: 0.5rem;">Tu Perfil 👤</h3>
+      <h3 id="profile-title" style="margin-bottom: 0.5rem;">Tu Perfil</h3>
       
       <div class="form-group">
         <label class="form-label" for="profile-name-input">Nombre:</label>
@@ -891,7 +923,7 @@
       <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border-color);">
 
       <button type="button" class="btn-neutral-ghost" id="btn-logout" style="width: 100%; color: #E53E3E;">
-        🚪 Cerrar Sesión
+        <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Cerrar Sesión
       </button>
     </div>
   </div>
@@ -899,7 +931,7 @@
   <!-- 5. MODAL: RECORDATORIOS -->
   <div class="modal-overlay" id="notif-modal" role="dialog" aria-modal="true" aria-labelledby="notif-title">
     <div class="modal-box">
-      <h3 id="notif-title" style="margin-bottom: 0.75rem;">🔔 Recordatorios de Entregas</h3>
+      <h3 id="notif-title" style="margin-bottom: 0.75rem;">Recordatorios de Entregas</h3>
       <div id="notif-list-container">
         <!-- Inyectado por app.js -->
       </div>
@@ -911,7 +943,7 @@
   <div class="modal-overlay" id="edit-task-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-modal-title">
     <div class="modal-box modal-box-large">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 id="edit-task-modal-title" style="margin: 0; font-size: 1.25rem;">✏️ Editar Tarea Académica</h3>
+        <h3 id="edit-task-modal-title" style="margin: 0; font-size: 1.25rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar Tarea Académica</h3>
         <button type="button" class="btn-icon-close" id="btn-close-edit-task" aria-label="Cerrar modal">&times;</button>
       </div>
       <form id="edit-task-form">
@@ -937,13 +969,13 @@
         <!-- Adjuntos en edición -->
         <div class="form-group">
           <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-            <span>📎 Documentos o apuntes</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem;"><svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Documentos o apuntes</span>
             <span style="font-size: 0.72rem; color: var(--text-muted);">PDF, DOCX, JPG, PNG (&lt;5MB)</span>
           </label>
           <div class="file-drop-area" id="edit-task-dropzone">
             <input type="file" id="edit-task-attachments-input" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png" style="display: none;">
             <button type="button" class="btn-secondary" id="btn-browse-edit-files" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; gap: 0.35rem;">
-              📁 Agregar más archivos
+              <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg> Agregar más archivos
             </button>
             <span style="font-size: 0.78rem; color: var(--text-muted);">o arrástralos aquí</span>
           </div>
@@ -960,7 +992,7 @@
   <!-- 7. MODAL: CONFIRMAR ELIMINACIÓN DE TAREA -->
   <div class="modal-overlay" id="delete-task-modal" role="dialog" aria-modal="true" aria-labelledby="delete-task-title">
     <div class="modal-box" style="text-align: center; max-width: 420px;">
-      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🗑️</div>
+      <div style="margin-bottom: 0.75rem; color: #EF4444;"><svg class="ui-icon" style="width: 3.5rem; height: 3.5rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <h3 id="delete-task-title" style="margin-bottom: 0.5rem; font-size: 1.25rem;">¿Eliminar esta tarea?</h3>
       <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.45;">
         Esta acción eliminará el plan de actividades y sus archivos adjuntos. Tu progreso actual y nivel de mascota se conservarán intactos.
@@ -986,7 +1018,7 @@
 
       <div class="pet-info-grid">
         <div class="pet-info-card">
-          <div class="pet-info-icon">🐾</div>
+          <div class="pet-info-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="9" r="2"/><path d="M11.5 8a5.5 5.5 0 0 0-5.5 5.5c0 1.5.8 3 2.5 3.5 1.5.5 2 1.5 3 1.5s1.5-1 3-1.5c1.7-.5 2.5-2 2.5-3.5A5.5 5.5 0 0 0 11.5 8z"/></svg></div>
           <div class="pet-info-content">
             <h4>¿Qué representa tu mascota?</h4>
             <p>Es tu compañero de apoyo psicológico para combatir la procrastinación. Su energía refleja tu constancia y ritmo académico.</p>
@@ -994,7 +1026,7 @@
         </div>
 
         <div class="pet-info-card">
-          <div class="pet-info-icon">📉</div>
+          <div class="pet-info-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
           <div class="pet-info-content">
             <h4>¿Cómo disminuye su satisfacción?</h4>
             <p>Baja de forma natural y paulatina con el paso de las horas si dejas de avanzar. Si llega a 40% o menos, sentirá hambre y te avisará.</p>
@@ -1002,7 +1034,7 @@
         </div>
 
         <div class="pet-info-card">
-          <div class="pet-info-icon">🍪</div>
+          <div class="pet-info-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg></div>
           <div class="pet-info-content">
             <h4>¿Cómo se consiguen las galletas?</h4>
             <p>Completando subtareas académicas reales (1 a 2 galletas según la duración estimada) y recolectándolas en el minijuego de vuelo.</p>
@@ -1010,7 +1042,7 @@
         </div>
 
         <div class="pet-info-card">
-          <div class="pet-info-icon">🥣</div>
+          <div class="pet-info-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11h18c0 5-4 9-9 9s-9-4-9-9Z"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="12" y1="4" x2="12" y2="8"/><line x1="16" y1="5" x2="16" y2="8"/></svg></div>
           <div class="pet-info-content">
             <h4>¿Cómo alimentarla?</h4>
             <p>Toca el botón <strong>"Alimentar"</strong> en el panel de inicio. Cada galleta restaura su satisfacción y le devuelve la alegría.</p>
@@ -1018,7 +1050,7 @@
         </div>
 
         <div class="pet-info-card">
-          <div class="pet-info-icon">🌱</div>
+          <div class="pet-info-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10a6 6 0 0 0-6-6H3v2a6 6 0 0 0 6 6h3"/><path d="M12 14a6 6 0 0 1 6-6h3v2a6 6 0 0 1-6 6h-3"/><line x1="12" y1="10" x2="12" y2="22"/></svg></div>
           <div class="pet-info-content">
             <h4>¿Cómo influyen tus tareas?</h4>
             <p>Completar planes enteros otorga 50 puntos de experiencia y bonificaciones especiales, subiendo tu rango desde <em>Novato</em> hasta <em>Maestro Zen</em>.</p>
@@ -1062,7 +1094,7 @@
   <div class="modal-overlay" id="pet-adoption-modal" role="dialog" aria-modal="true" aria-labelledby="adoption-modal-title">
     <div class="modal-box modal-box-large">
       <div style="text-align: center; margin-bottom: 1.25rem;">
-        <span style="font-size: 2.5rem;">🎉</span>
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-subtle); color: var(--primary); margin-bottom: 0.5rem;"><svg class="ui-icon ui-icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
         <h3 id="adoption-modal-title" style="font-size: 1.35rem; font-weight: 800; margin-top: 0.25rem;">¡Elige a tu Compañero de Estudio!</h3>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">
           Tu mascota te acompañará en cada entrega académica. Elige su especie, color y dale un nombre especial.
@@ -1072,7 +1104,7 @@
       <!-- Vista previa en tiempo real -->
       <div class="adoption-preview-card">
         <div class="adoption-avatar-circle" id="adoption-preview-avatar" style="background-color: #ECC94B;">
-          <span id="adoption-preview-emoji" style="font-size: 3rem;">🐻</span>
+          <div id="adoption-preview-emoji" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"><svg class="ui-icon species-svg" style="width: 3.5rem; height: 3.5rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="7"/><circle cx="6.5" cy="7.5" r="2.5"/><circle cx="17.5" cy="7.5" r="2.5"/><path d="M10 13h.01"/><path d="M14 13h.01"/><path d="M10 16a2 2 0 0 0 4 0"/></svg></div>
         </div>
         <div style="text-align: center; margin-top: 0.5rem;">
           <strong id="adoption-preview-name" style="font-size: 1.1rem; color: var(--text-main);">Mimi</strong>
@@ -1084,28 +1116,28 @@
       <div class="form-group">
         <label class="form-label">1. Elige la especie:</label>
         <div class="pet-species-selector" id="adoption-species-selector">
-          <button type="button" class="species-btn active" data-species="bear" data-emoji="🐻" data-sname="Osito Calma">
-            <span class="s-emoji">🐻</span>
+          <button type="button" class="species-btn active" data-species="bear" data-sname="Osito Calma">
+            <span class="s-icon"><svg class="ui-icon ui-icon-lg species-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="7"/><circle cx="6.5" cy="7.5" r="2.5"/><circle cx="17.5" cy="7.5" r="2.5"/><path d="M10 13h.01"/><path d="M14 13h.01"/><path d="M10 16a2 2 0 0 0 4 0"/></svg></span>
             <span class="s-title">Osito</span>
             <span class="s-sub">Calma</span>
           </button>
-          <button type="button" class="species-btn" data-species="cat" data-emoji="🐱" data-sname="Gatito Enfoque">
-            <span class="s-emoji">🐱</span>
+          <button type="button" class="species-btn" data-species="cat" data-sname="Gatito Enfoque">
+            <span class="s-icon"><svg class="ui-icon ui-icon-lg species-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5c-4 0-7 3.5-7 8 0 4 3 6 7 6s7-2 7-6c0-4.5-3-8-7-8z"/><path d="M5 8l-1-4 4 2"/><path d="M19 8l1-4-4 2"/><circle cx="9.5" cy="12.5" r="1" fill="currentColor"/><circle cx="14.5" cy="12.5" r="1" fill="currentColor"/><path d="M11 15h2"/></svg></span>
             <span class="s-title">Gatito</span>
             <span class="s-sub">Enfoque</span>
           </button>
-          <button type="button" class="species-btn" data-species="dog" data-emoji="🐶" data-sname="Perrito Ánimo">
-            <span class="s-emoji">🐶</span>
+          <button type="button" class="species-btn" data-species="dog" data-sname="Perrito Ánimo">
+            <span class="s-icon"><svg class="ui-icon ui-icon-lg species-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08 1.127 1.87 2.112 3 2 .828-.083 2.5-1.5 2.5-2.5"/><path d="M14 5.172C14 3.782 15.577 2.679 17.5 3c2.823.47 4.113 6.006 4 7-.08 1.127-1.87 2.112-3 2-.828-.083-2.5-1.5-2.5-2.5"/><circle cx="12" cy="14" r="6"/><circle cx="10" cy="13" r="1" fill="currentColor"/><circle cx="14" cy="13" r="1" fill="currentColor"/><ellipse cx="12" cy="15.5" rx="1.5" ry="1"/></svg></span>
             <span class="s-title">Perrito</span>
             <span class="s-sub">Ánimo</span>
           </button>
-          <button type="button" class="species-btn" data-species="owl" data-emoji="🦉" data-sname="Búho Sabio">
-            <span class="s-emoji">🦉</span>
+          <button type="button" class="species-btn" data-species="owl" data-sname="Búho Sabio">
+            <span class="s-icon"><svg class="ui-icon ui-icon-lg species-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="10" r="3"/><circle cx="16" cy="10" r="3"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="16" cy="10" r="1" fill="currentColor"/><path d="M12 12l-1 2h2l-1-2z"/><path d="M4 10a8 8 0 0 1 16 0c0 5-3 9-8 9s-8-4-8-9z"/><path d="M6 4l2 3"/><path d="M18 4l-2 3"/></svg></span>
             <span class="s-title">Búho</span>
             <span class="s-sub">Sabio</span>
           </button>
-          <button type="button" class="species-btn" data-species="bunny" data-emoji="🐰" data-sname="Conejito Paz">
-            <span class="s-emoji">🐰</span>
+          <button type="button" class="species-btn" data-species="bunny" data-sname="Conejito Paz">
+            <span class="s-icon"><svg class="ui-icon ui-icon-lg species-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="15" rx="6" ry="5"/><ellipse cx="9" cy="6" rx="2" ry="5"/><ellipse cx="15" cy="6" rx="2" ry="5"/><circle cx="10" cy="14" r="1" fill="currentColor"/><circle cx="14" cy="14" r="1" fill="currentColor"/><path d="M11 16.5h2"/></svg></span>
             <span class="s-title">Conejito</span>
             <span class="s-sub">Paz</span>
           </button>
@@ -1135,18 +1167,18 @@
       <div class="form-group">
         <label class="form-label" for="adoption-outfit-select">4. Accesorio inicial (opcional):</label>
         <select id="adoption-outfit-select" class="form-control">
-          <option value="none">✨ Al natural (Sin accesorio)</option>
-          <option value="glasses">👓 Gafas de Psicólogo</option>
-          <option value="scarf">🧣 Bufanda Abrigadora</option>
-          <option value="hat">🎓 Birrete de Graduación</option>
-          <option value="bowtie">🎀 Moño Elegante</option>
-          <option value="flower">🌸 Flor Zen en la Cabeza</option>
-          <option value="cape">🦸 Capa de Superestudiante</option>
+          <option value="none">Al natural (Sin accesorio)</option>
+          <option value="glasses">Gafas de Psicólogo</option>
+          <option value="scarf">Bufanda Abrigadora</option>
+          <option value="hat">Birrete de Graduación</option>
+          <option value="bowtie">Moño Elegante</option>
+          <option value="flower">Flor Zen en la Cabeza</option>
+          <option value="cape">Capa de Superestudiante</option>
         </select>
       </div>
 
       <button type="button" class="btn-primary" id="btn-confirm-adoption" style="width: 100%; margin-top: 1.25rem; padding: 0.9rem; font-size: 1rem;">
-        ¡Adoptar a mi Compañero y Comenzar! 🚀
+        ¡Adoptar a mi Compañero y Comenzar!
       </button>
     </div>
   </div>
